@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
+import {
+  CHECKOUT_ERROR_MESSAGES,
+  DELIVERY_UNAVAILABLE_MESSAGE,
+  checkoutSchema,
+  isWarehouseMethod,
+  type DeliveryMethod,
+  type Settlement,
+  type Warehouse,
+} from '~/contracts/delivery'
 import type { Address } from '~/contracts/addresses'
 
 useSeoMeta({ title: 'Оформление заказа — Nexus Commerce' })
@@ -7,6 +15,7 @@ useSeoMeta({ title: 'Оформление заказа — Nexus Commerce' })
 const cartStore = useCartStore()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
+const deliveryStore = useDeliveryStore()
 const { authFetch } = useAuthFetch()
 
 // If cart is empty redirect to cart page
@@ -20,17 +29,59 @@ const submitting = ref(false)
 const form = reactive({
   recipientName: '',
   phone: '',
+  deliveryMethod: 'np_branch' as DeliveryMethod,
   city: '',
   street: '',
   house: '',
   apartment: '',
+  npCityRef: '',
+  npWarehouseRef: '',
+  npWarehouseNumber: '',
+  npWarehouseAddress: '',
   notes: '',
 })
 
 const errors = ref<Partial<Record<keyof typeof form, string>>>({})
 
+const needsWarehouse = computed(() => isWarehouseMethod(form.deliveryMethod))
+const warehouseType = computed<'branch' | 'postomat'>(() =>
+  form.deliveryMethod === 'np_postomat' ? 'postomat' : 'branch',
+)
+
+/** Switching between branch and locker invalidates any previously picked warehouse. */
+watch(warehouseType, () => {
+  form.npWarehouseRef = ''
+  form.npWarehouseNumber = ''
+  form.npWarehouseAddress = ''
+})
+
+function onCitySelect(settlement: Settlement) {
+  // NP needs the delivery-city ref, which differs from the settlement's own ref
+  // for villages served by a branch in a neighbouring town.
+  form.npCityRef = settlement.deliveryCityRef
+  form.npWarehouseRef = ''
+  form.npWarehouseNumber = ''
+  form.npWarehouseAddress = ''
+  delete errors.value.city
+}
+
+function onWarehouseSelect(warehouse: Warehouse) {
+  form.npWarehouseRef = warehouse.ref
+  form.npWarehouseNumber = warehouse.number
+  form.npWarehouseAddress = warehouse.description
+  delete errors.value.npWarehouseRef
+}
+
 function formatPrice(p: number) {
   return p.toLocaleString('uk-UA') + ' ₴'
+}
+
+/** A saved address is either a street address or a Nova Poshta warehouse. */
+function formatAddress(addr: Address) {
+  if (addr.npWarehouseAddress) return `${addr.city}, ${addr.npWarehouseAddress}`
+
+  const apartment = addr.apartment ? `, кв. ${addr.apartment}` : ''
+  return `${addr.city}, ${addr.street}, ${addr.house}${apartment}`
 }
 
 // Prefill from user profile
@@ -57,10 +108,15 @@ onMounted(async () => {
 
 function applyAddress(addr: Address) {
   selectedAddressId.value = addr.id
+  form.deliveryMethod = addr.deliveryMethod ?? 'courier'
   form.city = addr.city
   form.street = addr.street
   form.house = addr.house
   form.apartment = addr.apartment ?? ''
+  form.npCityRef = addr.npCityRef ?? ''
+  form.npWarehouseRef = addr.npWarehouseRef ?? ''
+  form.npWarehouseNumber = addr.npWarehouseNumber ?? ''
+  form.npWarehouseAddress = addr.npWarehouseAddress ?? ''
   if (addr.recipientName) form.recipientName = addr.recipientName
   if (addr.phone) form.phone = addr.phone
 }
@@ -88,10 +144,21 @@ async function submit() {
           deliveryAddress: {
             recipientName: form.recipientName,
             phone: form.phone,
+            deliveryMethod: form.deliveryMethod,
             city: form.city,
-            street: form.street,
-            house: form.house,
-            apartment: form.apartment || undefined,
+            // Warehouse pickup carries no street address, and vice versa.
+            ...(needsWarehouse.value
+              ? {
+                  npCityRef: form.npCityRef,
+                  npWarehouseRef: form.npWarehouseRef,
+                  npWarehouseNumber: form.npWarehouseNumber || undefined,
+                  npWarehouseAddress: form.npWarehouseAddress || undefined,
+                }
+              : {
+                  street: form.street,
+                  house: form.house,
+                  apartment: form.apartment || undefined,
+                }),
           },
           notes: form.notes || undefined,
         }
@@ -141,13 +208,16 @@ async function submit() {
               type="button"
               @click="selectAddress(addr)"
             >
-              <span class="checkout__address-line"
-                >{{ addr.city }}, {{ addr.street }}, {{ addr.house
-                }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span
-              >
+              <span class="checkout__address-line">{{ formatAddress(addr) }}</span>
               <span v-if="addr.isDefault" class="checkout__address-badge">По умолчанию</span>
             </button>
           </div>
+        </div>
+
+        <!-- Delivery method -->
+        <div class="checkout__section">
+          <h2 class="checkout__section-title">Способ доставки</h2>
+          <CheckoutDeliveryMethod v-model="form.deliveryMethod" />
         </div>
 
         <!-- Delivery form -->
@@ -167,13 +237,27 @@ async function submit() {
               placeholder="+38 (0##) ###-##-##"
               :error="errors.phone"
             />
-            <AppInputText
+            <CheckoutCityAutocomplete
               v-model="form.city"
-              label="Город"
-              placeholder="Киев"
               :error="errors.city"
+              @select="onCitySelect"
             />
-            <div class="checkout__fields-row">
+
+            <template v-if="needsWarehouse">
+              <p v-if="deliveryStore.unavailable" class="checkout__notice">
+                {{ DELIVERY_UNAVAILABLE_MESSAGE }}
+              </p>
+              <CheckoutWarehousePicker
+                v-else
+                :city-ref="form.npCityRef"
+                :type="warehouseType"
+                :selected-ref="form.npWarehouseRef"
+                :error="errors.npWarehouseRef"
+                @select="onWarehouseSelect"
+              />
+            </template>
+
+            <div v-else class="checkout__fields-row">
               <AppInputText
                 v-model="form.street"
                 label="Улица"
@@ -365,6 +449,16 @@ async function submit() {
     display: flex;
     flex-direction: column;
     gap: 16px;
+  }
+
+  // Shown when the Nova Poshta proxy is unreachable or unconfigured.
+  &__notice {
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+    background: $color-gray-100;
+    padding: 12px;
+    border-radius: $radius-md;
+    max-width: 480px;
   }
 
   &__fields-row {
