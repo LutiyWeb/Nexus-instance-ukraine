@@ -1,13 +1,20 @@
 import { z } from 'zod'
+import type { DeliveryMethod } from './delivery'
 
 export interface Address {
   id: number
   city: string
+  /** Empty for Nova Poshta warehouse addresses — see the `np*` fields. */
   street: string
   house: string
   apartment: string | null
   recipientName: string | null
   phone: string | null
+  deliveryMethod: DeliveryMethod
+  npCityRef: string | null
+  npWarehouseRef: string | null
+  npWarehouseNumber: string | null
+  npWarehouseAddress: string | null
   isDefault: boolean
 }
 

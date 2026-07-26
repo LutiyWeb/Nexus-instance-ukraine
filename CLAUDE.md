@@ -12,25 +12,27 @@ npm run preview  # Preview production build locally
 
 ## Backend
 
-Project: `C:\Users\Юра\Desktop\vue-project\shopmarker-backend`
-Stack: Fastify + Prisma + TypeScript
+Separate repo: `d:/projects/shopmarker-backend` (sibling of this one). Fastify + Prisma + TypeScript, serves `:8000`.
 
 ```bash
-# Run from backend directory:
-npm run dev      # Starts Fastify dev server (tsx watch src/server.ts)
+# Run from the backend directory:
+npm run dev              # Fastify dev server (tsx watch src/server.ts)
+npm run typecheck        # tsc --noEmit — the backend's only static gate
+npm run prisma:studio    # Inspect the DB
+npm run db:seed          # Reseed
 ```
 
-Both servers must run in parallel. Start backend first, then frontend:
-1. Terminal 1 (backend): `cd C:\Users\Юра\Desktop\vue-project\shopmarker-backend && npm run dev`
-2. Terminal 2 (frontend): `npm run dev` (this repo)
+Both servers run in parallel — start the backend first, then `npm run dev` here.
 
-No test suite.
+Swagger UI is mounted on the backend, so the live API contract is available at its origin rather than in this repo. Check it before hand-writing a request shape in `contracts/`.
+
+No test suite in either repo. `npm run build` and `npm run lint` are the only verification gates here.
 
 ## Architecture
 
 ### API communication
 
-- `api/*.ts` — typed `$fetch` wrappers per domain (products, cart, auth, etc.)
+- `contracts/*.ts` — typed `$fetch` wrappers per domain (products, cart, auth, etc.). Named `contracts/`, **not** `api/` — Vercel auto-detects a root `api/` folder as Serverless Functions and breaks the build. Don't rename it back.
 - `composables/useAuthFetch.ts` — wraps `$fetch` with `Authorization: Bearer <token>` from the auth store; use this for all protected endpoints
 - API base URL: `runtimeConfig.public.apiBase` (defaults to `http://localhost:8000`)
 
@@ -58,15 +60,9 @@ Stores in `stores/` are auto-imported. Auth state (`token` + `user`) is persiste
 
 `AppSlider` wraps Swiper via a scoped slot: `#default="{ slide }"` receives each item from the `:slides` prop array.
 
-### Layouts
+### Layouts & middleware
 
-- `layouts/default.vue` — standard page shell with TheHeader + TheFooter
-- `layouts/empty.vue` — no chrome (used for auth/error flows)
-
-### Middleware
-
-- `middleware/auth.ts` — redirects unauthenticated users to `/`
-- `middleware/dev-only.ts` — restricts `/ui/*` routes to development mode
+`default` layout is the standard shell; `empty` is chrome-less, for auth/error flows. `auth` middleware bounces unauthenticated users to `/`; `dev-only` gates the `/ui/*` kit to dev mode.
 
 ### Figma-to-code rules
 
@@ -143,34 +139,28 @@ Before any code, output a planning breakdown:
 
 1. **Pseudo-elements for decorative DOM nodes**: Any element that exists purely for decoration (background shapes, dividers, separator lines, visual accents — no semantic content) MUST be implemented as a `::before`/`::after` pseudo-element on its nearest semantic parent, not as a separate HTML element. Extra DOM nodes for decoration pollute the markup without semantic value.
 
-2. **No default CSS values**: Never write a CSS property that is already the browser default (e.g., `overflow: visible`, `width: auto`, `display: inline`). These add noise without effect.
-
-3. **Check globals before writing component styles**: Before writing a property in a component, verify it is not already set in the global reset (`main.scss`). Globally defined rules must not be repeated per-component. Known global defaults (as of current `main.scss`):
+2. **Check globals before writing component styles**: Before writing a property in a component, verify it is not already set in the global reset (`main.scss`). Globally defined rules must not be repeated per-component. Known global defaults (as of current `main.scss`):
    - `img { display: block; max-width: 100%; }` — never repeat these on `img` inside components
    - `button { border: none; padding: 0; cursor: pointer; background: none; }` — never repeat on button elements
    - `*, *::before, *::after { box-sizing: border-box; }`
 
-4. **Horizontal offsets belong on the container**: When multiple sibling children share the same left/right indent, set `padding-inline` on the parent container — all children inherit the boundary automatically. Do NOT apply `margin-left` to each child individually. Exception: a design-specific offset that applies only to one particular child element (e.g., `margin-left` on a single image for a Figma-precise placement) stays on that child, not the container.
+3. **Horizontal offsets belong on the container**: When multiple sibling children share the same left/right indent, set `padding-inline` on the parent container — all children inherit the boundary automatically. Do NOT apply `margin-left` to each child individually. Exception: a design-specific offset that applies only to one particular child element (e.g., `margin-left` on a single image for a Figma-precise placement) stays on that child, not the container.
 
-5. **CSS custom properties for component-specific colors**: Hardcoded `rgb()`/HEX values that are unique to a component (not in `_variables.scss`) MUST be extracted to CSS custom properties defined at the component root class (e.g., `--hero-accent: rgb(241, 209, 82)`). Use `var(--...)` everywhere inside the component. This enables per-context overrides without touching component internals.
+4. **CSS custom properties for component-specific colors**: Hardcoded `rgb()`/HEX values that are unique to a component (not in `_variables.scss`) MUST be extracted to CSS custom properties defined at the component root class (e.g., `--hero-accent: rgb(241, 209, 82)`). Use `var(--...)` everywhere inside the component. This enables per-context overrides without touching component internals.
 
----
+5. **Explicit breakpoints per component**: Every component must have styles explicitly written for all breakpoints it uses (`sm`, `md`, `lg`, `xl`). Never rely on implicit inheritance between breakpoints — missing a middle breakpoint causes tablet layout breaks.
 
-## ADDITIONAL RULES (AI-recommended)
+6. **`<img>` width + height attributes required**: Always set `width` and `height` HTML attributes on every `<img>`, even if CSS controls the visual size. Without them the browser can't reserve space before the image loads — causes layout shift (CLS).
 
-6. **Explicit breakpoints per component**: Every component must have styles explicitly written for all breakpoints it uses (`sm`, `md`, `lg`, `xl`). Never rely on implicit inheritance between breakpoints — missing a middle breakpoint causes tablet layout breaks.
+7. **Interactive states are mandatory**: Every clickable element must have `:hover`, `:focus-visible`, and `:active` styles defined at the time of initial implementation, not later.
 
-7. **`<img>` width + height attributes required**: Always set `width` and `height` HTML attributes on every `<img>`, even if CSS controls the visual size. Without them the browser can't reserve space before the image loads — causes layout shift (CLS).
+8. **Animations via `transform`/`opacity` only**: Never animate `top`, `left`, `width`, `height`, or `margin` — these trigger reflow on every frame. Only `transform` and `opacity` are GPU-composited.
 
-8. **Interactive states are mandatory**: Every clickable element must have `:hover`, `:focus-visible`, and `:active` styles defined at the time of initial implementation, not later.
+9. **`z-index` via CSS custom properties only**: All z-index values must be defined as custom properties at the `:root` level in `_variables.scss` (e.g., `--z-header: 100`, `--z-modal: 200`). No hardcoded integers in component styles.
 
-9. **Animations via `transform`/`opacity` only**: Never animate `top`, `left`, `width`, `height`, or `margin` — these trigger reflow on every frame. Only `transform` and `opacity` are GPU-composited.
+10. **HTML semantics**: One `<h1>` per page. Use `<section>`, `<article>`, `<nav>`, `<main>` where appropriate. Never use `<div>` as a button or `<a>` without `href`.
 
-10. **`z-index` via CSS custom properties only**: All z-index values must be defined as custom properties at the `:root` level in `_variables.scss` (e.g., `--z-header: 100`, `--z-modal: 200`). No hardcoded integers in component styles.
-
-11. **HTML semantics**: One `<h1>` per page. Use `<section>`, `<article>`, `<nav>`, `<main>` where appropriate. Never use `<div>` as a button or `<a>` without `href`.
-
-12. **No dead CSS — write only what produces a visible effect**: Before adding any CSS property, verify it has a real effect given the current DOM structure. Specifically:
+11. **No dead CSS — write only what produces a visible effect**: Before adding any CSS property, verify it has a real effect given the current DOM structure. Specifically:
     - Layout properties (`display: flex`, `flex-direction`, `gap`, `align-items`, `justify-content`) on a container with a **single child** are meaningless — omit them.
-    - A property that matches the element's natural browser default (e.g., `display: block` on a `div`) must not be written.
+    - Never write a property that is already the browser default (`overflow: visible`, `width: auto`, `display: block` on a `div`).
     - If removing a property would produce zero visual difference, it does not belong in the codebase.
