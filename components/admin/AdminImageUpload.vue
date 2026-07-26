@@ -23,7 +23,7 @@ async function customRequest(options: {
     emit('update:modelValue', res.data.url)
     options.onSuccess?.(res)
   } catch (err) {
-    message.error('Не удалось загрузить файл')
+    message.error('Не вдалося завантажити файл')
     options.onError?.(err)
   } finally {
     uploading.value = false
@@ -39,7 +39,7 @@ function remove() {
   <div class="admin-image-upload">
     <div v-if="modelValue" class="admin-image-upload__preview">
       <img :src="modelValue" alt="" class="admin-image-upload__img" />
-      <a-button size="small" danger @click="remove">Удалить</a-button>
+      <a-button size="small" danger @click="remove">Видалити</a-button>
     </div>
     <a-upload-dragger
       v-else
@@ -49,7 +49,7 @@ function remove() {
       accept="image/*"
     >
       <p class="admin-image-upload__hint">
-        {{ uploading ? 'Загрузка...' : 'Перетащите изображение сюда или нажмите для выбора' }}
+        {{ uploading ? 'Завантаження...' : 'Перетягніть зображення сюди або натисніть для вибору' }}
       </p>
     </a-upload-dragger>
   </div>

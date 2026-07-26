@@ -4,7 +4,7 @@ import type { Product, Category } from '~/types/product'
 import type { Brand } from '~/contracts/brands'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
-useHead({ title: 'Админка — Товары' })
+useHead({ title: 'Адмінка — Товари' })
 
 const { authFetch } = useAuthFetch()
 const config = useRuntimeConfig()
@@ -35,9 +35,9 @@ const form = reactive(emptyForm())
 
 const columns = [
   { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-  { title: 'Название', dataIndex: 'title', key: 'title' },
-  { title: 'Цена', dataIndex: 'price', key: 'price', width: 120 },
-  { title: 'Остаток', dataIndex: 'stock', key: 'stock', width: 100 },
+  { title: 'Назва', dataIndex: 'title', key: 'title' },
+  { title: 'Ціна', dataIndex: 'price', key: 'price', width: 120 },
+  { title: 'Залишок', dataIndex: 'stock', key: 'stock', width: 100 },
   { title: 'Статус', dataIndex: 'status', key: 'status', width: 120 },
   { title: '', key: 'actions', width: 160 },
 ]
@@ -110,9 +110,9 @@ async function submit() {
 
     modalOpen.value = false
     await loadProducts()
-    message.success('Сохранено')
+    message.success('Збережено')
   } catch {
-    message.error('Не удалось сохранить товар')
+    message.error('Не вдалося зберегти товар')
   } finally {
     submitting.value = false
   }
@@ -121,7 +121,7 @@ async function submit() {
 async function remove(product: Product) {
   await authFetch(`/api/products/${product.id}`, { method: 'DELETE' })
   await loadProducts()
-  message.success('Товар удалён')
+  message.success('Товар видалено')
 }
 
 onMounted(() => {
@@ -133,8 +133,8 @@ onMounted(() => {
 <template>
   <div class="admin-products">
     <div class="admin-products__header">
-      <h1 class="admin-products__title">Товары</h1>
-      <a-button type="primary" @click="openCreate">Добавить товар</a-button>
+      <h1 class="admin-products__title">Товари</h1>
+      <a-button type="primary" @click="openCreate">Додати товар</a-button>
     </div>
 
     <a-table
@@ -147,9 +147,9 @@ onMounted(() => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'actions'">
           <a-space>
-            <a-button size="small" @click="openEdit(record)">Редактировать</a-button>
-            <a-popconfirm title="Удалить товар?" @confirm="remove(record)">
-              <a-button size="small" danger>Удалить</a-button>
+            <a-button size="small" @click="openEdit(record)">Редагувати</a-button>
+            <a-popconfirm title="Видалити товар?" @confirm="remove(record)">
+              <a-button size="small" danger>Видалити</a-button>
             </a-popconfirm>
           </a-space>
         </template>
@@ -158,44 +158,44 @@ onMounted(() => {
 
     <a-modal
       v-model:open="modalOpen"
-      :title="editingId ? 'Редактировать товар' : 'Новый товар'"
+      :title="editingId ? 'Редагувати товар' : 'Новий товар'"
       :confirm-loading="submitting"
       @ok="submit"
     >
       <a-form layout="vertical">
-        <a-form-item label="Название">
+        <a-form-item label="Назва">
           <a-input v-model:value="form.title" />
         </a-form-item>
         <a-form-item label="Slug">
           <a-input v-model:value="form.slug" />
         </a-form-item>
-        <a-form-item label="Описание">
+        <a-form-item label="Опис">
           <a-textarea v-model:value="form.description" :rows="3" />
         </a-form-item>
         <a-form-item label="SKU">
           <a-input v-model:value="form.sku" />
         </a-form-item>
-        <a-form-item label="Цена">
+        <a-form-item label="Ціна">
           <a-input-number v-model:value="form.price" :min="0" class="admin-products__number" />
         </a-form-item>
-        <a-form-item label="Цена до скидки">
+        <a-form-item label="Ціна до знижки">
           <a-input-number
             v-model:value="form.compareAtPrice"
             :min="0"
             class="admin-products__number"
           />
         </a-form-item>
-        <a-form-item label="Остаток">
+        <a-form-item label="Залишок">
           <a-input-number v-model:value="form.stock" :min="0" class="admin-products__number" />
         </a-form-item>
         <a-form-item label="Статус">
           <a-select v-model:value="form.status">
-            <a-select-option value="draft">Черновик</a-select-option>
-            <a-select-option value="active">Активен</a-select-option>
-            <a-select-option value="archived">Архив</a-select-option>
+            <a-select-option value="draft">Чернетка</a-select-option>
+            <a-select-option value="active">Активний</a-select-option>
+            <a-select-option value="archived">Архів</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="Категория">
+        <a-form-item label="Категорія">
           <a-select v-model:value="form.categoryId" allow-clear>
             <a-select-option v-for="cat in categories" :key="cat.id" :value="cat.id">
               {{ cat.name }}
@@ -209,7 +209,7 @@ onMounted(() => {
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="Изображение">
+        <a-form-item label="Зображення">
           <AdminImageUpload v-model="form.thumbnailUrl" />
         </a-form-item>
       </a-form>

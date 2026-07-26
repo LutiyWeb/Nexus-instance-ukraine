@@ -16,8 +16,8 @@ const submitted = ref(false)
 const errors = ref<Record<string, string>>({})
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Введите email').email('Некорректный email'),
-  password: z.string().min(1, 'Введите пароль'),
+  email: z.string().min(1, 'Введіть email').email('Некоректний email'),
+  password: z.string().min(1, 'Введіть пароль'),
 })
 
 function validate(): boolean {
@@ -52,7 +52,7 @@ async function submit() {
   if (!validate()) return
 
   if (!captchaToken.value) {
-    captchaError.value = 'Пройдите проверку капчи'
+    captchaError.value = 'Пройдіть перевірку капчі'
     return
   }
 
@@ -61,13 +61,13 @@ async function submit() {
 
     if (authStore.user?.role !== 'admin') {
       authStore.logout()
-      accessError.value = 'Доступ только для администраторов'
+      accessError.value = 'Доступ лише для адміністраторів'
       return
     }
 
     await navigateTo('/admin')
   } catch {
-    // authStore.error уже заполнен
+    // authStore.error вже заповнений
   } finally {
     captchaToken.value = ''
     captchaError.value = ''
@@ -79,7 +79,7 @@ async function submit() {
 <template>
   <div class="admin-login">
     <form class="admin-login__form" @submit.prevent="submit">
-      <h1 class="admin-login__title">Вход в админку</h1>
+      <h1 class="admin-login__title">Вхід в адмінку</h1>
 
       <AppInputText v-model="email" label="Email" placeholder="email@example.com" :error="errors.email" />
       <AppPasswordInput v-model="password" label="Пароль" placeholder="Пароль" :error="errors.password" />
@@ -91,7 +91,7 @@ async function submit() {
       </p>
 
       <AppButton type="submit" variant="primary" size="md" :loading="authStore.loading">
-        Войти
+        Увійти
       </AppButton>
     </form>
   </div>

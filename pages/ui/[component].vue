@@ -6,12 +6,12 @@ const route = useRoute()
 
 const SECTIONS = [
   { slug: 'buttons', label: 'Кнопки' },
-  { slug: 'forms', label: 'Формы' },
+  { slug: 'forms', label: 'Форми' },
   { slug: 'modals', label: 'Модалки' },
-  { slug: 'cards', label: 'Карточки' },
-  { slug: 'icons', label: 'Иконки' },
-  { slug: 'navigation', label: 'Навигация' },
-  { slug: 'toasts', label: 'Тосты' },
+  { slug: 'cards', label: 'Картки' },
+  { slug: 'icons', label: 'Іконки' },
+  { slug: 'navigation', label: 'Навігація' },
+  { slug: 'toasts', label: 'Тости' },
 ]
 
 const COMPONENTS: Record<string, ReturnType<typeof defineAsyncComponent>> = {
@@ -61,7 +61,7 @@ const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
       <div class="uikit__content">
         <component :is="CurrentComponent" v-if="CurrentComponent" />
         <div v-else class="uikit__empty">
-          <p>Выберите компонент в сайдбаре</p>
+          <p>Оберіть компонент у сайдбарі</p>
         </div>
       </div>
     </main>

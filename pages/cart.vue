@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingCart, Heart, Trash2 } from 'lucide-vue-next'
 
-useSeoMeta({ title: 'Корзина — Nexus Commerce' })
+useSeoMeta({ title: 'Кошик — Nexus Commerce' })
 
 const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()
@@ -54,23 +54,23 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
   <div class="cart-page container">
     <div class="cart-page__title-row">
       <h1 class="cart-page__heading">
-        Корзина <span class="cart-page__count">{{ cartStore.count }}</span>
+        Кошик <span class="cart-page__count">{{ cartStore.count }}</span>
       </h1>
-      <AppBreadcrumbs :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Корзина' }]" />
+      <AppBreadcrumbs :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Кошик' }]" />
     </div>
 
     <!-- Empty -->
     <AppEmpty
       v-if="!cartStore.items.length"
-      title="Корзина пуста"
-      description="Добавьте товары, чтобы оформить заказ"
+      title="Кошик порожній"
+      description="Додайте товари, щоб оформити замовлення"
     >
       <template #icon>
         <ShoppingCart :size="56" :stroke-width="1.2" />
       </template>
       <template #action>
         <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
-          Перейти в каталог
+          Перейти до каталогу
         </AppButton>
       </template>
     </AppEmpty>
@@ -83,25 +83,25 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
         <div class="cart-page__bulk">
           <label class="cart-page__select-all">
             <input type="checkbox" :checked="allSelected" @change="toggleAll" />
-            Выбрано {{ selectedIds.length }} из {{ cartStore.items.length }}
+            Обрано {{ selectedIds.length }} з {{ cartStore.items.length }}
           </label>
           <div v-if="selectedIds.length" class="cart-page__bulk-actions">
             <button type="button" @click="addSelectedToFavorites">
-              <Heart :size="14" /> В избранное
+              <Heart :size="14" /> До обраного
             </button>
             <button type="button" class="cart-page__bulk-delete" @click="pendingDelete = true">
-              <Trash2 :size="14" /> Удалить
+              <Trash2 :size="14" /> Видалити
             </button>
           </div>
         </div>
 
         <!-- Delete confirm -->
         <div v-if="pendingDelete" class="cart-page__confirm">
-          <span>Удалить {{ selectedIds.length }} товар(ов)?</span>
+          <span>Видалити {{ selectedIds.length }} товар(ів)?</span>
           <button type="button" class="cart-page__confirm-ok" @click="removeSelected">
-            Удалить
+            Видалити
           </button>
-          <button type="button" @click="pendingDelete = false">Отмена</button>
+          <button type="button" @click="pendingDelete = false">Скасувати</button>
         </div>
 
         <CartItem
@@ -117,27 +117,27 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 
       <!-- Summary column -->
       <aside class="cart-page__summary">
-        <h2 class="cart-page__summary-title">Итого</h2>
+        <h2 class="cart-page__summary-title">Разом</h2>
 
         <div class="cart-page__summary-rows">
           <div class="cart-page__summary-row">
-            <span>Товары ({{ cartStore.count }})</span>
+            <span>Товари ({{ cartStore.count }})</span>
             <span>{{ formatPrice(cartStore.total) }}</span>
           </div>
           <div class="cart-page__summary-row">
             <span>Доставка</span>
-            <span class="cart-page__summary-free">Бесплатно</span>
+            <span class="cart-page__summary-free">Безкоштовно</span>
           </div>
         </div>
 
         <div class="cart-page__summary-total">
-          <span>К оплате</span>
+          <span>До сплати</span>
           <span>{{ formatPrice(cartStore.total) }}</span>
         </div>
 
-        <NuxtLink to="/checkout" class="cart-page__checkout">Оформить заказ</NuxtLink>
+        <NuxtLink to="/checkout" class="cart-page__checkout">Оформити замовлення</NuxtLink>
         <button type="button" class="cart-page__continue" @click="navigateTo('/catalog')">
-          Продолжить покупки
+          Продовжити покупки
         </button>
       </aside>
     </div>
@@ -145,7 +145,7 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     <!-- Recommendations -->
     <div v-if="recommendations.length" class="cart-page__recs">
       <AppSlider
-        title="Рекомендуем"
+        title="Рекомендуємо"
         :slides="recommendations"
         :space-between="16"
         :peek="true"

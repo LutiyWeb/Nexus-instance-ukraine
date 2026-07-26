@@ -19,15 +19,15 @@ const submitted = ref(false)
 const errors = ref<Record<string, string>>({})
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Введите email').email('Некорректный email'),
-  password: z.string().min(1, 'Введите пароль'),
+  email: z.string().min(1, 'Введіть email').email('Некоректний email'),
+  password: z.string().min(1, 'Введіть пароль'),
 })
 
 const registerSchema = z.object({
-  email: z.string().min(1, 'Введите email').email('Некорректный email'),
-  password: z.string().min(8, 'Минимум 8 символов'),
-  firstName: z.string().min(2, 'Минимум 2 символа'),
-  lastName: z.string().min(2, 'Минимум 2 символа'),
+  email: z.string().min(1, 'Введіть email').email('Некоректний email'),
+  password: z.string().min(8, 'Мінімум 8 символів'),
+  firstName: z.string().min(2, 'Мінімум 2 символи'),
+  lastName: z.string().min(2, 'Мінімум 2 символи'),
 })
 
 function validate(): boolean {
@@ -75,7 +75,7 @@ async function handleGoogleSuccess(response: { credential: string }) {
     emit('update:open', false)
     emit('success')
   } catch {
-    // authStore.error уже заполнен
+    // authStore.error вже заповнений
   }
 }
 
@@ -84,7 +84,7 @@ async function submit() {
   if (!validate()) return
 
   if (!captchaToken.value) {
-    captchaError.value = 'Пройдите проверку капчи'
+    captchaError.value = 'Пройдіть перевірку капчі'
     return
   }
 
@@ -118,24 +118,24 @@ async function submit() {
         type="button"
         @click="mode = 'login'"
       >
-        Войти
+        Увійти
       </button>
       <button
         :class="['auth-modal__tab', { 'auth-modal__tab--active': mode === 'register' }]"
         type="button"
         @click="mode = 'register'"
       >
-        Регистрация
+        Реєстрація
       </button>
     </div>
 
     <form class="app-modal__form" @submit.prevent="submit">
       <template v-if="mode === 'register'">
-        <AppInputText v-model="firstName" label="Имя" placeholder="Введите имя" :error="errors.firstName" />
-        <AppInputText v-model="lastName" label="Фамилия" placeholder="Введите фамилию" :error="errors.lastName" />
+        <AppInputText v-model="firstName" label="Ім'я" placeholder="Введіть ім'я" :error="errors.firstName" />
+        <AppInputText v-model="lastName" label="Прізвище" placeholder="Введіть прізвище" :error="errors.lastName" />
       </template>
       <AppInputText v-model="email" label="Email" placeholder="email@example.com" :error="errors.email" />
-      <AppPasswordInput v-model="password" label="Пароль" placeholder="Минимум 8 символов" :error="errors.password" />
+      <AppPasswordInput v-model="password" label="Пароль" placeholder="Мінімум 8 символів" :error="errors.password" />
 
       <AppCaptcha ref="captchaRef" @verify="onCaptchaVerify" @expired="onCaptchaExpired" />
 
@@ -150,7 +150,7 @@ async function submit() {
         :loading="authStore.loading"
         style="width: 100%"
       >
-        {{ mode === 'login' ? 'Войти' : 'Зарегистрироваться' }}
+        {{ mode === 'login' ? 'Увійти' : 'Зареєструватися' }}
       </AppButton>
 
       <button
@@ -159,11 +159,11 @@ async function submit() {
         class="app-modal__secondary-btn"
         @click="$emit('forgot-password')"
       >
-        Забыли пароль?
+        Забули пароль?
       </button>
 
       <div class="auth-modal__divider">
-        <span class="auth-modal__divider-text">или</span>
+        <span class="auth-modal__divider-text">або</span>
       </div>
 
       <div class="auth-modal__google">

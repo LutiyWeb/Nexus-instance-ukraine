@@ -18,11 +18,11 @@ interface AdminBanner {
 }
 
 const SECTION_LABELS: Record<string, string> = {
-  hero: 'Главный баннер',
-  special_1: 'Спец-баннер 1',
-  special_2: 'Спец-баннер 2',
+  hero: 'Головний банер',
+  special_1: 'Спец-банер 1',
+  special_2: 'Спец-банер 2',
   promo: 'Промо-плитки',
-  hot: 'Горячие позиции',
+  hot: 'Гарячі позиції',
 }
 
 const route = useRoute()
@@ -32,7 +32,7 @@ const showMedia = computed(() => section.value !== 'promo')
 const showGradient = computed(() => section.value === 'promo' || section.value === 'hot')
 const title = computed(() => SECTION_LABELS[section.value] ?? section.value)
 
-useHead(() => ({ title: `Админка — ${title.value}` }))
+useHead(() => ({ title: `Адмінка — ${title.value}` }))
 
 const { authFetch } = useAuthFetch()
 
@@ -58,9 +58,9 @@ const form = reactive(emptyForm())
 
 const columns = [
   { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-  { title: 'Название', dataIndex: 'title', key: 'title' },
+  { title: 'Назва', dataIndex: 'title', key: 'title' },
   { title: 'Порядок', dataIndex: 'sortOrder', key: 'sortOrder', width: 100 },
-  { title: 'Активен', dataIndex: 'isActive', key: 'isActive', width: 100 },
+  { title: 'Активний', dataIndex: 'isActive', key: 'isActive', width: 100 },
   { title: '', key: 'actions', width: 160 },
 ]
 
@@ -128,9 +128,9 @@ async function submit() {
 
     modalOpen.value = false
     await load()
-    message.success('Сохранено')
+    message.success('Збережено')
   } catch {
-    message.error('Не удалось сохранить баннер')
+    message.error('Не вдалося зберегти банер')
   } finally {
     submitting.value = false
   }
@@ -139,7 +139,7 @@ async function submit() {
 async function remove(banner: AdminBanner) {
   await authFetch(`/api/banners/admin/${banner.id}`, { method: 'DELETE' })
   await load()
-  message.success('Баннер удалён')
+  message.success('Банер видалено')
 }
 
 watch(section, load, { immediate: true })
@@ -150,9 +150,9 @@ watch(section, load, { immediate: true })
     <div class="admin-banners__header">
       <h1 class="admin-banners__title">{{ title }}</h1>
       <a-button v-if="isSingle" type="primary" @click="editSingle">
-        {{ banners[0] ? 'Редактировать' : 'Создать' }}
+        {{ banners[0] ? 'Редагувати' : 'Створити' }}
       </a-button>
-      <a-button v-else type="primary" @click="openCreate">Добавить слайд</a-button>
+      <a-button v-else type="primary" @click="openCreate">Додати слайд</a-button>
     </div>
 
     <a-table
@@ -165,24 +165,24 @@ watch(section, load, { immediate: true })
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'isActive'">
-          {{ record.isActive ? 'Да' : 'Нет' }}
+          {{ record.isActive ? 'Так' : 'Ні' }}
         </template>
         <template v-if="column.key === 'actions'">
           <a-space>
-            <a-button size="small" @click="openEdit(record)">Редактировать</a-button>
-            <a-popconfirm title="Удалить баннер?" @confirm="remove(record)">
-              <a-button size="small" danger>Удалить</a-button>
+            <a-button size="small" @click="openEdit(record)">Редагувати</a-button>
+            <a-popconfirm title="Видалити банер?" @confirm="remove(record)">
+              <a-button size="small" danger>Видалити</a-button>
             </a-popconfirm>
           </a-space>
         </template>
       </template>
     </a-table>
 
-    <a-empty v-else-if="!loading && !banners.length" description="Баннер ещё не создан" />
+    <a-empty v-else-if="!loading && !banners.length" description="Банер ще не створено" />
 
     <a-modal
       v-model:open="modalOpen"
-      :title="editingId ? 'Редактировать баннер' : 'Новый баннер'"
+      :title="editingId ? 'Редагувати банер' : 'Новий банер'"
       :confirm-loading="submitting"
       @ok="submit"
     >
@@ -190,36 +190,36 @@ watch(section, load, { immediate: true })
         <a-form-item label="Заголовок">
           <a-input v-model:value="form.title" />
         </a-form-item>
-        <a-form-item label="Описание">
+        <a-form-item label="Опис">
           <a-textarea v-model:value="form.description" :rows="3" />
         </a-form-item>
         <template v-if="showMedia">
-          <a-form-item label="Тип медиа">
+          <a-form-item label="Тип медіа">
             <a-select v-model:value="form.mediaType">
-              <a-select-option value="image">Изображение</a-select-option>
-              <a-select-option value="video">Видео</a-select-option>
+              <a-select-option value="image">Зображення</a-select-option>
+              <a-select-option value="video">Відео</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item v-if="form.mediaType === 'image'" label="Изображение">
+          <a-form-item v-if="form.mediaType === 'image'" label="Зображення">
             <AdminImageUpload v-model="form.mediaUrl" />
           </a-form-item>
-          <a-form-item v-else label="Ссылка на видео">
+          <a-form-item v-else label="Посилання на відео">
             <a-input v-model:value="form.mediaUrl" />
           </a-form-item>
         </template>
-        <a-form-item v-if="showGradient" label="Градиент (CSS)">
+        <a-form-item v-if="showGradient" label="Градієнт (CSS)">
           <a-input v-model:value="form.gradient" placeholder="linear-gradient(...)" />
         </a-form-item>
-        <a-form-item label="Ссылка при клике">
+        <a-form-item label="Посилання при кліку">
           <a-input v-model:value="form.linkUrl" />
         </a-form-item>
         <a-form-item label="Текст кнопки">
           <a-input v-model:value="form.buttonText" />
         </a-form-item>
-        <a-form-item v-if="!isSingle" label="Порядок сортировки">
+        <a-form-item v-if="!isSingle" label="Порядок сортування">
           <a-input-number v-model:value="form.sortOrder" :min="0" class="admin-banners__number" />
         </a-form-item>
-        <a-form-item label="Активен">
+        <a-form-item label="Активний">
           <a-switch v-model:checked="form.isActive" />
         </a-form-item>
       </a-form>

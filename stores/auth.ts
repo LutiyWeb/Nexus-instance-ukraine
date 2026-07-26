@@ -41,8 +41,8 @@ export const useAuthStore = defineStore('auth', () => {
       await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
-        ? (err.response?.data?.error?.message ?? 'Ошибка входа')
-        : 'Ошибка входа'
+        ? (err.response?.data?.error?.message ?? 'Помилка входу')
+        : 'Помилка входу'
       throw err
     } finally {
       loading.value = false
@@ -65,8 +65,8 @@ export const useAuthStore = defineStore('auth', () => {
       await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
-        ? (err.response?.data?.error?.message ?? 'Ошибка регистрации')
-        : 'Ошибка регистрации'
+        ? (err.response?.data?.error?.message ?? 'Помилка реєстрації')
+        : 'Помилка реєстрації'
       throw err
     } finally {
       loading.value = false
@@ -80,8 +80,8 @@ export const useAuthStore = defineStore('auth', () => {
       await apiClient.post('/api/auth/forgot-password', { email, captchaToken })
     } catch (err) {
       error.value = axios.isAxiosError(err)
-        ? (err.response?.data?.error?.message ?? 'Ошибка отправки письма')
-        : 'Ошибка отправки письма'
+        ? (err.response?.data?.error?.message ?? 'Помилка надсилання листа')
+        : 'Помилка надсилання листа'
       throw err
     } finally {
       loading.value = false
@@ -112,8 +112,8 @@ export const useAuthStore = defineStore('auth', () => {
       await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
-        ? (err.response?.data?.error?.message ?? 'Ошибка входа через Google')
-        : 'Ошибка входа через Google'
+        ? (err.response?.data?.error?.message ?? 'Помилка входу через Google')
+        : 'Помилка входу через Google'
       throw err
     } finally {
       loading.value = false
@@ -175,7 +175,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
       _clear()
     } catch (err) {
-      error.value = 'Ошибка удаления аккаунта'
+      error.value = 'Помилка видалення акаунта'
       throw err
     } finally {
       loading.value = false

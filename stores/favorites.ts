@@ -34,20 +34,20 @@ export const useFavoritesStore = defineStore('favorites', () => {
             body: { productId: id },
             headers: { Authorization: `Bearer ${authStore.token}` },
           })
-          toastStore.add('Товар добавлен в избранное')
+          toastStore.add('Товар додано до обраного')
         } else {
           await $fetch(`${config.public.apiBase}/api/favorites/${id}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${authStore.token}` },
           })
-          toastStore.add('Товар удалён из избранного', 'warning')
+          toastStore.add('Товар видалено з обраного', 'warning')
         }
       } catch {
         if (adding) ids.value.splice(ids.value.indexOf(id), 1)
         else ids.value.push(id)
-        toastStore.add('Не удалось обновить избранное', 'error')
+        toastStore.add('Не вдалося оновити обране', 'error')
       }
-    } else if (adding) toastStore.add('Войдите, чтобы сохранить в избранное', 'warning')
+    } else if (adding) toastStore.add('Увійдіть, щоб зберегти в обране', 'warning')
   }
 
   if (process.client && authStore.isLoggedIn) {

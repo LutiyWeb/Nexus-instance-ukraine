@@ -82,18 +82,18 @@ const quickSpecs = computed(() => [
 ])
 
 const mockSpecs = computed(() => [
-  { label: 'Бренд', value: product.value?.brand ?? 'Не указан' },
-  { label: 'Категория', value: product.value?.category ?? '—' },
+  { label: 'Бренд', value: product.value?.brand ?? 'Не вказано' },
+  { label: 'Категорія', value: product.value?.category ?? '—' },
   { label: 'Рейтинг', value: String(product.value?.rating ?? '—') },
-  { label: 'В наличии', value: `${product.value?.stock ?? 0} шт.` },
+  { label: 'В наявності', value: `${product.value?.stock ?? 0} шт.` },
   {
-    label: 'Скидка',
+    label: 'Знижка',
     value: product.value?.discountPercentage
       ? `${Math.round(product.value.discountPercentage)}%`
-      : 'Нет',
+      : 'Немає',
   },
   { label: 'Артикул', value: product.value?.sku ?? '—' },
-  { label: 'Гарантия', value: '12 месяцев' },
+  { label: 'Гарантія', value: '12 місяців' },
 ])
 
 const tabs = [
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
     <div class="product-detail container">
       <AppBreadcrumbs
         :crumbs="[
-          { label: 'Главная', to: '/' },
+          { label: 'Головна', to: '/' },
           { label: 'Каталог', to: '/catalog' },
           {
             label: product?.category ?? '...',
@@ -183,13 +183,13 @@ onBeforeUnmount(() => {
       <!-- Error -->
       <div v-else-if="error || !product" class="product-detail__error">
         <p>
-          Не удалось загрузить товар. Попробуйте
+          Не вдалося завантажити товар. Спробуйте
           <button
             type="button"
             class="product-detail__error-retry"
             @click="() => refreshNuxtData()"
           >
-            обновить страницу
+            оновити сторінку
           </button>
         </p>
       </div>
@@ -310,7 +310,7 @@ onBeforeUnmount(() => {
               <button
                 :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
                 type="button"
-                :title="isFav ? 'Убрать из избранного' : 'В избранное'"
+                :title="isFav ? 'Прибрати з обраного' : 'До обраного'"
                 @click="toggleFav"
               >
                 <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
@@ -356,15 +356,15 @@ onBeforeUnmount(() => {
           <div class="product-detail__perks">
             <div class="product-detail__perk">
               <Truck :size="16" />
-              <span>Бесплатная доставка от $50</span>
+              <span>Безкоштовна доставка від $50</span>
             </div>
             <div class="product-detail__perk">
               <Shield :size="16" />
-              <span>Гарантия 12 месяцев</span>
+              <span>Гарантія 12 місяців</span>
             </div>
             <div class="product-detail__perk">
               <Package :size="16" />
-              <span>Возврат в течение 30 дней</span>
+              <span>Повернення протягом 30 днів</span>
             </div>
           </div>
         </div>

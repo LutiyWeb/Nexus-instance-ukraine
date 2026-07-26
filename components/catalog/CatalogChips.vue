@@ -18,7 +18,7 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
         <button
           class="catalog-chips__remove"
           type="button"
-          :aria-label="`Убрать фильтр: ${chip.label}`"
+          :aria-label="`Прибрати фільтр: ${chip.label}`"
           @click="emit('remove', chip.key)"
         >
           <X :size="16" />
@@ -32,7 +32,7 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
       type="button"
       @click="emit('clearAll')"
     >
-      Сбросить всё
+      Скинути все
     </button>
   </div>
 </template>

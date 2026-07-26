@@ -95,7 +95,7 @@ const PRICE_PRESETS: PricePreset[] = [
   { label: 'До $50', priceMin: 0, priceMax: 50 },
   { label: '$50 – $100', priceMin: 50, priceMax: 100 },
   { label: '$100 – $500', priceMin: 100, priceMax: 500 },
-  { label: 'От $500', priceMin: 500, priceMax: 999999 },
+  { label: 'Від $500', priceMin: 500, priceMax: 999999 },
 ]
 
 // ─── Active chips ─────────────────────────────────────────────────────────────
@@ -116,7 +116,7 @@ const activeChips = computed<Chip[]>(() => {
   if (priceMin > 0 || priceMax < 999999) {
     const preset = PRICE_PRESETS.find((p) => p.priceMin === priceMin && p.priceMax === priceMax)
     const label = preset?.label ?? `$${priceMin}–$${priceMax}`
-    chips.push({ key: 'price', label: `Цена: ${label}` })
+    chips.push({ key: 'price', label: `Ціна: ${label}` })
   }
 
   return chips
@@ -347,15 +347,15 @@ const breadcrumbs = computed(() => {
 
         <AppEmpty
           v-else
-          title="Товары не найдены"
-          description="Попробуйте изменить фильтры или сбросить их"
+          title="Товари не знайдено"
+          description="Спробуйте змінити фільтри або скинути їх"
         >
           <template #icon>
             <SearchX :size="56" :stroke-width="1.2" />
           </template>
           <template #action>
             <AppButton variant="outline" size="md" @click="clearAllFilters">
-              Сбросить фильтры
+              Скинути фільтри
             </AppButton>
           </template>
         </AppEmpty>

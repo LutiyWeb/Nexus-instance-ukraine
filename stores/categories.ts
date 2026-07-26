@@ -16,7 +16,7 @@ export const useCategoriesStore = defineStore('categories', () => {
         ...cat,
         subcategories: [1, 2, 3].map((n) => ({
           id: cat.id * 100 + n,
-          name: `${cat.name} — раздел ${n}`,
+          name: `${cat.name} — розділ ${n}`,
           slug: `${cat.slug}-${n}`,
         })),
       }))

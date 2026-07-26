@@ -78,11 +78,11 @@ async function confirmDelete() {
   <div class="cab-profile">
     <!-- Profile -->
     <section class="cab-profile__section">
-      <h2 class="cab-profile__title">Контактные данные</h2>
+      <h2 class="cab-profile__title">Контактні дані</h2>
 
       <div class="cab-profile__grid">
         <div class="cab-profile__field">
-          <label class="cab-profile__label">Имя</label>
+          <label class="cab-profile__label">Ім'я</label>
           <input
             v-model="form.firstName"
             class="cab-profile__input"
@@ -94,7 +94,7 @@ async function confirmDelete() {
         </div>
 
         <div class="cab-profile__field">
-          <label class="cab-profile__label">Фамилия</label>
+          <label class="cab-profile__label">Прізвище</label>
           <input
             v-model="form.lastName"
             class="cab-profile__input"
@@ -129,20 +129,20 @@ async function confirmDelete() {
       </div>
 
       <div class="cab-profile__actions">
-        <AppButton variant="primary" size="md" @click="saveProfile">Сохранить</AppButton>
+        <AppButton variant="primary" size="md" @click="saveProfile">Зберегти</AppButton>
         <Transition name="fade">
-          <span v-if="profileSaved" class="cab-profile__saved">Сохранено</span>
+          <span v-if="profileSaved" class="cab-profile__saved">Збережено</span>
         </Transition>
       </div>
     </section>
 
     <!-- Password -->
     <section class="cab-profile__section">
-      <h2 class="cab-profile__title">Смена пароля</h2>
+      <h2 class="cab-profile__title">Зміна пароля</h2>
 
       <div class="cab-profile__grid">
         <div class="cab-profile__field">
-          <label class="cab-profile__label">Текущий пароль</label>
+          <label class="cab-profile__label">Поточний пароль</label>
           <div class="cab-profile__pwd-wrap">
             <input
               v-model="pwd.current"
@@ -164,7 +164,7 @@ async function confirmDelete() {
         <div />
 
         <div class="cab-profile__field">
-          <label class="cab-profile__label">Новый пароль</label>
+          <label class="cab-profile__label">Новий пароль</label>
           <div class="cab-profile__pwd-wrap">
             <input
               v-model="pwd.next"
@@ -180,7 +180,7 @@ async function confirmDelete() {
         </div>
 
         <div class="cab-profile__field">
-          <label class="cab-profile__label">Повторите пароль</label>
+          <label class="cab-profile__label">Повторіть пароль</label>
           <div class="cab-profile__pwd-wrap">
             <input
               v-model="pwd.confirm"
@@ -201,9 +201,9 @@ async function confirmDelete() {
       </div>
 
       <div class="cab-profile__actions">
-        <AppButton variant="outline" size="md" @click="changePassword">Изменить пароль</AppButton>
+        <AppButton variant="outline" size="md" @click="changePassword">Змінити пароль</AppButton>
         <Transition name="fade">
-          <span v-if="pwdSaved" class="cab-profile__saved">Пароль изменён</span>
+          <span v-if="pwdSaved" class="cab-profile__saved">Пароль змінено</span>
         </Transition>
       </div>
     </section>
@@ -211,13 +211,13 @@ async function confirmDelete() {
     <!-- Danger zone -->
     <section class="cab-profile__danger">
       <div>
-        <p class="cab-profile__danger-title">Удаление аккаунта</p>
+        <p class="cab-profile__danger-title">Видалення облікового запису</p>
         <p class="cab-profile__danger-desc">
-          После удаления все данные будут уничтожены и не подлежат восстановлению.
+          Після видалення всі дані будуть знищені та не підлягають відновленню.
         </p>
       </div>
       <AppButton variant="danger" size="md" @click="isDeleteOpen = true">
-        <Trash2 :size="16" /> Удалить аккаунт
+        <Trash2 :size="16" /> Видалити обліковий запис
       </AppButton>
     </section>
 
@@ -225,18 +225,18 @@ async function confirmDelete() {
     <Teleport to="body">
       <div v-if="isDeleteOpen" class="cab-profile__overlay" @click.self="isDeleteOpen = false">
         <div class="cab-profile__modal">
-          <h3>Удалить аккаунт?</h3>
-          <p>Это действие необратимо. Все ваши данные, заказы и избранное будут удалены.</p>
+          <h3>Видалити обліковий запис?</h3>
+          <p>Ця дія незворотна. Усі ваші дані, замовлення та обране будуть видалені.</p>
           <p v-if="authStore.error" class="cab-profile__error">{{ authStore.error }}</p>
           <div class="cab-profile__modal-actions">
-            <AppButton variant="outline" size="md" @click="isDeleteOpen = false">Отмена</AppButton>
+            <AppButton variant="outline" size="md" @click="isDeleteOpen = false">Скасувати</AppButton>
             <AppButton
               variant="danger"
               size="md"
               :loading="authStore.loading"
               @click="confirmDelete"
             >
-              Да, удалить
+              Так, видалити
             </AppButton>
           </div>
         </div>

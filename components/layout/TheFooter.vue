@@ -12,7 +12,7 @@ function toggle(i: number) {
     <div class="the-footer__inner container">
       <div class="the-footer__brand">
         <NuxtLink to="/" class="the-footer__logo">Nexus</NuxtLink>
-        <p class="the-footer__desc">Лучшие шаблоны для современных проектов.</p>
+        <p class="the-footer__desc">Найкращі шаблони для сучасних проєктів.</p>
         <NuxtLink v-if="$config.public.isDev" to="/ui" class="the-footer__dev-link">
           Dev: UI Kit
         </NuxtLink>

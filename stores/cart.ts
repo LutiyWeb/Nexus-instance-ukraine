@@ -17,7 +17,7 @@ export const useCartStore = defineStore('cart', () => {
   const count = computed(() => items.value.reduce((s, e) => s + e.qty, 0))
   const total = computed(() => items.value.reduce((s, e) => s + e.product.price * e.qty, 0))
 
-  // ── localStorage (гость) ─────────────────────────────────────────────────
+  // ── localStorage (гість) ─────────────────────────────────────────────────
   function _loadLocal() {
     if (!process.client) return
     try {
@@ -36,7 +36,7 @@ export const useCartStore = defineStore('cart', () => {
     localStorage.removeItem(LS_KEY)
   }
 
-  // ── Применить ответ бэкенда ──────────────────────────────────────────────
+  // ── Застосувати відповідь бекенду ────────────────────────────────────────
   function _apply(backendItems: any[]) {
     items.value = backendItems.map((i) => ({
       id: i.id,
@@ -45,7 +45,7 @@ export const useCartStore = defineStore('cart', () => {
     }))
   }
 
-  // ── Загрузить корзину с бэкенда ──────────────────────────────────────────
+  // ── Завантажити кошик з бекенду ──────────────────────────────────────────
   async function fetchCart() {
     loading.value = true
     try {
@@ -57,7 +57,7 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  // ── Мигрировать гостевую корзину в бэкенд после входа ────────────────────
+  // ── Мігрувати гостьовий кошик у бекенд після входу ───────────────────────
   async function _syncAfterLogin() {
     const localItems = [...items.value]
     await fetchCart()
@@ -87,8 +87,8 @@ export const useCartStore = defineStore('cart', () => {
         const msg = err?.data?.error?.message
         toastStore.add(
           msg === 'Not enough product stock'
-            ? 'Недостаточно товара на складе'
-            : 'Не удалось добавить товар в корзину',
+            ? 'Недостатньо товару на складі'
+            : 'Не вдалося додати товар до кошика',
           'error',
         )
       }
@@ -112,7 +112,7 @@ export const useCartStore = defineStore('cart', () => {
         })
         _apply(res.data.items)
       } catch {
-        toastStore.add('Не удалось удалить товар', 'error')
+        toastStore.add('Не вдалося видалити товар', 'error')
       }
     } else {
       items.value = items.value.filter((e) => e.product.id !== productId)
@@ -141,8 +141,8 @@ export const useCartStore = defineStore('cart', () => {
         const msg = err?.data?.error?.message
         toastStore.add(
           msg === 'Not enough product stock'
-            ? 'Недостаточно товара на складе'
-            : 'Не удалось обновить количество',
+            ? 'Недостатньо товару на складі'
+            : 'Не вдалося оновити кількість',
           'warning',
         )
       }
@@ -168,7 +168,7 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  // ── Инициализация ─────────────────────────────────────────────────────────
+  // ── Ініціалізація ─────────────────────────────────────────────────────────
   if (process.client) {
     if (authStore.isLoggedIn) {
       fetchCart()
@@ -177,7 +177,7 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  // При изменении состояния авторизации
+  // При зміні стану авторизації
   watch(
     () => authStore.isLoggedIn,
     async (loggedIn) => {

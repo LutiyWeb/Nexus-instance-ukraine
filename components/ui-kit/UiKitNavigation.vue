@@ -5,9 +5,9 @@ const MOCK_PRODUCTS: Product[] = Array.from({ length: 6 }, (_, i) => ({
   id: 8000 + i,
   title: `Товар для слайдера ${i + 1}`,
   slug: `slider-product-${i + 1}`,
-  description: 'Описание товара в слайдере',
+  description: 'Опис товару в слайдері',
   sku: `SKU-${i + 1}`,
-  category: 'Электроника',
+  category: 'Електроніка',
   categoryId: 1,
   categorySlug: 'electronics',
   brand: 'Brand',
@@ -24,11 +24,11 @@ const MOCK_PRODUCTS: Product[] = Array.from({ length: 6 }, (_, i) => ({
   updatedAt: new Date().toISOString(),
 }))
 
-const RIBBON_CODE = `<!-- CategoryRibbon читает данные из categoriesStore автоматически -->
+const RIBBON_CODE = `<!-- CategoryRibbon читає дані з categoriesStore автоматично -->
 <CategoryRibbon />`
 
 const SLIDER_CODE = `<AppSlider
-  title="Рекомендуем"
+  title="Рекомендуємо"
   :slides="products"
   :space-between="16"
   :breakpoints="{
@@ -43,11 +43,11 @@ const SLIDER_CODE = `<AppSlider
   </template>
 </AppSlider>`
 
-const ARROW_CODE = `<!-- AppArrow — универсальная стрелка для всех слайдеров -->
+const ARROW_CODE = `<!-- AppArrow — універсальна стрілка для всіх слайдерів -->
 <AppArrow direction="prev" @click="swiper.slidePrev()" />
 <AppArrow direction="next" @click="swiper.slideNext()" />
 
-<!-- Состояния -->
+<!-- Стани -->
 <AppArrow direction="prev" :disabled="isBeginning" />
 <AppArrow direction="next" :disabled="isEnd" />`
 </script>
@@ -56,7 +56,7 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
   <div class="uikit-nav">
     <UiKitSection
       title="CategoryRibbon"
-      description="Горизонтальная лента категорий с иконками и стрелками прокрутки"
+      description="Горизонтальна стрічка категорій з іконками та стрілками прокрутки"
     >
       <template #preview>
         <div style="width: 100%; overflow: hidden">
@@ -70,12 +70,12 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
 
     <UiKitSection
       title="AppSlider"
-      description="Swiper.js слайдер с товарами, адаптивными брейкпоинтами и стрелками"
+      description="Swiper.js слайдер з товарами, адаптивними брейкпоінтами та стрілками"
     >
       <template #preview>
         <div style="width: 100%; overflow: hidden">
           <AppSlider
-            title="Пример слайдера"
+            title="Приклад слайдера"
             :slides="MOCK_PRODUCTS"
             :space-between="16"
             :breakpoints="{
@@ -97,13 +97,13 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
 
     <UiKitSection
       title="AppArrow"
-      description="Универсальный компонент стрелок — используется во всех слайдерах"
+      description="Універсальний компонент стрілок — використовується у всіх слайдерах"
     >
       <template #preview>
         <div style="display: flex; gap: 12px; align-items: center">
           <AppArrow direction="prev" />
           <AppArrow direction="next" />
-          <span style="color: #9ca3af; font-size: 13px; margin-left: 8px">активные</span>
+          <span style="color: #9ca3af; font-size: 13px; margin-left: 8px">активні</span>
         </div>
         <div style="display: flex; gap: 12px; align-items: center">
           <AppArrow direction="prev" :disabled="true" />
@@ -121,13 +121,13 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
               name: 'direction',
               type: `'prev' | 'next'`,
               required: true,
-              description: 'Направление стрелки',
+              description: 'Напрямок стрілки',
             },
             {
               name: 'disabled',
               type: 'boolean',
               default: 'false',
-              description: 'Заблокировать стрелку',
+              description: 'Заблокувати стрілку',
             },
           ]"
         />

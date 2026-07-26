@@ -4,7 +4,7 @@ import type { Review } from '~/types/review'
 defineProps<{ review: Review }>()
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ru-RU', {
+  return new Date(iso).toLocaleDateString('uk-UA', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

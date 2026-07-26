@@ -2,7 +2,7 @@
 import { Heart } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-useSeoMeta({ title: 'Избранное — Nexus Commerce' })
+useSeoMeta({ title: 'Обране — Nexus Commerce' })
 
 const wishlistsStore = useWishlistsStore()
 const config = useRuntimeConfig()
@@ -34,26 +34,26 @@ watch(() => wishlistsStore.guestIds.length, loadProducts)
   <div class="wishlist-page container">
     <div class="wishlist-page__title-row">
       <h1 class="wishlist-page__heading">
-        Избранное
+        Обране
         <span v-if="wishlistsStore.count" class="wishlist-page__count">{{
           wishlistsStore.count
         }}</span>
       </h1>
-      <AppBreadcrumbs :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Избранное' }]" />
+      <AppBreadcrumbs :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Обране' }]" />
     </div>
 
     <!-- Empty -->
     <AppEmpty
       v-if="!loading && !products.length"
-      title="Избранное пусто"
-      description="Добавляйте понравившиеся товары, нажимая на сердечко"
+      title="Обране порожнє"
+      description="Додавайте товари, що сподобались, натискаючи на сердечко"
     >
       <template #icon>
         <Heart :size="56" :stroke-width="1.2" />
       </template>
       <template #action>
         <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
-          Перейти в каталог
+          Перейти до каталогу
         </AppButton>
       </template>
     </AppEmpty>

@@ -17,7 +17,7 @@ async function copy(code: string) {
     <div class="uk-code__bar">
       <span class="uk-code__lang">{{ language ?? 'vue' }}</span>
       <button class="uk-code__copy" type="button" @click="copy(code)">
-        {{ copied ? '✓ Скопировано' : 'Копировать' }}
+        {{ copied ? '✓ Скопійовано' : 'Копіювати' }}
       </button>
     </div>
     <pre class="uk-code__pre"><code>{{ code }}</code></pre>

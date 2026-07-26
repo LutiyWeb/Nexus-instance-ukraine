@@ -11,27 +11,27 @@ export const POPULAR_CARDS: LandingCard[] = [
     id: 1,
     title: 'Vue 3 Starter Kit',
     description:
-      'Production-ready boilerplate с TypeScript, Pinia и Vue Router. Стартуй за минуты без лишней настройки.',
+      'Production-ready boilerplate з TypeScript, Pinia та Vue Router. Стартуй за хвилини без зайвих налаштувань.',
     badge: 'Free',
   },
   {
     id: 2,
     title: 'Admin Dashboard',
     description:
-      'Полноценный шаблон панели администратора: таблицы, графики, аналитика — всё готово к работе.',
+      'Повноцінний шаблон панелі адміністратора: таблиці, графіки, аналітика — все готово до роботи.',
     badge: 'Pro',
     imageRight: true,
   },
   {
     id: 3,
     title: 'E-Commerce Template',
-    description: 'Полноценный интернет-магазин: каталог товаров, корзина и оформление заказа.',
+    description: 'Повноцінний інтернет-магазин: каталог товарів, кошик та оформлення замовлення.',
     badge: 'Pro',
   },
   {
     id: 4,
     title: 'Blog Starter',
-    description: 'Минималистичный блог с горизонтальными карточками для листинга статей.',
+    description: 'Мінімалістичний блог із горизонтальними картками для лістингу статей.',
     badge: 'Free',
     imageRight: true,
   },
@@ -40,30 +40,30 @@ export const POPULAR_CARDS: LandingCard[] = [
 export const ARTICLES_CARDS: LandingCard[] = [
   {
     id: 1,
-    title: 'Как начать с Vue 3',
+    title: 'Як почати з Vue 3',
     description:
-      'Полное руководство по старту проекта на Vue 3 с нуля: настройка, структура, первые компоненты.',
+      'Повний посібник зі старту проєкту на Vue 3 з нуля: налаштування, структура, перші компоненти.',
     badge: 'Гайд',
   },
   {
     id: 2,
     title: 'Pinia vs Vuex',
     description:
-      'Сравниваем два подхода к управлению состоянием и выбираем подходящий для твоего проекта.',
-    badge: 'Статья',
+      'Порівнюємо два підходи до керування станом і обираємо відповідний для твого проєкту.',
+    badge: 'Стаття',
     imageRight: true,
   },
   {
     id: 3,
-    title: 'TypeScript в Vue 3',
-    description: 'Типизация пропсов, эмитов и стора — практические примеры из реальных проектов.',
+    title: 'TypeScript у Vue 3',
+    description: 'Типізація пропсів, емітів та стору — практичні приклади з реальних проєктів.',
     badge: 'Гайд',
   },
   {
     id: 4,
-    title: 'Оптимизация сборки',
-    description: 'Vite, code splitting и lazy loading: как ускорить загрузку в продакшене.',
-    badge: 'Статья',
+    title: 'Оптимізація збірки',
+    description: 'Vite, code splitting та lazy loading: як прискорити завантаження в продакшені.',
+    badge: 'Стаття',
     imageRight: true,
   },
 ]

@@ -71,7 +71,7 @@ onMounted(load)
         @click="showForm = !showForm"
       >
         <component :is="showForm ? X : Plus" :size="14" />
-        <span class="cab-addr__btn-label">{{ showForm ? 'Отмена' : 'Добавить адрес' }}</span>
+        <span class="cab-addr__btn-label">{{ showForm ? 'Скасувати' : 'Додати адресу' }}</span>
       </AppButton>
     </div>
 
@@ -80,29 +80,29 @@ onMounted(load)
       <div v-if="showForm" class="cab-addr__form">
         <div class="cab-addr__grid">
           <div class="cab-addr__field">
-            <label class="cab-addr__label">Город *</label>
+            <label class="cab-addr__label">Місто *</label>
             <input
               v-model="form.city"
               class="cab-addr__input"
               :class="{ 'cab-addr__input--error': errors.city }"
-              placeholder="Киев"
+              placeholder="Київ"
             />
             <span v-if="errors.city" class="cab-addr__error">{{ errors.city }}</span>
           </div>
 
           <div class="cab-addr__field">
-            <label class="cab-addr__label">Улица *</label>
+            <label class="cab-addr__label">Вулиця *</label>
             <input
               v-model="form.street"
               class="cab-addr__input"
               :class="{ 'cab-addr__input--error': errors.street }"
-              placeholder="ул. Крещатик"
+              placeholder="вул. Хрещатик"
             />
             <span v-if="errors.street" class="cab-addr__error">{{ errors.street }}</span>
           </div>
 
           <div class="cab-addr__field">
-            <label class="cab-addr__label">Дом *</label>
+            <label class="cab-addr__label">Будинок *</label>
             <input
               v-model="form.house"
               class="cab-addr__input"
@@ -120,11 +120,11 @@ onMounted(load)
 
         <label class="cab-addr__checkbox">
           <input v-model="form.isDefault" type="checkbox" />
-          <span>Сделать основным</span>
+          <span>Зробити основною</span>
         </label>
 
         <AppButton variant="primary" size="md" :loading="submitting" @click="submit">
-          Сохранить адрес
+          Зберегти адресу
         </AppButton>
       </div>
     </Transition>
@@ -137,7 +137,7 @@ onMounted(load)
     <!-- Empty -->
     <div v-else-if="!addresses.length && !showForm" class="cab-addr__empty">
       <MapPin :size="40" class="cab-addr__empty-icon" />
-      <p>Нет сохранённых адресов</p>
+      <p>Немає збережених адрес</p>
     </div>
 
     <!-- List -->
@@ -149,20 +149,20 @@ onMounted(load)
             {{ addr.city }}, {{ addr.street }}, {{ addr.house }}
             <template v-if="addr.apartment">, кв. {{ addr.apartment }}</template>
           </span>
-          <span v-if="addr.isDefault" class="cab-addr__badge">Основной</span>
+          <span v-if="addr.isDefault" class="cab-addr__badge">Основна</span>
         </div>
         <div class="cab-addr__item-actions">
           <button
             v-if="!addr.isDefault"
             class="cab-addr__action-btn"
-            title="Сделать основным"
+            title="Зробити основною"
             @click="setDefault(addr.id)"
           >
             <Star :size="15" />
           </button>
           <button
             class="cab-addr__action-btn cab-addr__action-btn--danger"
-            title="Удалить"
+            title="Видалити"
             @click="deleteAddress(addr.id)"
           >
             <Trash2 :size="15" />

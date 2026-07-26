@@ -122,10 +122,10 @@ const iconSize = ref(24)
 
 const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
 
-// Напрямую
+// Напряму
 <ShoppingCart :size="20" />
 
-// Через AppIcon (обёртка с flex-центрированием)
+// Через AppIcon (обгортка з flex-центруванням)
 <AppIcon name="cart" :size="24">
   <ShoppingCart />
 </AppIcon>`
@@ -134,13 +134,13 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
 <template>
   <div class="uikit-icons">
     <UiKitSection
-      title="Галерея иконок"
-      description="Нажми на иконку чтобы скопировать её название"
+      title="Галерея іконок"
+      description="Натисни на іконку, щоб скопіювати її назву"
     >
       <template #preview>
         <div style="width: 100%; display: flex; flex-direction: column; gap: 16px">
           <div style="display: flex; align-items: center; gap: 12px">
-            <span style="font-size: 13px; color: #6b7280">Размер:</span>
+            <span style="font-size: 13px; color: #6b7280">Розмір:</span>
             <input v-model="iconSize" type="range" min="16" max="40" style="width: 120px" />
             <span style="font-size: 13px; font-weight: 600; color: #374151">{{ iconSize }}px</span>
           </div>
@@ -162,8 +162,8 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
     </UiKitSection>
 
     <UiKitSection
-      title="AppIcon — обёртка"
-      description="Flex-контейнер для иконок с фиксированным размером"
+      title="AppIcon — обгортка"
+      description="Flex-контейнер для іконок із фіксованим розміром"
     >
       <template #preview>
         <div style="display: flex; gap: 16px; align-items: center">
@@ -200,13 +200,13 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
               name: 'name',
               type: 'string',
               required: true,
-              description: 'Идентификатор иконки (для семантики)',
+              description: 'Ідентифікатор іконки (для семантики)',
             },
             {
               name: 'size',
               type: 'number',
               default: '24',
-              description: 'Размер контейнера в пикселях',
+              description: 'Розмір контейнера в пікселях',
             },
           ]"
         />

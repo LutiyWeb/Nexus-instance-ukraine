@@ -5,12 +5,12 @@ const authStore = useAuthStore()
 const route = useRoute()
 
 const NAV_ITEMS = [
-  { key: '/admin/products', label: 'Товары' },
-  { key: '/admin/banners/hero', label: 'Главный баннер' },
-  { key: '/admin/banners/special_1', label: 'Спец-баннер 1' },
-  { key: '/admin/banners/special_2', label: 'Спец-баннер 2' },
+  { key: '/admin/products', label: 'Товари' },
+  { key: '/admin/banners/hero', label: 'Головний банер' },
+  { key: '/admin/banners/special_1', label: 'Спец-банер 1' },
+  { key: '/admin/banners/special_2', label: 'Спец-банер 2' },
   { key: '/admin/banners/promo', label: 'Промо-плитки' },
-  { key: '/admin/banners/hot', label: 'Горячие позиции' },
+  { key: '/admin/banners/hot', label: 'Гарячі позиції' },
 ]
 
 const selectedKeys = computed(() => [route.path])
@@ -24,7 +24,7 @@ function handleLogout() {
 <template>
   <a-layout class="admin-layout">
     <a-layout-sider class="admin-layout__sider" theme="light" width="240">
-      <div class="admin-layout__logo">Админка</div>
+      <div class="admin-layout__logo">Адмінка</div>
       <a-menu :selected-keys="selectedKeys" mode="inline">
         <a-menu-item v-for="item in NAV_ITEMS" :key="item.key">
           <NuxtLink :to="item.key">{{ item.label }}</NuxtLink>
@@ -34,7 +34,7 @@ function handleLogout() {
     <a-layout>
       <a-layout-header class="admin-layout__header">
         <span class="admin-layout__user">{{ authStore.user?.email }}</span>
-        <a-button @click="handleLogout">Выйти</a-button>
+        <a-button @click="handleLogout">Вийти</a-button>
       </a-layout-header>
       <a-layout-content class="admin-layout__content">
         <slot />

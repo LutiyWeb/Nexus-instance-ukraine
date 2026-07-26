@@ -107,7 +107,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 
     <!-- Categories -->
     <div class="catalog-filters__section">
-      <span class="catalog-filters__label">Категории</span>
+      <span class="catalog-filters__label">Категорії</span>
       <label v-for="cat in categoriesStore.categories" :key="cat.id" class="catalog-filters__check">
         <input
           type="checkbox"
@@ -120,7 +120,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 
     <!-- Price presets -->
     <div class="catalog-filters__section">
-      <span class="catalog-filters__label">Цена</span>
+      <span class="catalog-filters__label">Ціна</span>
       <label v-for="preset in pricePresets" :key="preset.label" class="catalog-filters__check">
         <input type="checkbox" :checked="activePreset === preset" @change="togglePreset(preset)" />
         {{ preset.label }}
@@ -129,7 +129,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 
     <!-- Brands -->
     <div class="catalog-filters__section">
-      <span class="catalog-filters__label">Бренды</span>
+      <span class="catalog-filters__label">Бренди</span>
 
       <div class="catalog-filters__search">
         <Search :size="14" class="catalog-filters__search-icon" />
@@ -137,7 +137,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
           v-model="brandSearch"
           class="catalog-filters__search-input"
           type="text"
-          placeholder="Поиск бренда..."
+          placeholder="Пошук бренду..."
         />
       </div>
 
@@ -160,7 +160,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
             <span class="catalog-filters__brand-count">({{ brand.count }})</span>
           </label>
           <p v-if="!brandsStore.brands.length" class="catalog-filters__no-results">
-            Ничего не найдено
+            Нічого не знайдено
           </p>
         </template>
       </div>

@@ -7,7 +7,7 @@ interface Props {
   linkUrl?: string | null
   tag?: string
 }
-withDefaults(defineProps<Props>(), { tag: 'Акция' })
+withDefaults(defineProps<Props>(), { tag: 'Акція' })
 </script>
 
 <template>
@@ -15,7 +15,7 @@ withDefaults(defineProps<Props>(), { tag: 'Акция' })
     <span class="promo-card__tag">{{ tag }}</span>
     <h3 class="promo-card__title">{{ title }}</h3>
     <p class="promo-card__subtitle">{{ subtitle }}</p>
-    <span class="promo-card__cta">Смотреть <ArrowRight :size="14" /></span>
+    <span class="promo-card__cta">Дивитись <ArrowRight :size="14" /></span>
   </NuxtLink>
 </template>
 

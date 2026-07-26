@@ -1,17 +1,17 @@
 <script setup lang="ts">
 const toastStore = useToastStore()
 
-const customMessage = ref('Моё сообщение')
+const customMessage = ref('Моє повідомлення')
 const customType = ref<'success' | 'error' | 'warning'>('success')
 
 const USAGE_CODE = `import { useToastStore } from '~/stores/toast'
 
 const toastStore = useToastStore()
 
-// Добавить тост
-toastStore.add('Товар добавлен в корзину', 'success')
-toastStore.add('Недостаточно товара на складе', 'error')
-toastStore.add('Товар добавлен в избранное', 'warning')`
+// Додати тост
+toastStore.add('Товар додано до кошика', 'success')
+toastStore.add('Недостатньо товару на складі', 'error')
+toastStore.add('Товар додано до обраного', 'warning')`
 
 const STORE_CODE = `// stores/toast.ts
 export type ToastType = 'success' | 'error' | 'warning'
@@ -22,35 +22,35 @@ interface Toast {
   type: ToastType
 }
 
-// Тост автоматически исчезает через 3.5 секунды`
+// Тост автоматично зникає через 3.5 секунди`
 </script>
 
 <template>
   <div class="uikit-toasts">
     <UiKitSection
-      title="Виды тостов"
-      description="Три типа уведомлений: успех, ошибка, предупреждение"
+      title="Види тостів"
+      description="Три типи сповіщень: успіх, помилка, попередження"
     >
       <template #preview>
         <div style="display: flex; flex-wrap: wrap; gap: 12px">
           <AppButton
             variant="primary"
             size="sm"
-            @click="toastStore.add('Товар успешно добавлен в корзину', 'success')"
+            @click="toastStore.add('Товар успішно додано до кошика', 'success')"
           >
             Success
           </AppButton>
           <AppButton
             variant="danger"
             size="sm"
-            @click="toastStore.add('Не удалось выполнить операцию', 'error')"
+            @click="toastStore.add('Не вдалося виконати операцію', 'error')"
           >
             Error
           </AppButton>
           <AppButton
             variant="outline"
             size="sm"
-            @click="toastStore.add('Товар добавлен в избранное', 'warning')"
+            @click="toastStore.add('Товар додано до обраного', 'warning')"
           >
             Warning
           </AppButton>
@@ -58,12 +58,12 @@ interface Toast {
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Конструктор тоста" description="Создай своё сообщение">
+    <UiKitSection title="Конструктор тоста" description="Створи своє повідомлення">
       <template #preview>
         <div
           style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px"
         >
-          <AppInputText v-model="customMessage" label="Текст сообщения" />
+          <AppInputText v-model="customMessage" label="Текст повідомлення" />
           <div style="display: flex; gap: 8px">
             <label
               v-for="t in ['success', 'error', 'warning']"
@@ -78,9 +78,9 @@ interface Toast {
             variant="outline"
             size="sm"
             style="align-self: flex-start"
-            @click="toastStore.add(customMessage || 'Пустое сообщение', customType)"
+            @click="toastStore.add(customMessage || 'Порожнє повідомлення', customType)"
           >
-            Показать тост
+            Показати тост
           </AppButton>
         </div>
       </template>
@@ -89,16 +89,16 @@ interface Toast {
       </template>
     </UiKitSection>
 
-    <UiKitSection title="API тостов">
+    <UiKitSection title="API тостів">
       <UiKitPropsTable
         :rows="[
           {
             name: 'add(message, type)',
             type: 'function',
-            description: 'Показать тост. Исчезает через 3.5 сек',
+            description: 'Показати тост. Зникає через 3.5 сек',
           },
-          { name: 'remove(id)', type: 'function', description: 'Удалить тост по id' },
-          { name: 'toasts', type: 'Toast[]', description: 'Текущий список тостов' },
+          { name: 'remove(id)', type: 'function', description: 'Видалити тост за id' },
+          { name: 'toasts', type: 'Toast[]', description: 'Поточний список тостів' },
         ]"
       />
       <UiKitCodeBlock :code="STORE_CODE" language="ts" />

@@ -15,7 +15,7 @@ const { data, pending, error } = useAsyncData(`order-${route.params.id}`, () =>
 const order = computed(() => data.value?.data ?? null)
 
 useSeoMeta({
-  title: () => (order.value ? `Заказ ${order.value.orderNumber} — Nexus Commerce` : 'Заказ'),
+  title: () => (order.value ? `Замовлення ${order.value.orderNumber} — Nexus Commerce` : 'Замовлення'),
 })
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
@@ -28,7 +28,7 @@ const STATUS_COLOR: Record<OrderStatus, string> = {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ru-RU', {
+  return new Date(iso).toLocaleDateString('uk-UA', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -42,8 +42,8 @@ function formatDate(iso: string) {
   <div class="order-page container">
     <AppBreadcrumbs
       :crumbs="[
-        { label: 'Главная', to: '/' },
-        { label: 'Мои заказы', to: '/cabinet?section=orders' },
+        { label: 'Головна', to: '/' },
+        { label: 'Мої замовлення', to: '/cabinet?section=orders' },
         { label: order?.orderNumber ?? '...' },
       ]"
       class="order-page__breadcrumbs"
@@ -56,8 +56,8 @@ function formatDate(iso: string) {
 
     <!-- Error -->
     <div v-else-if="error || !order" class="order-page__error">
-      <p>Заказ не найден.</p>
-      <NuxtLink to="/cabinet?section=orders" class="order-page__error-link">Мои заказы</NuxtLink>
+      <p>Замовлення не знайдено.</p>
+      <NuxtLink to="/cabinet?section=orders" class="order-page__error-link">Мої замовлення</NuxtLink>
     </div>
 
     <!-- Content -->
@@ -68,9 +68,9 @@ function formatDate(iso: string) {
           <CheckCircle2 :size="40" />
         </div>
         <div class="order-page__banner-body">
-          <h1 class="order-page__banner-title">Заказ оформлен!</h1>
+          <h1 class="order-page__banner-title">Замовлення оформлено!</h1>
           <p class="order-page__banner-sub">
-            Номер заказа: <strong>{{ order.orderNumber }}</strong> &nbsp;·&nbsp;
+            Номер замовлення: <strong>{{ order.orderNumber }}</strong> &nbsp;·&nbsp;
             {{ formatDate(order.createdAt) }}
           </p>
         </div>
@@ -90,7 +90,7 @@ function formatDate(iso: string) {
         <div class="order-page__main">
           <!-- Items -->
           <section class="order-page__card">
-            <h2 class="order-page__card-title"><Package :size="16" />Состав заказа</h2>
+            <h2 class="order-page__card-title"><Package :size="16" />Склад замовлення</h2>
             <div class="order-page__items">
               <div v-for="item in order.items" :key="item.id" class="order-page__item">
                 <div class="order-page__item-info">
@@ -110,7 +110,7 @@ function formatDate(iso: string) {
 
           <!-- Delivery address -->
           <section v-if="order.deliveryAddressSnapshot" class="order-page__card">
-            <h2 class="order-page__card-title"><MapPin :size="16" />Адрес доставки</h2>
+            <h2 class="order-page__card-title"><MapPin :size="16" />Адреса доставки</h2>
             <div class="order-page__address">
               <p>
                 <User :size="13" />
@@ -123,7 +123,7 @@ function formatDate(iso: string) {
               <p>
                 <MapPin :size="13" />
                 {{ order.deliveryAddressSnapshot.city }},
-                {{ order.deliveryAddressSnapshot.street }}, д.
+                {{ order.deliveryAddressSnapshot.street }}, буд.
                 {{ order.deliveryAddressSnapshot.house }}
                 <template v-if="order.deliveryAddressSnapshot.apartment">
                   , кв. {{ order.deliveryAddressSnapshot.apartment }}
@@ -134,7 +134,7 @@ function formatDate(iso: string) {
 
           <!-- Notes -->
           <section v-if="order.notes" class="order-page__card">
-            <h2 class="order-page__card-title"><FileText :size="16" />Комментарий</h2>
+            <h2 class="order-page__card-title"><FileText :size="16" />Коментар</h2>
             <p class="order-page__notes">{{ order.notes }}</p>
           </section>
         </div>
@@ -142,42 +142,42 @@ function formatDate(iso: string) {
         <!-- Right: summary + actions -->
         <aside class="order-page__aside">
           <div class="order-page__summary">
-            <h2 class="order-page__summary-title">Итого</h2>
+            <h2 class="order-page__summary-title">Разом</h2>
 
             <div class="order-page__summary-row">
-              <span>Товары</span>
+              <span>Товари</span>
               <span>{{ ordersStore.formatMoney(order.subtotalPrice, order.currency) }}</span>
             </div>
             <div
               v-if="parseFloat(order.discountAmount) > 0"
               class="order-page__summary-row order-page__summary-row--discount"
             >
-              <span>Скидка</span>
+              <span>Знижка</span>
               <span>− {{ ordersStore.formatMoney(order.discountAmount, order.currency) }}</span>
             </div>
             <div class="order-page__summary-row">
               <span>Доставка</span>
               <span>{{
                 parseFloat(order.deliveryPrice) === 0
-                  ? 'Бесплатно'
+                  ? 'Безкоштовно'
                   : ordersStore.formatMoney(order.deliveryPrice, order.currency)
               }}</span>
             </div>
 
             <div class="order-page__summary-total">
-              <span>К оплате</span>
+              <span>До сплати</span>
               <span>{{ ordersStore.formatMoney(order.totalPrice, order.currency) }}</span>
             </div>
 
             <div class="order-page__summary-actions">
               <NuxtLink to="/catalog" class="order-page__btn order-page__btn--primary">
-                Продолжить покупки
+                Продовжити покупки
               </NuxtLink>
               <NuxtLink
                 to="/cabinet?section=orders"
                 class="order-page__btn order-page__btn--outline"
               >
-                Мои заказы <ChevronRight :size="14" />
+                Мої замовлення <ChevronRight :size="14" />
               </NuxtLink>
             </div>
           </div>

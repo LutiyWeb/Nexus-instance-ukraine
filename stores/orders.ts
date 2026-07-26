@@ -2,12 +2,12 @@ import { defineStore } from 'pinia'
 import type { Order, OrderStatus } from '~/types/order'
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтверждён',
-  processing: 'Обрабатывается',
-  shipped: 'В пути',
-  delivered: 'Доставлен',
-  cancelled: 'Отменён',
+  pending: 'Очікує підтвердження',
+  confirmed: 'Підтверджено',
+  processing: 'Обробляється',
+  shipped: 'В дорозі',
+  delivered: 'Доставлено',
+  cancelled: 'Скасовано',
 }
 
 const STATUS_COLOR: Record<OrderStatus, string> = {

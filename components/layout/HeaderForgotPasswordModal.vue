@@ -35,7 +35,7 @@ async function submit() {
   formError.value = ''
   if (!email.value) return
   if (!captchaToken.value) {
-    formError.value = 'Пройдите проверку капчи'
+    formError.value = 'Пройдіть перевірку капчі'
     return
   }
   try {

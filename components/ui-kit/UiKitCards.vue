@@ -3,11 +3,11 @@ import type { Product } from '~/types/product'
 
 const MOCK_PRODUCT: Product = {
   id: 9999,
-  title: 'Беспроводные наушники Pro X',
+  title: 'Бездротові навушники Pro X',
   slug: 'wireless-headphones-pro-x',
-  description: 'Премиальные наушники с активным шумоподавлением и 30 часами работы',
+  description: 'Преміальні навушники з активним шумозаглушенням та 30 годинами роботи',
   sku: 'HP-001',
-  category: 'Электроника',
+  category: 'Електроніка',
   categoryId: 1,
   categorySlug: 'electronics',
   brand: 'SoundMax',
@@ -27,8 +27,8 @@ const MOCK_PRODUCT: Product = {
 const VERTICAL_CODE = `<TheProductCard :product="product" />`
 
 const HORIZONTAL_CODE = `<TheCardHorizontal
-  title="Заголовок карточки"
-  description="Описание карточки с деталями"
+  title="Заголовок картки"
+  description="Опис картки з деталями"
   badge="Новинка"
   image="/path/to/image.jpg"
   :image-right="false"
@@ -43,7 +43,7 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
                      6px 0 24px -6px rgb(0 0 0 / 12%),
                      0 14px 28px -4px rgb(0 0 0 / 16%);
 
-// Использование
+// Використання
 .my-card {
   box-shadow: $shadow-card;
   &:hover { box-shadow: $shadow-card-hover; }
@@ -53,8 +53,8 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
 <template>
   <div class="uikit-cards">
     <UiKitSection
-      title="TheProductCard (вертикальная)"
-      description="Карточка товара в сетке каталога и слайдерах"
+      title="TheProductCard (вертикальна)"
+      description="Картка товару в сітці каталогу та слайдерах"
     >
       <template #preview>
         <div style="display: grid; grid-template-columns: repeat(3, 240px); gap: 16px">
@@ -73,7 +73,7 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
             :product="{
               ...MOCK_PRODUCT,
               id: 9997,
-              title: 'Очень длинное название товара которое обрезается',
+              title: 'Дуже довга назва товару, яка обрізається',
               thumbnail: 'https://picsum.photos/seed/kit2/400/400',
             }"
           />
@@ -85,20 +85,20 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
     </UiKitSection>
 
     <UiKitSection
-      title="TheCardHorizontal (горизонтальная)"
-      description="Карточка для баннеров и промо-блоков"
+      title="TheCardHorizontal (горизонтальна)"
+      description="Картка для банерів та промо-блоків"
     >
       <template #preview>
         <div style="width: 100%; display: flex; flex-direction: column; gap: 16px">
           <TheCardHorizontal
-            title="Летняя распродажа"
-            description="Скидки до 50% на электронику, гаджеты и аксессуары. Успей купить!"
-            badge="Акция"
+            title="Літній розпродаж"
+            description="Знижки до 50% на електроніку, гаджети та аксесуари. Встигни купити!"
+            badge="Акція"
             image="https://picsum.photos/seed/banner1/560/320"
           />
           <TheCardHorizontal
-            title="Новая коллекция"
-            description="Эксклюзивные товары только что поступили на склад"
+            title="Нова колекція"
+            description="Ексклюзивні товари щойно надійшли на склад"
             badge="Новинка"
             image="https://picsum.photos/seed/banner2/560/320"
             :image-right="true"
@@ -112,8 +112,8 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
     </UiKitSection>
 
     <UiKitSection
-      title="Тени карточек"
-      description="Универсальные SCSS-переменные для всех карточек проекта"
+      title="Тіні карток"
+      description="Універсальні SCSS-змінні для всіх карток проєкту"
     >
       <template #preview>
         <div style="display: flex; gap: 24px">

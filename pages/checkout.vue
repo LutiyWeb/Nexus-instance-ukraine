@@ -2,7 +2,7 @@
 import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
 import type { Address } from '~/contracts/addresses'
 
-useSeoMeta({ title: 'Оформление заказа — Nexus Commerce' })
+useSeoMeta({ title: 'Оформлення замовлення — Nexus Commerce' })
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
@@ -102,7 +102,7 @@ async function submit() {
   } catch (err: unknown) {
     const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message
     toastStore.add(
-      CHECKOUT_ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.',
+      CHECKOUT_ERROR_MESSAGES[msg ?? ''] ?? 'Не вдалося оформити замовлення. Спробуйте ще раз.',
       'error',
     )
   } finally {
@@ -115,21 +115,21 @@ async function submit() {
   <div class="checkout container">
     <AppBreadcrumbs
       :crumbs="[
-        { label: 'Главная', to: '/' },
-        { label: 'Корзина', to: '/cart' },
-        { label: 'Оформление заказа' },
+        { label: 'Головна', to: '/' },
+        { label: 'Кошик', to: '/cart' },
+        { label: 'Оформлення замовлення' },
       ]"
       class="checkout__breadcrumbs"
     />
 
-    <h1 class="checkout__heading">Оформление заказа</h1>
+    <h1 class="checkout__heading">Оформлення замовлення</h1>
 
     <div class="checkout__layout">
       <!-- Left: form -->
       <div class="checkout__form-col">
         <!-- Saved addresses -->
         <div v-if="savedAddresses.length" class="checkout__section">
-          <h2 class="checkout__section-title">Сохранённые адреса</h2>
+          <h2 class="checkout__section-title">Збережені адреси</h2>
           <div class="checkout__addresses">
             <button
               v-for="addr in savedAddresses"
@@ -145,20 +145,20 @@ async function submit() {
                 >{{ addr.city }}, {{ addr.street }}, {{ addr.house
                 }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span
               >
-              <span v-if="addr.isDefault" class="checkout__address-badge">По умолчанию</span>
+              <span v-if="addr.isDefault" class="checkout__address-badge">За замовчуванням</span>
             </button>
           </div>
         </div>
 
         <!-- Delivery form -->
         <div class="checkout__section">
-          <h2 class="checkout__section-title">Данные доставки</h2>
+          <h2 class="checkout__section-title">Дані доставки</h2>
 
           <div class="checkout__fields">
             <AppInputText
               v-model="form.recipientName"
-              label="Имя получателя"
-              placeholder="Иван Иванов"
+              label="Ім'я отримувача"
+              placeholder="Іван Іванов"
               :error="errors.recipientName"
             />
             <AppInputText
@@ -170,20 +170,20 @@ async function submit() {
             />
             <AppInputText
               v-model="form.city"
-              label="Город"
-              placeholder="Киев"
+              label="Місто"
+              placeholder="Київ"
               :error="errors.city"
             />
             <div class="checkout__fields-row">
               <AppInputText
                 v-model="form.street"
-                label="Улица"
-                placeholder="ул. Крещатик"
+                label="Вулиця"
+                placeholder="вул. Хрещатик"
                 :error="errors.street"
               />
               <AppInputText
                 v-model="form.house"
-                label="Дом"
+                label="Будинок"
                 placeholder="1"
                 :error="errors.house"
               />
@@ -194,11 +194,11 @@ async function submit() {
 
         <!-- Comment -->
         <div class="checkout__section">
-          <h2 class="checkout__section-title">Комментарий к заказу</h2>
+          <h2 class="checkout__section-title">Коментар до замовлення</h2>
           <textarea
             v-model="form.notes"
             class="checkout__textarea"
-            placeholder="Дополнительная информация для курьера..."
+            placeholder="Додаткова інформація для кур'єра..."
             rows="3"
           />
         </div>
@@ -206,7 +206,7 @@ async function submit() {
 
       <!-- Right: summary -->
       <aside class="checkout__summary">
-        <h2 class="checkout__summary-title">Ваш заказ</h2>
+        <h2 class="checkout__summary-title">Ваше замовлення</h2>
 
         <div class="checkout__summary-items">
           <div
@@ -232,17 +232,17 @@ async function submit() {
 
         <div class="checkout__summary-rows">
           <div class="checkout__summary-row">
-            <span>Товары ({{ cartStore.count }})</span>
+            <span>Товари ({{ cartStore.count }})</span>
             <span>{{ formatPrice(cartStore.total) }}</span>
           </div>
           <div class="checkout__summary-row">
             <span>Доставка</span>
-            <span class="checkout__summary-free">Бесплатно</span>
+            <span class="checkout__summary-free">Безкоштовно</span>
           </div>
         </div>
 
         <div class="checkout__summary-total">
-          <span>К оплате</span>
+          <span>До сплати</span>
           <span>{{ formatPrice(cartStore.total) }}</span>
         </div>
 
@@ -253,7 +253,7 @@ async function submit() {
           style="width: 100%"
           @click="submit"
         >
-          Подтвердить заказ
+          Підтвердити замовлення
         </AppButton>
       </aside>
     </div>

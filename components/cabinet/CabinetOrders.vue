@@ -28,7 +28,7 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
 
 <template>
   <div class="cab-orders">
-    <h2 class="cab-orders__title">История заказов</h2>
+    <h2 class="cab-orders__title">Історія замовлень</h2>
 
     <!-- Loading -->
     <div v-if="ordersStore.loading" class="cab-orders__list">
@@ -42,10 +42,10 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     <!-- Empty -->
     <div v-else-if="!ordersStore.orders.length" class="cab-orders__empty">
       <Package :size="48" class="cab-orders__empty-icon" />
-      <p class="cab-orders__empty-title">Заказов пока нет</p>
-      <p class="cab-orders__empty-desc">Ваши заказы появятся здесь после первой покупки</p>
+      <p class="cab-orders__empty-title">Замовлень поки немає</p>
+      <p class="cab-orders__empty-desc">Ваші замовлення з'являться тут після першої покупки</p>
       <AppButton variant="primary" size="md" @click="navigateTo('/catalog')"
-        >Перейти в каталог</AppButton
+        >Перейти до каталогу</AppButton
       >
     </div>
 
@@ -57,7 +57,7 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
           <div class="cab-orders__meta">
             <span class="cab-orders__number">{{ order.orderNumber }}</span>
             <span class="cab-orders__date">{{
-              new Date(order.createdAt).toLocaleDateString('ru-RU')
+              new Date(order.createdAt).toLocaleDateString('uk-UA')
             }}</span>
           </div>
 
@@ -106,7 +106,7 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
 
             <div class="cab-orders__details-footer">
               <NuxtLink :to="`/order/${order.id}`" class="cab-orders__link">
-                Подробнее о заказе <ExternalLink :size="13" />
+                Детальніше про замовлення <ExternalLink :size="13" />
               </NuxtLink>
             </div>
           </div>

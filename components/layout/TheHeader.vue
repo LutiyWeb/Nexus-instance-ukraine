@@ -104,7 +104,7 @@ function onBackToLogin() {
         <!-- Search input (desktop) — opens overlay on focus -->
         <div class="the-header__search" role="button" @click="uiStore.searchOpen = true">
           <Search class="the-header__search-icon" :size="16" />
-          <span class="the-header__search-placeholder">Поиск товаров...</span>
+          <span class="the-header__search-placeholder">Пошук товарів...</span>
         </div>
 
         <!-- User -->

@@ -126,9 +126,9 @@ async function createList() {
     newListName.value = ''
     createModalOpen.value = false
     activeTabId.value = newList.id
-    toastStore.add('Список создан')
+    toastStore.add('Список створено')
   } catch {
-    toastStore.add('Не удалось создать список', 'error')
+    toastStore.add('Не вдалося створити список', 'error')
   } finally {
     creatingList.value = false
   }
@@ -142,9 +142,9 @@ async function deleteList(id: number) {
       activeTabId.value = def?.id ?? null
     }
     exitSelectionMode()
-    toastStore.add('Список удалён', 'warning')
+    toastStore.add('Список видалено', 'warning')
   } catch {
-    toastStore.add('Не удалось удалить список', 'error')
+    toastStore.add('Не вдалося видалити список', 'error')
   }
 }
 
@@ -152,7 +152,7 @@ async function removeItem(wishlistId: number, productId: number) {
   try {
     await wishlistsStore.removeItem(wishlistId, productId)
   } catch {
-    toastStore.add('Не удалось убрать товар', 'error')
+    toastStore.add('Не вдалося прибрати товар', 'error')
   }
 }
 
@@ -168,15 +168,15 @@ async function confirmMove() {
       const ids = [...selectedIds.value]
       await wishlistsStore.moveItems(ids, activeTabId.value, moveTargetId.value)
       exitSelectionMode()
-      toastStore.add(`${ids.length} товаров перемещено`)
+      toastStore.add(`${ids.length} товарів переміщено`)
     } else {
       await wishlistsStore.moveItem(movingProductId.value!, activeTabId.value, moveTargetId.value)
-      toastStore.add('Товар перемещён')
+      toastStore.add('Товар переміщено')
     }
     activeTabId.value = moveTargetId.value
     moveModalOpen.value = false
   } catch {
-    toastStore.add('Не удалось переместить', 'error')
+    toastStore.add('Не вдалося перемістити', 'error')
   } finally {
     isMoving.value = false
   }
@@ -196,7 +196,7 @@ onBeforeUnmount(() => {
   <div class="cab-fav">
     <div class="cab-fav__header">
       <template v-if="!selectionMode">
-        <h2 class="cab-fav__title">Избранное</h2>
+        <h2 class="cab-fav__title">Обране</h2>
         <div class="cab-fav__header-actions">
           <button
             v-if="activeList && activeList.items.length"
@@ -204,24 +204,24 @@ onBeforeUnmount(() => {
             type="button"
             @click="toggleSelectionMode"
           >
-            Выбрать
+            Обрати
           </button>
           <button class="cab-fav__add-list-btn" type="button" @click="openCreateModal">
             <Plus :size="16" />
-            Новый список
+            Новий список
           </button>
         </div>
       </template>
       <template v-else>
         <span class="cab-fav__selection-info">
-          Выбрано: {{ selectedIds.size }} из {{ activeList?.items.length ?? 0 }}
+          Обрано: {{ selectedIds.size }} з {{ activeList?.items.length ?? 0 }}
         </span>
         <div class="cab-fav__header-actions">
           <button class="cab-fav__select-btn" type="button" @click="toggleSelectAll">
-            {{ allSelected ? 'Снять всё' : 'Выбрать все' }}
+            {{ allSelected ? 'Зняти все' : 'Обрати все' }}
           </button>
           <button class="cab-fav__cancel-btn" type="button" @click="exitSelectionMode">
-            Отмена
+            Скасувати
           </button>
         </div>
       </template>
@@ -229,12 +229,12 @@ onBeforeUnmount(() => {
 
     <ClientOnly>
       <AppModal :open="createModalOpen" @update:open="createModalOpen = $event">
-        <h2 class="cab-fav__modal-title">Новый список</h2>
+        <h2 class="cab-fav__modal-title">Новий список</h2>
         <div class="app-modal__form">
           <AppInputText
             v-model="newListName"
-            label="Название"
-            placeholder="Название списка (до 64 символов)"
+            label="Назва"
+            placeholder="Назва списку (до 64 символів)"
             @keyup.enter="createList"
           />
           <AppButton
@@ -245,13 +245,13 @@ onBeforeUnmount(() => {
             class="cab-fav__modal-submit"
             @click="createList"
           >
-            Создать
+            Створити
           </AppButton>
         </div>
       </AppModal>
 
       <AppModal :open="moveModalOpen" @update:open="moveModalOpen = $event">
-        <h2 class="cab-fav__modal-title">Переместить в список</h2>
+        <h2 class="cab-fav__modal-title">Перемістити у список</h2>
         <div class="cab-fav__move-list">
           <button
             v-for="list in otherLists"
@@ -268,11 +268,11 @@ onBeforeUnmount(() => {
             </span>
             <span class="cab-fav__move-info">
               <span class="cab-fav__move-name">{{ list.name }}</span>
-              <span class="cab-fav__move-count">{{ list.items.length }} товаров</span>
+              <span class="cab-fav__move-count">{{ list.items.length }} товарів</span>
             </span>
           </button>
           <p v-if="!otherLists.length" class="cab-fav__move-empty">
-            Нет других списков. Создайте новый список через кнопку «Новый список».
+            Немає інших списків. Створіть новий список через кнопку «Новий список».
           </p>
         </div>
         <div class="cab-fav__move-actions">
@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
             class="cab-fav__modal-submit"
             @click="moveModalOpen = false"
           >
-            Отмена
+            Скасувати
           </AppButton>
           <AppButton
             variant="primary"
@@ -292,7 +292,7 @@ onBeforeUnmount(() => {
             class="cab-fav__modal-submit"
             @click="confirmMove"
           >
-            Переместить
+            Перемістити
           </AppButton>
         </div>
       </AppModal>
@@ -303,16 +303,16 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else-if="error" class="cab-fav__empty">
-      <p>Не удалось загрузить избранное.</p>
-      <AppButton variant="outline" size="sm" @click="load">Повторить</AppButton>
+      <p>Не вдалося завантажити обране.</p>
+      <AppButton variant="outline" size="sm" @click="load">Повторити</AppButton>
     </div>
 
     <div v-else-if="!wishlistsStore.wishlists.length" class="cab-fav__empty">
       <Heart :size="48" class="cab-fav__empty-icon" />
-      <p class="cab-fav__empty-title">Список избранного пуст</p>
-      <p class="cab-fav__empty-desc">Добавляйте товары в избранное, чтобы не потерять их</p>
+      <p class="cab-fav__empty-title">Список обраного порожній</p>
+      <p class="cab-fav__empty-desc">Додавайте товари в обране, щоб не втратити їх</p>
       <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
-        Перейти в каталог
+        Перейти до каталогу
       </AppButton>
     </div>
 
@@ -331,7 +331,7 @@ onBeforeUnmount(() => {
             v-if="!list.isDefault"
             class="cab-fav__tab-delete"
             role="button"
-            title="Удалить список"
+            title="Видалити список"
             @click.stop="deleteList(list.id)"
           >
             <Trash2 :size="13" />
@@ -340,7 +340,7 @@ onBeforeUnmount(() => {
       </div>
 
       <div v-if="activeList && !activeList.items.length" class="cab-fav__list-empty">
-        Список пуст
+        Список порожній
       </div>
 
       <div v-else-if="activeList" class="cab-fav__grid">
@@ -389,14 +389,14 @@ onBeforeUnmount(() => {
                 type="button"
                 @click="openMoveModal(item.productId)"
               >
-                Переместить в другой список
+                Перемістити в інший список
               </button>
               <button
                 class="cab-fav__card-dropdown-item cab-fav__card-dropdown-item--danger"
                 type="button"
                 @click="removeAndCloseMenu(activeList.id, item.productId)"
               >
-                Удалить из списка
+                Видалити зі списку
               </button>
             </div>
             <NuxtLink :to="`/product/${item.productId}`" class="cab-fav__img-wrap">
@@ -417,7 +417,7 @@ onBeforeUnmount(() => {
                   v-if="!selectionMode"
                   class="cab-fav__remove"
                   type="button"
-                  title="Убрать из избранного"
+                  title="Прибрати з обраного"
                   @click="removeItem(activeList.id, item.productId)"
                 >
                   <Heart :size="16" fill="currentColor" />
@@ -431,7 +431,7 @@ onBeforeUnmount(() => {
       <Transition name="cab-fav-bar">
         <div v-if="selectionMode && selectedIds.size > 0" class="cab-fav__action-bar">
           <span class="cab-fav__action-info">
-            {{ selectedIds.size }} {{ selectedIds.size === 1 ? 'товар' : 'товаров' }} выбрано
+            {{ selectedIds.size }} {{ selectedIds.size === 1 ? 'товар' : 'товарів' }} обрано
           </span>
           <AppButton
             variant="primary"
@@ -439,7 +439,7 @@ onBeforeUnmount(() => {
             :disabled="!otherLists.length"
             @click="openBulkMoveModal"
           >
-            Переместить
+            Перемістити
           </AppButton>
         </div>
       </Transition>

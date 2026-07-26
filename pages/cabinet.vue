@@ -2,7 +2,7 @@
 import { User, MapPin, ShoppingBag, Heart, LogOut } from 'lucide-vue-next'
 
 definePageMeta({ middleware: 'auth' })
-useSeoMeta({ title: 'Личный кабинет — Nexus Commerce' })
+useSeoMeta({ title: 'Особистий кабінет — Nexus Commerce' })
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -25,10 +25,10 @@ watch(
 )
 
 const sections = [
-  { key: 'profile', label: 'Личные данные', icon: User },
-  { key: 'addresses', label: 'Адреса доставки', icon: MapPin },
-  { key: 'orders', label: 'История заказов', icon: ShoppingBag },
-  { key: 'favorites', label: 'Избранное', icon: Heart },
+  { key: 'profile', label: 'Особисті дані', icon: User },
+  { key: 'addresses', label: 'Адреси доставки', icon: MapPin },
+  { key: 'orders', label: 'Історія замовлень', icon: ShoppingBag },
+  { key: 'favorites', label: 'Обране', icon: Heart },
 ]
 
 const activeSectionIcon = computed(
@@ -80,7 +80,7 @@ function logout() {
         </nav>
 
         <button class="cabinet__logout" type="button" @click="logout">
-          <LogOut :size="16" /> Выйти
+          <LogOut :size="16" /> Вийти
         </button>
 
         <!-- Mobile nav drawer -->
@@ -120,7 +120,7 @@ function logout() {
                 </button>
               </nav>
               <button class="cabinet__drawer-logout" type="button" @click="logout">
-                <LogOut :size="16" /> Выйти
+                <LogOut :size="16" /> Вийти
               </button>
             </div>
           </Transition>

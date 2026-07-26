@@ -9,8 +9,8 @@ function triggerLoading() {
   }, 2000)
 }
 
-const VARIANTS_CODE = `<AppButton variant="primary">Основная</AppButton>
-<AppButton variant="secondary">Вторичная</AppButton>
+const VARIANTS_CODE = `<AppButton variant="primary">Основний</AppButton>
+<AppButton variant="secondary">Другорядний</AppButton>
 <AppButton variant="outline">Outline</AppButton>
 <AppButton variant="ghost">Ghost</AppButton>
 <AppButton variant="danger">Danger</AppButton>`
@@ -19,14 +19,14 @@ const SIZES_CODE = `<AppButton size="sm">Small</AppButton>
 <AppButton size="md">Medium</AppButton>
 <AppButton size="lg">Large</AppButton>`
 
-const STATES_CODE = `<AppButton :loading="true">Загрузка...</AppButton>
+const STATES_CODE = `<AppButton :loading="true">Завантаження...</AppButton>
 <AppButton :disabled="true">Недоступна</AppButton>`
 
 const ICON_CODE = `<AppButton variant="primary">
-  <Plus :size="16" /> Добавить
+  <Plus :size="16" /> Додати
 </AppButton>
 <AppButton variant="outline">
-  Далее <ArrowRight :size="16" />
+  Далі <ArrowRight :size="16" />
 </AppButton>
 <AppButton variant="danger">
   <Trash2 :size="16" />
@@ -37,16 +37,16 @@ const PROPS = [
     name: 'variant',
     type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'",
     default: "'primary'",
-    description: 'Визуальный стиль кнопки',
+    description: 'Візуальний стиль кнопки',
   },
-  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Размер кнопки' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Розмір кнопки' },
   { name: 'tag', type: "'button' | 'a' | 'span'", default: "'button'", description: 'HTML тег' },
-  { name: 'disabled', type: 'boolean', default: 'false', description: 'Заблокировать кнопку' },
+  { name: 'disabled', type: 'boolean', default: 'false', description: 'Заблокувати кнопку' },
   {
     name: 'loading',
     type: 'boolean',
     default: 'false',
-    description: 'Состояние загрузки (показывает спиннер)',
+    description: 'Стан завантаження (показує спінер)',
   },
 ]
 </script>
@@ -54,12 +54,12 @@ const PROPS = [
 <template>
   <div class="uikit-buttons">
     <UiKitSection
-      title="Варианты"
-      description="Все доступные визуальные стили компонента AppButton"
+      title="Варіанти"
+      description="Усі доступні візуальні стилі компонента AppButton"
     >
       <template #preview>
-        <AppButton variant="primary">Основная</AppButton>
-        <AppButton variant="secondary">Вторичная</AppButton>
+        <AppButton variant="primary">Основний</AppButton>
+        <AppButton variant="secondary">Другорядний</AppButton>
         <AppButton variant="outline">Outline</AppButton>
         <AppButton variant="ghost">Ghost</AppButton>
         <AppButton variant="danger">Danger</AppButton>
@@ -69,7 +69,7 @@ const PROPS = [
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Размеры">
+    <UiKitSection title="Розміри">
       <template #preview>
         <AppButton size="sm">Small</AppButton>
         <AppButton size="md">Medium</AppButton>
@@ -80,10 +80,10 @@ const PROPS = [
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Состояния" description="Нажми на кнопку 'Загрузка' для демонстрации">
+    <UiKitSection title="Стани" description="Натисни на кнопку 'Завантаження' для демонстрації">
       <template #preview>
         <AppButton :loading="loadingDemo" @click="triggerLoading">
-          {{ loadingDemo ? 'Загружается...' : 'Нажми для загрузки' }}
+          {{ loadingDemo ? 'Завантажується...' : 'Натисни для завантаження' }}
         </AppButton>
         <AppButton :disabled="true">Недоступна</AppButton>
       </template>
@@ -92,10 +92,10 @@ const PROPS = [
       </template>
     </UiKitSection>
 
-    <UiKitSection title="С иконками">
+    <UiKitSection title="З іконками">
       <template #preview>
-        <AppButton variant="primary"><Plus :size="16" /> Добавить</AppButton>
-        <AppButton variant="outline">Далее <ArrowRight :size="16" /></AppButton>
+        <AppButton variant="primary"><Plus :size="16" /> Додати</AppButton>
+        <AppButton variant="outline">Далі <ArrowRight :size="16" /></AppButton>
         <AppButton variant="danger"><Trash2 :size="16" /></AppButton>
       </template>
       <template #code>
@@ -103,7 +103,7 @@ const PROPS = [
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Пропсы">
+    <UiKitSection title="Пропси">
       <UiKitPropsTable :rows="PROPS" />
     </UiKitSection>
   </div>

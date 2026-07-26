@@ -146,7 +146,7 @@ const bentoSections = computed(() =>
               type="button"
               @click="viewMode = 'grid'"
             >
-              Сетка
+              Сітка
             </button>
           </div>
 
@@ -204,7 +204,7 @@ const bentoSections = computed(() =>
                   />
                   <div class="promo-section__cta-overlay" />
                   <span class="promo-section__cta-label">
-                    Смотреть всё
+                    Дивитись усі
                     <ArrowDownRight :size="20" class="promo-section__cta-arrow" />
                   </span>
                 </NuxtLink>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CARD_GAP } from '~/constants/layout'
 
-useHead({ title: 'Nexus Commerce — Главная' })
+useHead({ title: 'Nexus Commerce — Головна' })
 
 interface BannerDto {
   id: number
@@ -85,21 +85,21 @@ const FALLBACK_PROMO = [
     id: 1,
     gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
     title: 'до -40%',
-    subtitle: 'на смартфоны и планшеты',
+    subtitle: 'на смартфони та планшети',
     linkUrl: null as string | null,
   },
   {
     id: 2,
     gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
     title: 'до -35%',
-    subtitle: 'на ноутбуки и технику',
+    subtitle: 'на ноутбуки та техніку',
     linkUrl: null as string | null,
   },
   {
     id: 3,
     gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
     title: 'до -25%',
-    subtitle: 'на аудио и аксессуары',
+    subtitle: 'на аудіо та аксесуари',
     linkUrl: null as string | null,
   },
 ]
@@ -252,8 +252,8 @@ const promoTiles = computed(() => {
           :space-between="CARD_GAP"
           :breakpoints="productBreakpoints"
           :peek="true"
-          title="Все продукты"
-          link-label="Смотреть все"
+          title="Всі товари"
+          link-label="Дивитись усі"
           link-to="/catalog"
           :link-count="store.meta.total"
         >

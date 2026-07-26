@@ -2,7 +2,7 @@
 import { SearchX } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-useHead({ title: 'Поиск — Nexus Commerce' })
+useHead({ title: 'Пошук — Nexus Commerce' })
 
 const route = useRoute()
 const router = useRouter()
@@ -44,10 +44,10 @@ function onPageChange(p: number) {
 <template>
   <div class="search-page container">
     <TheTitle tag="h1" size="m">
-      {{ q ? `Результаты: "${q}"` : 'Поиск' }}
+      {{ q ? `Результати: "${q}"` : 'Пошук' }}
     </TheTitle>
 
-    <p v-if="q && !loading" class="search-page__count">Найдено: {{ meta.total }} товаров</p>
+    <p v-if="q && !loading" class="search-page__count">Знайдено: {{ meta.total }} товарів</p>
 
     <div v-if="loading" class="search-page__grid">
       <TheProductCard v-for="n in LIMIT" :key="n" :loading="true" />
@@ -68,15 +68,15 @@ function onPageChange(p: number) {
 
     <AppEmpty
       v-else-if="q"
-      title="Ничего не найдено"
-      description="Попробуйте изменить запрос или поискать что-то другое"
+      title="Нічого не знайдено"
+      description="Спробуйте змінити запит або пошукати щось інше"
     >
       <template #icon>
         <SearchX :size="56" :stroke-width="1.2" />
       </template>
       <template #action>
         <AppButton variant="outline" size="md" @click="router.push('/catalog')">
-          Перейти в каталог
+          Перейти до каталогу
         </AppButton>
       </template>
     </AppEmpty>

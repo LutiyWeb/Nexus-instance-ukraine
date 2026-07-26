@@ -13,34 +13,34 @@ const toastStore = useToastStore()
 const MOCK_REVIEWS: Review[] = [
   {
     id: 1,
-    author: 'РђР»РµРєСЃРµР№ Рљ.',
-    initials: 'РђРљ',
+    author: 'Олексій К.',
+    initials: 'ОК',
     rating: 5,
-    text: 'РћС‚Р»РёС‡РЅС‹Р№ С‚РѕРІР°СЂ, РїРѕР»РЅРѕСЃС‚СЊСЋ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ РѕРїРёСЃР°РЅРёСЋ. Р”РѕСЃС‚Р°РІРєР° Р±С‹СЃС‚СЂР°СЏ, СѓРїР°РєРѕРІРєР° РЅР°РґС‘Р¶РЅР°СЏ. РћРґРЅРѕР·РЅР°С‡РЅРѕ СЂРµРєРѕРјРµРЅРґСѓСЋ!',
+    text: 'Чудовий товар, повністю відповідає опису. Доставка швидка, упаковка надійна. Однозначно рекомендую!',
     createdAt: '2026-04-15T10:30:00Z',
   },
   {
     id: 2,
-    author: 'РњР°СЂРёРЅР° РЎ.',
-    initials: 'РњРЎ',
+    author: 'Марина С.',
+    initials: 'МС',
     rating: 4,
-    text: 'РҐРѕСЂРѕС€РµРµ СЃРѕРѕС‚РЅРѕС€РµРЅРёРµ С†РµРЅР°/РєР°С‡РµСЃС‚РІРѕ. РќРµРјРЅРѕРіРѕ РЅРµ РґРѕС‚СЏРіРёРІР°РµС‚ РґРѕ РѕР¶РёРґР°РЅРёР№ РїРѕ РјРµР»РѕС‡Р°Рј, РЅРѕ РІ С†РµР»РѕРј РѕС‡РµРЅСЊ РґРѕРІРѕР»РµРЅ РїРѕРєСѓРїРєРѕР№.',
+    text: 'Гарне співвідношення ціна/якість. Трохи не дотягує до очікувань за дрібницями, але загалом дуже задоволена покупкою.',
     createdAt: '2026-04-02T14:20:00Z',
   },
   {
     id: 3,
-    author: 'Р”РјРёС‚СЂРёР№ Р’.',
-    initials: 'Р”Р’',
+    author: 'Дмитро В.',
+    initials: 'ДВ',
     rating: 5,
-    text: 'Р’С‚РѕСЂРѕР№ СЂР°Р· РїРѕРєСѓРїР°СЋ. РќРµ СЂР°Р·РѕС‡Р°СЂРѕРІР°Р»СЃСЏ. РљР°С‡РµСЃС‚РІРѕ СЃС‚Р°Р±РёР»СЊРЅРѕРµ, РІСЃС‘ СЂР°Р±РѕС‚Р°РµС‚ РєР°Рє РЅР°РґРѕ.',
+    text: 'Другий раз купую. Не розчарувався. Якість стабільна, все працює як треба.',
     createdAt: '2026-03-28T09:15:00Z',
   },
   {
     id: 4,
-    author: 'РћР»СЊРіР° Рќ.',
-    initials: 'РћРќ',
+    author: 'Ольга Н.',
+    initials: 'ОН',
     rating: 3,
-    text: 'Р’ С†РµР»РѕРј РЅРѕСЂРјР°Р»СЊРЅРѕ, РЅРѕ Р±С‹Р»Рё РЅРµР±РѕР»СЊС€РёРµ РїСЂРѕР±Р»РµРјС‹ СЃ СѓРїР°РєРѕРІРєРѕР№ РїСЂРё РґРѕСЃС‚Р°РІРєРµ. РџСЂРѕРґР°РІРµС† Р±С‹СЃС‚СЂРѕ СЂРµС€РёР» РІРѕРїСЂРѕСЃ.',
+    text: 'Загалом нормально, але були невеликі проблеми з упаковкою при доставці. Продавець швидко вирішив питання.',
     createdAt: '2026-03-10T18:45:00Z',
   },
 ]
@@ -115,7 +115,7 @@ async function submit() {
     await new Promise((resolve) => setTimeout(resolve, 500)) // simulate request
 
     const user = authStore.user
-    const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'РђРЅРѕРЅРёРј'
+    const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Анонім'
     const newReview: Review = {
       id: Date.now(),
       author: name,
@@ -127,9 +127,9 @@ async function submit() {
     reviews.value.unshift(newReview)
     visibleCount.value = Math.max(visibleCount.value, 1)
     dialogOpen.value = false
-    toastStore.add('РћС‚Р·С‹РІ СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅ!')
+    toastStore.add('Відгук успішно додано!')
   } catch {
-    toastStore.add('РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ РѕС‚Р·С‹РІ', 'error')
+    toastStore.add('Не вдалося надіслати відгук', 'error')
   } finally {
     submitting.value = false
   }
@@ -141,12 +141,12 @@ async function submit() {
     <!-- Header -->
     <div class="product-reviews__header">
       <div class="product-reviews__header-left">
-        <h2 class="product-reviews__title">РћС‚Р·С‹РІС‹</h2>
+        <h2 class="product-reviews__title">Відгуки</h2>
         <span class="product-reviews__count">{{ reviews.length }}</span>
       </div>
       <AppButton variant="primary" size="md" @click="openDialog">
         <MessageSquare :size="16" />
-        РќР°РїРёСЃР°С‚СЊ РѕС‚Р·С‹РІ
+        Написати відгук
       </AppButton>
     </div>
 
@@ -155,11 +155,11 @@ async function submit() {
       <div class="product-reviews__avg">
         <span class="product-reviews__avg-num">{{ avgRating }}</span>
         <ReviewStars :rating="avgRating" :size="20" />
-        <span class="product-reviews__avg-sub">{{ reviews.length }} РѕС‚Р·С‹РІРѕРІ</span>
+        <span class="product-reviews__avg-sub">{{ reviews.length }} відгуків</span>
       </div>
       <div class="product-reviews__bars">
         <div v-for="(count, i) in ratingCounts" :key="i" class="product-reviews__bar-row">
-          <span class="product-reviews__bar-label">{{ 5 - i }} в…</span>
+          <span class="product-reviews__bar-label">{{ 5 - i }} ★</span>
           <div class="product-reviews__bar-track">
             <div
               class="product-reviews__bar-fill"
@@ -174,7 +174,7 @@ async function submit() {
     <!-- Empty -->
     <div v-else class="product-reviews__empty">
       <MessageSquare :size="40" class="product-reviews__empty-icon" />
-      <p>РћС‚Р·С‹РІРѕРІ РїРѕРєР° РЅРµС‚. Р‘СѓРґСЊС‚Рµ РїРµСЂРІС‹Рј!</p>
+      <p>Відгуків поки немає. Будьте першим!</p>
     </div>
 
     <!-- List -->
@@ -185,7 +185,7 @@ async function submit() {
     <!-- Load more -->
     <div v-if="hasMore" class="product-reviews__more">
       <AppButton variant="outline" size="md" @click="visibleCount += 3">
-        РџРѕРєР°Р·Р°С‚СЊ РµС‰С‘
+        Показати ще
       </AppButton>
     </div>
 
@@ -194,7 +194,7 @@ async function submit() {
       <div v-if="dialogOpen" class="review-dialog-overlay" @click.self="dialogOpen = false">
         <div class="review-dialog">
           <div class="review-dialog__head">
-            <h3 class="review-dialog__title">РќР°РїРёСЃР°С‚СЊ РѕС‚Р·С‹РІ</h3>
+            <h3 class="review-dialog__title">Написати відгук</h3>
             <button class="review-dialog__close" type="button" @click="dialogOpen = false">
               <X :size="14" />
             </button>
@@ -203,13 +203,8 @@ async function submit() {
           <div class="review-dialog__body">
             <!-- Star picker -->
             <div class="review-dialog__field">
-              <label class="review-dialog__label">РћС†РµРЅРєР°</label>
-              <ReviewStars
-                v-model:rating="formRating"
-                :rating="formRating"
-                :size="28"
-                interactive
-              />
+              <label class="review-dialog__label">Оцінка</label>
+              <ReviewStars v-model:rating="formRating" :size="28" interactive />
               <span v-if="formErrors.rating" class="review-dialog__error">{{
                 formErrors.rating
               }}</span>
@@ -217,12 +212,12 @@ async function submit() {
 
             <!-- Text -->
             <div class="review-dialog__field">
-              <label class="review-dialog__label">Р’Р°С€ РѕС‚Р·С‹РІ</label>
+              <label class="review-dialog__label">Ваш відгук</label>
               <textarea
                 v-model="formText"
                 class="review-dialog__textarea"
                 :class="{ 'review-dialog__textarea--error': formErrors.text }"
-                placeholder="Р Р°СЃСЃРєР°Р¶РёС‚Рµ Рѕ СЃРІРѕС‘Рј РѕРїС‹С‚Рµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚РѕРІР°СЂР°..."
+                placeholder="Розкажіть про свій досвід використання товару..."
                 rows="5"
               />
               <div class="review-dialog__field-footer">
@@ -236,10 +231,10 @@ async function submit() {
 
           <div class="review-dialog__footer">
             <AppButton variant="outline" size="md" @click="dialogOpen = false"
-              >РћС‚РјРµРЅР°</AppButton
+              >Скасувати</AppButton
             >
             <AppButton variant="primary" size="md" :loading="submitting" @click="submit">
-              РћС‚РїСЂР°РІРёС‚СЊ РѕС‚Р·С‹РІ
+              Надіслати відгук
             </AppButton>
           </div>
         </div>

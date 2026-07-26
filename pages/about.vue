@@ -1,21 +1,21 @@
 <script setup lang="ts">
-useHead({ title: 'О нас — Nexus Commerce' })
+useHead({ title: 'Про нас — Nexus Commerce' })
 </script>
 
 <template>
   <div class="about-page container">
-    <TheTitle tag="h1" size="m">О нас</TheTitle>
+    <TheTitle tag="h1" size="m">Про нас</TheTitle>
     <p class="about-page__lead">
-      Nexus Commerce — современная платформа шаблонов для e-commerce проектов на Nuxt 3.
+      Nexus Commerce — сучасна платформа шаблонів для e-commerce проєктів на Nuxt 3.
     </p>
     <div class="about-page__grid">
       <TheBanner variant="primary">
-        <template #eyebrow>Наша миссия</template>
-        <p>Помогать разработчикам быстро запускать качественные проекты.</p>
+        <template #eyebrow>Наша місія</template>
+        <p>Допомагати розробникам швидко запускати якісні проєкти.</p>
       </TheBanner>
       <TheBanner variant="dark">
-        <template #eyebrow>Технологии</template>
-        <p>Nuxt 3, Pinia, Swiper, PrimeVue, SCSS — лучший стек для продакшена.</p>
+        <template #eyebrow>Технології</template>
+        <p>Nuxt 3, Pinia, Swiper, PrimeVue, SCSS — найкращий стек для продакшену.</p>
       </TheBanner>
     </div>
   </div>

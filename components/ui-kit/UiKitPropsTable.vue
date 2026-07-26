@@ -17,8 +17,8 @@ defineProps<{ rows: PropRow[] }>()
         <tr>
           <th>Prop</th>
           <th>Тип</th>
-          <th>По умолчанию</th>
-          <th>Описание</th>
+          <th>За замовчуванням</th>
+          <th>Опис</th>
         </tr>
       </thead>
       <tbody>

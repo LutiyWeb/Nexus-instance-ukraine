@@ -18,7 +18,7 @@ function isNew(cat: { slug?: string; name?: string }) {
   <Transition name="catalog-menu">
     <div v-if="open" class="catalog-menu container" @click.self="$emit('close')">
       <div class="catalog-menu__inner" @mouseleave="activeId = null">
-        <!-- Левый столбец: список категорий -->
+        <!-- Лівий стовпець: список категорій -->
         <div class="catalog-menu__cats">
           <NuxtLink
             v-for="cat in categoriesStore.categories"
@@ -37,7 +37,7 @@ function isNew(cat: { slug?: string; name?: string }) {
           </NuxtLink>
         </div>
 
-        <!-- Правый столбец: подкатегории активной категории -->
+        <!-- Правий стовпець: підкатегорії активної категорії -->
         <Transition name="catalog-subs">
           <div v-if="activeCat?.subcategories?.length" class="catalog-menu__subs">
             <NuxtLink

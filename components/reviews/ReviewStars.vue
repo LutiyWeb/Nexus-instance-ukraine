@@ -32,7 +32,7 @@ function pick(n: number) {
       :key="n"
       type="button"
       class="review-stars__star"
-      :aria-label="`${n} звезд`"
+      :aria-label="`${n} зірок`"
       @click="pick(n)"
       @mouseenter="interactive && (hovered = n)"
       @mouseleave="interactive && (hovered = 0)"

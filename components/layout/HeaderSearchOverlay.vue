@@ -214,7 +214,7 @@ function quickAdd(product: Product, e: MouseEvent) {
   e.preventDefault()
   e.stopPropagation()
   cartStore.add(product)
-  toastStore.add('Товар добавлен в корзину', 'success')
+  toastStore.add('Товар додано до кошика', 'success')
 }
 
 function dismiss() {
@@ -275,14 +275,14 @@ onBeforeUnmount(() => {
               ref="inputRef"
               v-model="query"
               class="search-modal__input"
-              placeholder="Поиск товаров, категорий..."
+              placeholder="Пошук товарів, категорій..."
               autocomplete="off"
               @keydown="onKeydown"
             />
             <button
               class="search-modal__dismiss"
               type="button"
-              :aria-label="query ? 'Очистить' : 'Закрыть'"
+              :aria-label="query ? 'Очистити' : 'Закрити'"
               @click="dismiss"
             >
               <X :size="18" />
@@ -298,13 +298,13 @@ onBeforeUnmount(() => {
               <!-- Recent searches -->
               <section v-if="searchStore.history.length" class="search-modal__section">
                 <div class="search-modal__section-f">
-                  <span class="search-modal__section-title"><Clock :size="13" />Недавние</span>
+                  <span class="search-modal__section-title"><Clock :size="13" />Недавні</span>
                   <button
                     class="search-modal__section-action"
                     type="button"
                     @click="searchStore.clear()"
                   >
-                    Очистить
+                    Очистити
                   </button>
                 </div>
                 <div class="search-modal__history">
@@ -334,7 +334,7 @@ onBeforeUnmount(() => {
               <section class="search-modal__section">
                 <div class="search-modal__section-head">
                   <span class="search-modal__section-title"
-                    ><LayoutGrid :size="13" />Категории</span
+                    ><LayoutGrid :size="13" />Категорії</span
                   >
                 </div>
                 <CategoryRibbon />
@@ -411,13 +411,13 @@ onBeforeUnmount(() => {
                   >
                     <Search :size="14" />
                     <span
-                      >Найти <strong>{{ debouncedQuery }}</strong></span
+                      >Знайти <strong>{{ debouncedQuery }}</strong></span
                     >
                   </button>
 
                   <!-- History matches -->
                   <template v-if="historySuggestions.length">
-                    <p class="search-modal__suggestions-label">История</p>
+                    <p class="search-modal__suggestions-label">Історія</p>
                     <button
                       v-for="item in historySuggestions"
                       :key="item"
@@ -440,7 +440,7 @@ onBeforeUnmount(() => {
 
                   <!-- Category matches -->
                   <template v-if="categorySuggestions.length">
-                    <p class="search-modal__suggestions-label">Категории</p>
+                    <p class="search-modal__suggestions-label">Категорії</p>
                     <NuxtLink
                       v-for="cat in categorySuggestions"
                       :key="cat.id"
@@ -498,7 +498,7 @@ onBeforeUnmount(() => {
                       <button
                         class="search-modal__product-add"
                         type="button"
-                        title="Добавить в корзину"
+                        title="Додати до кошика"
                         @click.prevent="quickAdd(p, $event)"
                       >
                         <ShoppingCart :size="14" />
@@ -507,7 +507,7 @@ onBeforeUnmount(() => {
                   </template>
 
                   <!-- No results -->
-                  <p v-else class="search-modal__no-results">Ничего не найдено</p>
+                  <p v-else class="search-modal__no-results">Нічого не знайдено</p>
                 </div>
               </div>
             </template>

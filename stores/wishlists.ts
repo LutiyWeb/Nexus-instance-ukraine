@@ -63,10 +63,10 @@ export const useWishlistsStore = defineStore('wishlists', () => {
       const idx = guestIds.value.indexOf(productId)
       if (idx === -1) {
         guestIds.value.push(productId)
-        toastStore.add('Товар добавлен в избранное')
+        toastStore.add('Товар додано до обраного')
       } else {
         guestIds.value.splice(idx, 1)
-        toastStore.add('Товар удалён из избранного', 'warning')
+        toastStore.add('Товар видалено з обраного', 'warning')
       }
       _saveGuest()
       return
@@ -83,9 +83,9 @@ export const useWishlistsStore = defineStore('wishlists', () => {
           body: { productIds: [productId] },
         })
         wishlists.value = [res.data]
-        toastStore.add('Товар добавлен в избранное')
+        toastStore.add('Товар додано до обраного')
       } catch {
-        toastStore.add('Не удалось обновить избранное', 'error')
+        toastStore.add('Не вдалося оновити обране', 'error')
       }
       return
     }
@@ -98,10 +98,10 @@ export const useWishlistsStore = defineStore('wishlists', () => {
       defaultList.value.items = defaultList.value.items.filter((i) => i.productId !== productId)
       try {
         await authFetch(`/api/wishlists/${listId}/items/${productId}`, { method: 'DELETE' })
-        toastStore.add('Товар удалён из избранного', 'warning')
+        toastStore.add('Товар видалено з обраного', 'warning')
       } catch {
         defaultList.value.items = backup
-        toastStore.add('Не удалось обновить избранное', 'error')
+        toastStore.add('Не вдалося оновити обране', 'error')
       }
     } else {
       try {
@@ -111,9 +111,9 @@ export const useWishlistsStore = defineStore('wishlists', () => {
         })
         const idx = wishlists.value.findIndex((w) => w.id === listId)
         if (idx !== -1) wishlists.value[idx] = res.data
-        toastStore.add('Товар добавлен в избранное')
+        toastStore.add('Товар додано до обраного')
       } catch {
-        toastStore.add('Не удалось обновить избранное', 'error')
+        toastStore.add('Не вдалося оновити обране', 'error')
       }
     }
   }
