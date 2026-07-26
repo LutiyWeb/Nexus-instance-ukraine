@@ -69,7 +69,6 @@ const pages = computed(() => {
       color $transition-fast;
 
     &:not(:disabled):hover {
-      border-color: $color-primary;
       color: $color-primary;
     }
     &:disabled {
@@ -78,9 +77,9 @@ const pages = computed(() => {
     }
 
     &--active {
-      background: $color-primary;
-      border-color: $color-primary;
-      color: $color-white;
+      background: rgb(99 102 241 / 8%);
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
     }
   }
 

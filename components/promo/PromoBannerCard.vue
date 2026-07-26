@@ -4,13 +4,14 @@ interface Props {
   title: string
   subtitle: string
   gradient: string
+  linkUrl?: string | null
   tag?: string
 }
 withDefaults(defineProps<Props>(), { tag: 'Акция' })
 </script>
 
 <template>
-  <NuxtLink to="/promo" class="promo-card" :style="{ background: gradient }">
+  <NuxtLink :to="linkUrl || '/promo'" class="promo-card" :style="{ background: gradient }">
     <span class="promo-card__tag">{{ tag }}</span>
     <h3 class="promo-card__title">{{ title }}</h3>
     <p class="promo-card__subtitle">{{ subtitle }}</p>

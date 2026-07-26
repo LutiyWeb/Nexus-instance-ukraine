@@ -3,14 +3,16 @@ import { CARD_GAP } from '~/constants/layout'
 
 useHead({ title: 'Nexus Commerce — Главная' })
 
-interface MainBanner {
+interface BannerDto {
   id: number
   title: string
   description: string | null
-  media_url: string
-  media_type: 'image' | 'video'
-  link_url: string | null
-  sort_order: number
+  mediaUrl: string | null
+  mediaType: 'image' | 'video'
+  linkUrl: string | null
+  buttonText: string | null
+  gradient: string | null
+  sortOrder: number
 }
 
 type SliderItem = {
@@ -18,20 +20,15 @@ type SliderItem = {
   [key: string]: unknown
 }
 
-interface SpecialBanner {
-  title: string
-  description?: string
-  image_url: string
-  link_url: string | null
-}
-
 interface BannersResponse {
   data: {
-    main_banner: MainBanner[]
-    special_banners: {
-      special_1: SpecialBanner | null
-      special_2: SpecialBanner | null
+    mainBanner: BannerDto[]
+    specialBanners: {
+      special1: BannerDto | null
+      special2: BannerDto | null
     }
+    promoBanners: BannerDto[]
+    hotTiles: BannerDto[]
   }
 }
 
@@ -48,46 +45,89 @@ onMounted(() => {
   categoriesStore.fetchCategories()
 })
 
-const FALLBACK_MAIN: MainBanner[] = [
+const FALLBACK_MAIN: BannerDto[] = [
   {
     id: 1,
     title: 'Beats Studio Pro',
     description: 'Преміальний звук та активне шумоподавлення. Бездротова свобода до 40 годин.',
-    media_url: '/banners/test-headphones.png',
-    media_type: 'image',
-    link_url: '/catalog',
-    sort_order: 1,
+    mediaUrl: '/banners/headphone.png',
+    mediaType: 'image',
+    linkUrl: '/catalog',
+    buttonText: null,
+    gradient: null,
+    sortOrder: 1,
   },
 ]
 
-const FALLBACK_SPECIAL_1: SpecialBanner = {
+const FALLBACK_SPECIAL_1: BannerDto = {
+  id: -1,
   title: 'Навушники тижня',
   description:
     'Бездротовий звук преміум-класу з активним шумоподавленням та до 40 годин автономності.',
-  image_url: '/banners/test-headphones.png',
-  link_url: '/catalog',
+  mediaUrl: '/banners/test-headphones.png',
+  mediaType: 'image',
+  linkUrl: '/catalog',
+  buttonText: null,
+  gradient: null,
+  sortOrder: 0,
 }
 
-const FALLBACK_SPECIAL_2: SpecialBanner = {
+const FALLBACK_SPECIAL_2: BannerDto = {
+  ...FALLBACK_SPECIAL_1,
+  id: -2,
   title: 'Хіт сезону',
   description:
     'Найпопулярніша модель серед наших покупців. Обмежена кількість за спеціальною ціною.',
-  image_url: '/banners/test-headphones.png',
-  link_url: '/catalog',
 }
 
+const FALLBACK_PROMO = [
+  {
+    id: 1,
+    gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
+    title: 'до -40%',
+    subtitle: 'на смартфоны и планшеты',
+    linkUrl: null as string | null,
+  },
+  {
+    id: 2,
+    gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
+    title: 'до -35%',
+    subtitle: 'на ноутбуки и технику',
+    linkUrl: null as string | null,
+  },
+  {
+    id: 3,
+    gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
+    title: 'до -25%',
+    subtitle: 'на аудио и аксессуары',
+    linkUrl: null as string | null,
+  },
+]
+
 const heroSlides = computed<SliderItem[]>(() => {
-  const fromApi = bannersData.value?.data?.main_banner ?? []
+  const fromApi = bannersData.value?.data?.mainBanner ?? []
   const slides = fromApi.length ? fromApi : FALLBACK_MAIN
 
   return slides as unknown as SliderItem[]
 })
 const special1 = computed(
-  () => bannersData.value?.data?.special_banners?.special_1 ?? FALLBACK_SPECIAL_1,
+  () => bannersData.value?.data?.specialBanners?.special1 ?? FALLBACK_SPECIAL_1,
 )
 const special2 = computed(
-  () => bannersData.value?.data?.special_banners?.special_2 ?? FALLBACK_SPECIAL_2,
+  () => bannersData.value?.data?.specialBanners?.special2 ?? FALLBACK_SPECIAL_2,
 )
+const promoBanners = computed(() => {
+  const fromApi = bannersData.value?.data?.promoBanners ?? []
+  if (!fromApi.length) return FALLBACK_PROMO
+
+  return fromApi.map((banner) => ({
+    id: banner.id,
+    gradient: banner.gradient ?? '',
+    title: banner.title,
+    subtitle: banner.description ?? '',
+    linkUrl: banner.linkUrl,
+  }))
+})
 
 const featuredProducts = computed(() => {
   const products = store.products.slice(0, 12)
@@ -107,28 +147,7 @@ const productBreakpoints = {
   1280: { slidesPerView: 6 },
 }
 
-const PROMO_BANNERS = [
-  {
-    id: 1,
-    gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
-    title: 'до -40%',
-    subtitle: 'на смартфоны и планшеты',
-  },
-  {
-    id: 2,
-    gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
-    title: 'до -35%',
-    subtitle: 'на ноутбуки и технику',
-  },
-  {
-    id: 3,
-    gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
-    title: 'до -25%',
-    subtitle: 'на аудио и аксессуары',
-  },
-]
-
-const PROMO_TILES_CONFIG = [
+const FALLBACK_HOT_TILES = [
   {
     id: 1,
     label: "Комп'ютери",
@@ -161,12 +180,23 @@ const PROMO_TILES_CONFIG = [
   },
 ]
 
-const promoTiles = computed(() =>
-  PROMO_TILES_CONFIG.map((tile, i) => ({
-    ...tile,
-    image: store.products[5 + i]?.thumbnail ?? '',
-  })),
-)
+const promoTiles = computed(() => {
+  const fromApi = bannersData.value?.data?.hotTiles ?? []
+  if (!fromApi.length) {
+    return FALLBACK_HOT_TILES.map((tile, i) => ({
+      ...tile,
+      image: store.products[5 + i]?.thumbnail ?? '',
+    }))
+  }
+
+  return fromApi.map(tile => ({
+    id: tile.id,
+    label: tile.title,
+    gradient: tile.gradient ?? '',
+    to: tile.linkUrl ?? '/catalog',
+    image: tile.mediaUrl ?? '',
+  }))
+})
 </script>
 
 <template>
@@ -180,9 +210,9 @@ const promoTiles = computed(() =>
               v-if="slotProps?.slide"
               :title="(slotProps.slide?.title as string | null) ?? ''"
               :description="(slotProps.slide?.description as string | null) ?? null"
-              :media-url="(slotProps.slide?.media_url as string | null) ?? ''"
-              :media-type="(slotProps.slide?.media_type as 'image' | 'video' | null) ?? 'image'"
-              :link-url="(slotProps.slide?.link_url as string | null) ?? null"
+              :media-url="(slotProps.slide?.mediaUrl as string | null) ?? ''"
+              :media-type="(slotProps.slide?.mediaType as 'image' | 'video' | null) ?? 'image'"
+              :link-url="(slotProps.slide?.linkUrl as string | null) ?? null"
             />
           </template>
         </AppSlider>
@@ -202,11 +232,11 @@ const promoTiles = computed(() =>
         <div class="home__promo-header">
           <h2 class="home__promo-title">Акції</h2>
           <NuxtLink to="/promo" class="home__promo-link">
-            Всі акції ({{ PROMO_BANNERS.length }})
+            Всі акції ({{ promoBanners.length }})
           </NuxtLink>
         </div>
 
-        <PromoBannerList :banners="PROMO_BANNERS" class="home__promo-list" />
+        <PromoBannerList :banners="promoBanners" class="home__promo-list" />
       </div>
     </section>
 
@@ -291,9 +321,9 @@ const promoTiles = computed(() =>
       <div class="container">
         <SpecialBanner
           :title="special1.title"
-          :description="special1.description"
-          :image-url="special1.image_url"
-          :link-url="special1.link_url"
+          :description="special1.description ?? undefined"
+          :image-url="special1.mediaUrl ?? ''"
+          :link-url="special1.linkUrl"
         />
       </div>
     </section>
@@ -324,9 +354,9 @@ const promoTiles = computed(() =>
       <div class="container">
         <SpecialBanner
           :title="special2.title"
-          :description="special2.description"
-          :image-url="special2.image_url"
-          :link-url="special2.link_url"
+          :description="special2.description ?? undefined"
+          :image-url="special2.mediaUrl ?? ''"
+          :link-url="special2.linkUrl"
           :reverse="true"
         />
       </div>

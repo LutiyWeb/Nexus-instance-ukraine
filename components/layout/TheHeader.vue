@@ -8,6 +8,13 @@ const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
 
+// authStore.isLoggedIn is unknown during SSR (localStorage-only) but already true on client
+// mount, so gating on `mounted` avoids a hydration class mismatch that Vue never patches
+const mounted = ref(false)
+onMounted(() => {
+  mounted.value = true
+})
+
 function handleCart() {
   navigateTo('/cart')
 }
@@ -15,6 +22,11 @@ function handleCart() {
 function handleUser() {
   if (authStore.isLoggedIn) router.push('/cabinet')
   else uiStore.authModalOpen = true
+}
+
+function openMenu() {
+  uiStore.menuOpen = true
+  uiStore.catalogOpen = false
 }
 
 function toggleCatalog() {
@@ -46,7 +58,7 @@ function onBackToLogin() {
     <div class="the-header__inner container">
       <!-- Left: burger + mobile search + catalog -->
       <div class="the-header__left">
-        <button class="the-header__burger-btn" type="button" @click="uiStore.menuOpen = true; uiStore.catalogOpen = false">
+        <button class="the-header__burger-btn" type="button" @click="openMenu">
           <Menu :size="20" />
         </button>
 
@@ -57,6 +69,19 @@ function onBackToLogin() {
           @click="uiStore.searchOpen = true"
         >
           <Search :size="20" />
+        </button>
+
+        <!-- Mobile catalog toggle — icon only, opens the same category menu as desktop -->
+        <button
+          :class="[
+            'the-header__action-btn',
+            'the-header__action-btn--catalog-mobile',
+            { 'the-header__action-btn--active': uiStore.catalogOpen },
+          ]"
+          type="button"
+          @click="toggleCatalog"
+        >
+          <LayoutGrid :size="20" />
         </button>
 
         <button
@@ -84,7 +109,10 @@ function onBackToLogin() {
 
         <!-- User -->
         <button
-          :class="['the-header__action-btn', { 'the-header__action-btn--logged-in': authStore.isLoggedIn }]"
+          :class="[
+            'the-header__action-btn',
+            { 'the-header__action-btn--logged-in': mounted && authStore.isLoggedIn },
+          ]"
           type="button"
           @click="handleUser"
         >
@@ -138,6 +166,7 @@ function onBackToLogin() {
   &__inner {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     height: 64px;
     gap: 12px;
     position: relative;
@@ -147,10 +176,6 @@ function onBackToLogin() {
     display: flex;
     align-items: center;
     gap: 4px;
-
-    @include mixins.respond-to(md) {
-      flex: 1;
-    }
   }
 
   &__logo {
@@ -165,7 +190,6 @@ function onBackToLogin() {
     display: flex;
     align-items: center;
     gap: 4px;
-    flex: 1;
     justify-content: flex-end;
   }
 
@@ -278,6 +302,17 @@ function onBackToLogin() {
       @include mixins.respond-to(md) {
         display: none;
       }
+    }
+
+    &--catalog-mobile {
+      @include mixins.respond-to(md) {
+        display: none;
+      }
+    }
+
+    &--active {
+      background: $color-gray-100;
+      color: $color-primary;
     }
 
     &--logged-in svg {

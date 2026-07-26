@@ -61,18 +61,20 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
             }}</span>
           </div>
 
-          <span
-            :class="[
-              'cab-orders__status',
-              `cab-orders__status--${STATUS_CLASS[order.status as OrderStatus]}`,
-            ]"
-          >
-            {{ ordersStore.getStatusLabel(order.status as OrderStatus) }}
-          </span>
+          <div class="cab-orders__side">
+            <span
+              :class="[
+                'cab-orders__status',
+                `cab-orders__status--${STATUS_CLASS[order.status as OrderStatus]}`,
+              ]"
+            >
+              {{ ordersStore.getStatusLabel(order.status as OrderStatus) }}
+            </span>
 
-          <span class="cab-orders__total">{{
-            ordersStore.formatMoney(order.totalPrice, order.currency)
-          }}</span>
+            <span class="cab-orders__total">{{
+              ordersStore.formatMoney(order.totalPrice, order.currency)
+            }}</span>
+          </div>
 
           <ChevronDown
             :size="16"
@@ -190,7 +192,6 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
 
   &__row {
     display: flex;
-    align-items: center;
     gap: 16px;
     padding: 14px 16px;
     cursor: pointer;
@@ -215,6 +216,14 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
   &__date {
     font-size: $font-size-xs;
     color: $color-gray-400;
+  }
+
+  &__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
   }
 
   &__status {

@@ -183,16 +183,16 @@ onMounted(load)
 
   &__add-btn {
     --btn-min-width: 0;
+    --btn-padding: 0;
     width: 32px;
     height: 32px;
-    padding: 0;
     flex-shrink: 0;
 
     @include mixins.respond-to(md) {
       --btn-min-width: 165px;
+      --btn-padding: 6px 12px;
       width: auto;
       height: auto;
-      padding: 6px 12px;
     }
   }
 

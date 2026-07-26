@@ -46,6 +46,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    '/admin/**': { ssr: false },
     '/about': { prerender: true },
     '/contacts': { prerender: true },
     '/legal': { prerender: true },

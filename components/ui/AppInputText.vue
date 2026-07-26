@@ -1,26 +1,39 @@
 <script setup lang="ts">
+import { vMaska } from 'maska/vue'
+
 interface Props {
-  modelValue?: string
   placeholder?: string
   label?: string
   error?: string
   disabled?: boolean
+  type?: 'text' | 'phone'
 }
 
-defineProps<Props>()
-const emit = defineEmits<{ 'update:modelValue': [string] }>()
+const props = withDefaults(defineProps<Props>(), { type: 'text' })
+const modelValue = defineModel<string>()
+
+// UA mobile format: +38 (0XX) XXX-XX-XX — "+38 (0" is fixed, only the 9 digits after it are user input
+const PHONE_MASK = '+38 (0##) ###-##-##'
+const PHONE_PREFIX = '+38 (0'
+
+function onFocus() {
+  if (props.type === 'phone' && !modelValue.value) {
+    modelValue.value = PHONE_PREFIX
+  }
+}
 </script>
 
 <template>
   <div class="app-input">
     <label v-if="label" class="app-input__label">{{ label }}</label>
     <input
-      :value="modelValue"
+      v-model="modelValue"
+      v-maska="type === 'phone' ? { mask: PHONE_MASK, eager: true } : undefined"
+      :type="type === 'phone' ? 'tel' : 'text'"
       :placeholder="placeholder"
       :disabled="disabled"
       :class="['app-input__field', { 'app-input__field--error': error }]"
-      type="text"
-      @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      @focus="onFocus"
     />
     <span v-if="error" class="app-input__error">{{ error }}</span>
   </div>

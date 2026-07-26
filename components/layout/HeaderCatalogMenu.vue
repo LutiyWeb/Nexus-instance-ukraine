@@ -71,13 +71,19 @@ function isNew(cat: { slug?: string; name?: string }) {
     display: flex;
     padding-block: 8px;
     min-height: 120px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
   }
 
   &__cats {
-    width: 220px;
+    width: 100%;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
+
+    @include mixins.respond-to(md) {
+      width: 220px;
+    }
   }
 
   &__parent {
@@ -119,13 +125,17 @@ function isNew(cat: { slug?: string; name?: string }) {
   }
 
   &__subs {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    max-width: 220px;
-    padding: 0 16px;
-    border-left: 1px solid $color-gray-100;
-    overflow-y: auto;
+    display: none;
+
+    @include mixins.respond-to(md) {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      max-width: 220px;
+      padding: 0 16px;
+      border-left: 1px solid $color-gray-100;
+      overflow-y: auto;
+    }
   }
 
   &__sub {

@@ -35,9 +35,9 @@ const ICONS = {
 @use '~/assets/styles/mixins' as mixins;
 .toast-container {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
+  bottom: 12px;
+  right: 12px;
+  z-index: 9;
   display: flex;
   flex-direction: column;
   gap: 8px;

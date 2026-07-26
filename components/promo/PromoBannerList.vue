@@ -4,6 +4,7 @@ interface PromoBanner {
   gradient: string
   title: string
   subtitle: string
+  linkUrl?: string | null
 }
 
 defineProps<{ banners: PromoBanner[] }>()
@@ -17,6 +18,7 @@ defineProps<{ banners: PromoBanner[] }>()
       :gradient="banner.gradient"
       :title="banner.title"
       :subtitle="banner.subtitle"
+      :link-url="banner.linkUrl"
     />
   </div>
 </template>

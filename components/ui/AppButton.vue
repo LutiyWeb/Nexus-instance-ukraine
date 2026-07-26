@@ -72,26 +72,26 @@ withDefaults(defineProps<Props>(), {
 
   // Sizes
   &--sm {
-    padding: 6px 12px;
+    padding: var(--btn-padding, 6px 12px);
     font-size: $font-size-sm;
   }
   &--md {
-    padding: 10px 20px;
+    padding: var(--btn-padding, 10px 20px);
     font-size: 15px;
   }
   &--lg {
-    padding: 16px;
+    padding: var(--btn-padding, 16px);
     font-size: $font-size-base;
   }
 
   &--xl {
     min-width: 240px;
-    padding: 12px;
+    padding: var(--btn-padding, 12px);
     font-size: $font-size-sm;
 
     @include mixins.respond-to(lg) {
       min-width: 240px;
-      padding: 20px;
+      padding: var(--btn-padding, 20px);
       font-size: $font-size-xl;
     }
   }

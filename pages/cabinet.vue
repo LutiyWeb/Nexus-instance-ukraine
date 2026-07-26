@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User, MapPin, ShoppingBag, Heart, LogOut, ChevronDown } from 'lucide-vue-next'
+import { User, MapPin, ShoppingBag, Heart, LogOut } from 'lucide-vue-next'
 
 definePageMeta({ middleware: 'auth' })
 useSeoMeta({ title: 'Личный кабинет — Nexus Commerce' })
@@ -31,6 +31,10 @@ const sections = [
   { key: 'favorites', label: 'Избранное', icon: Heart },
 ]
 
+const activeSectionIcon = computed(
+  () => sections.find(s => s.key === activeSection.value)?.icon ?? User,
+)
+
 function select(key: string) {
   activeSection.value = key
   router.replace({ query: { section: key } })
@@ -58,7 +62,7 @@ function logout() {
             <p class="cabinet__email">{{ authStore.user?.email }}</p>
           </div>
           <button class="cabinet__nav-toggle" type="button" @click="isMobileNavOpen = true">
-            <ChevronDown :size="18" />
+            <component :is="activeSectionIcon" :size="18" />
           </button>
         </div>
 

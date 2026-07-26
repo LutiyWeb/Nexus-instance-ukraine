@@ -163,6 +163,7 @@ async function submit() {
             />
             <AppInputText
               v-model="form.phone"
+              type="phone"
               label="Телефон"
               placeholder="+38 (0##) ###-##-##"
               :error="errors.phone"
@@ -450,6 +451,7 @@ async function submit() {
   }
 
   &__summary-name {
+    max-width: 200px;
     font-size: $font-size-sm;
     color: $color-gray-900;
     white-space: nowrap;

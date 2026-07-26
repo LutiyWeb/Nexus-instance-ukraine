@@ -120,7 +120,33 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // The refresh token is single-use: the server treats a second use of the same
+  // token as theft and kills the whole session. Two tabs racing to refresh at the
+  // same moment would trigger exactly that, so a tab that sees another tab already
+  // refreshing waits for it instead of racing it with a second network call.
+  const REFRESH_LOCK_KEY = 'auth_refresh_lock'
+  const REFRESH_LOCK_TTL_MS = 8000
+
   async function refresh(): Promise<boolean> {
+    if (process.client) {
+      const lockAt = Number(localStorage.getItem(REFRESH_LOCK_KEY) ?? 0)
+      if (lockAt && Date.now() - lockAt < REFRESH_LOCK_TTL_MS) {
+        for (let i = 0; i < 20; i++) {
+          await new Promise(r => setTimeout(r, 250))
+          if (!localStorage.getItem(REFRESH_LOCK_KEY)) break
+        }
+        token.value = localStorage.getItem('access_token')
+        const saved = localStorage.getItem('auth_user')
+        try {
+          user.value = saved ? JSON.parse(saved) : null
+        } catch {
+          user.value = null
+        }
+        return !!token.value
+      }
+      localStorage.setItem(REFRESH_LOCK_KEY, String(Date.now()))
+    }
+
     try {
       const res = await $fetch<{ data: { user: User; accessToken: string } }>(
         `${config.public.apiBase}/api/auth/refresh`,
@@ -131,6 +157,8 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       _clear()
       return false
+    } finally {
+      if (process.client) localStorage.removeItem(REFRESH_LOCK_KEY)
     }
   }
 

@@ -65,7 +65,6 @@ withDefaults(defineProps<Props>(), {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    min-height: 500px;
     padding: 40px 64px;
     gap: 48px;
   }
