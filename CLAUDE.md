@@ -26,6 +26,15 @@ Both servers must run in parallel. Start backend first, then frontend:
 
 No test suite.
 
+## Repo relationship (template → mirrors)
+
+This repo is a **mirror/instance** of the core template `NuxTemplate-Pro` — customized for a specific store (Ukraine). It has two remotes:
+
+- `origin` (`LutiyWeb/Nexus-instance-ukraine`) — this mirror's own unique repo; store-specific work is pushed here.
+- `upstream` (`LutiyWeb/NuxTemplate-Pro`) — the parent template; pull from here (`git fetch upstream` / merge `upstream/<branch>`) to bring in global updates shared across all mirrors.
+
+If a change is generic enough to belong in every mirror (not specific to this store), it should ideally be made in the template repo (`NuxTemplate-Pro`) and pulled in via `upstream`, rather than only fixed here.
+
 ## Architecture
 
 ### API communication

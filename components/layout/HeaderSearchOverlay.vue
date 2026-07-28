@@ -214,7 +214,7 @@ function quickAdd(product: Product, e: MouseEvent) {
   e.preventDefault()
   e.stopPropagation()
   cartStore.add(product)
-  toastStore.add('Товар додано до кошика', 'success')
+  toastStore.add('Товар додано до кошика', 'success', { label: 'Перейти в кошик', to: '/cart' })
 }
 
 function dismiss() {

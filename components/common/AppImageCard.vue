@@ -23,7 +23,7 @@ function getHoverImage(product: Product): string | null {
 
 function handleCartClick(product: Product) {
   cartStore.add(product)
-  toastStore.add('Товар додано до кошика', 'success')
+  toastStore.add('Товар додано до кошика', 'success', { label: 'Перейти в кошик', to: '/cart' })
 }
 
 function handleFavClick(product: Product) {

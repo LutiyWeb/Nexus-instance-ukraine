@@ -3,10 +3,6 @@ import { z } from 'zod'
 export const checkoutSchema = z.object({
   recipientName: z.string().trim().min(2, "Введіть ім'я отримувача"),
   phone: z.string().trim().min(10, 'Введіть коректний номер телефону'),
-  city: z.string().trim().min(1, 'Введіть місто'),
-  street: z.string().trim().min(1, 'Введіть вулицю'),
-  house: z.string().trim().min(1, 'Введіть номер будинку'),
-  apartment: z.string().optional(),
   notes: z.string().optional(),
 })
 

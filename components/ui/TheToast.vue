@@ -21,6 +21,14 @@ const ICONS = {
         >
           <component :is="ICONS[toast.type]" :size="18" class="toast__icon" />
           <span class="toast__msg">{{ toast.message }}</span>
+          <NuxtLink
+            v-if="toast.action"
+            :to="toast.action.to"
+            class="toast__action"
+            @click="toastStore.remove(toast.id)"
+          >
+            {{ toast.action.label }}
+          </NuxtLink>
           <button class="toast__close" type="button" @click="toastStore.remove(toast.id)">
             <X :size="14" />
           </button>
@@ -84,6 +92,18 @@ const ICONS = {
     font-size: $font-size-sm;
     color: $color-gray-800;
     line-height: $line-height-relaxed;
+  }
+
+  &__action {
+    flex-shrink: 0;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__close {
