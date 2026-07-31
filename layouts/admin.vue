@@ -6,6 +6,7 @@ const route = useRoute()
 
 const NAV_ITEMS = [
   { key: '/admin/products', label: 'Товари' },
+  { key: '/admin/vendors', label: 'Вендори' },
   { key: '/admin/banners/hero', label: 'Головний банер' },
   { key: '/admin/banners/special_1', label: 'Спец-банер 1' },
   { key: '/admin/banners/special_2', label: 'Спец-банер 2' },

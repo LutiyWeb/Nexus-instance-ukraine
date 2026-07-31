@@ -7,10 +7,23 @@ export default defineNuxtConfig({
 
   modules: ['@pinia/nuxt', '@nuxt/image'],
 
+  app: {
+    head: {
+      link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap',
+        },
+      ],
+    },
+  },
+
   image: {
     quality: 80,
     format: ['webp', 'jpg'],
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com', 'image.hubber.pro'],
   },
 
   css: [

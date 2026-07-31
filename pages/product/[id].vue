@@ -313,7 +313,9 @@ function toggleFav() {
     font-weight: $font-weight-bold;
     margin: 0;
     flex: 1;
+    min-width: 0;
     line-height: 1.2;
+    overflow-wrap: break-word;
 
     @include mixins.respond-to(2xl) {
       font-size: $font-size-2xl;

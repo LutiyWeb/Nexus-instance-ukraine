@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ImageOff } from 'lucide-vue-next'
+
 interface Breakpoint {
   w: number
   h: number
@@ -38,14 +40,28 @@ const height = computed(
   () => props.sizes.desktop?.h ?? props.sizes.tablet?.h ?? props.sizes.mobile?.h,
 )
 
+// External vendor CDNs (e.g. image.hubber.pro) aren't ours to guarantee uptime for —
+// fall back to a placeholder instead of a broken-image icon.
+const hasError = ref(false)
+watch(
+  () => props.src,
+  () => {
+    hasError.value = false
+  },
+)
+
 const imgAttrs = computed(() => ({
   class: ['app-image__img', props.imgClass].filter(Boolean).join(' '),
   decoding: 'async' as const,
+  onError: () => {
+    hasError.value = true
+  },
 }))
 </script>
 
 <template>
   <NuxtPicture
+    v-if="!hasError"
     class="app-image"
     :src="src"
     :alt="alt"
@@ -56,6 +72,9 @@ const imgAttrs = computed(() => ({
     :img-attrs="imgAttrs"
     format="webp,jpg"
   />
+  <div v-else class="app-image app-image__fallback" :aria-label="alt">
+    <ImageOff :size="24" />
+  </div>
 </template>
 
 <style lang="scss">
@@ -71,6 +90,20 @@ const imgAttrs = computed(() => ({
     height: var(--ai-height, auto);
     object-fit: var(--ai-fit, cover);
     aspect-ratio: var(--ai-ratio, auto);
+  }
+
+  // Overrides the `display: contents` above — this needs its own box to
+  // occupy the same space the <img> would have.
+  &__fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ai-width, 100%);
+    max-width: 100%;
+    height: var(--ai-height, auto);
+    aspect-ratio: var(--ai-ratio, auto);
+    background: $color-gray-100;
+    color: $color-gray-400;
   }
 }
 </style>

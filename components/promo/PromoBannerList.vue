@@ -13,9 +13,9 @@ defineProps<{ banners: PromoBanner[] }>()
 <template>
   <div class="promo-banner-list">
     <PromoBannerCard
-      v-for="banner in banners"
+      v-for="(banner, index) in banners"
       :key="banner.id"
-      :gradient="banner.gradient"
+      :variant="index % 2 === 0 ? 'graphite' : 'accent'"
       :title="banner.title"
       :subtitle="banner.subtitle"
       :link-url="banner.linkUrl"

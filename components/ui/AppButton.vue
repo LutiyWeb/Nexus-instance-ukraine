@@ -153,22 +153,25 @@ withDefaults(defineProps<Props>(), {
     }
   }
 
+  // EXPERIMENTAL: temporary hardcoded accent for the glassmorphism visual test
+  // (see .claude/skills branch brief) — not promoted to variables.scss yet.
   &--gradient {
-    background: linear-gradient(
-      120deg,
-      lighten($color-secondary, 15%),
-      $color-secondary,
-      $color-secondary-dark,
-      $color-secondary
-    );
-    background-size: 300% 300%;
+    --accent-start: #00c6ff;
+    --accent-mid: #0072ff;
+
+    background: linear-gradient(90deg, var(--accent-start), var(--accent-mid), var(--accent-start));
+    background-size: 200% auto;
     color: $color-white;
-    box-shadow: 0 4px 16px rgb(6 182 212 / 35%);
-    animation: app-btn-gradient-flow 6s ease infinite;
+    box-shadow: 0 8px 20px rgb(0 198 255 / 35%);
+    animation: app-btn-gradient-move 3s linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
 
     &:not(:disabled):hover {
-      box-shadow: 0 8px 24px rgb(6 182 212 / 55%);
-      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgb(0 198 255 / 50%);
+      transform: translateY(-2px);
     }
   }
 
@@ -188,13 +191,12 @@ withDefaults(defineProps<Props>(), {
   }
 }
 
-@keyframes app-btn-gradient-flow {
-  0%,
-  100% {
+@keyframes app-btn-gradient-move {
+  from {
     background-position: 0% 50%;
   }
-  50% {
-    background-position: 100% 50%;
+  to {
+    background-position: 200% 50%;
   }
 }
 </style>

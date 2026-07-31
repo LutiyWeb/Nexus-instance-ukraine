@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-vue-next'
 interface Props {
   title: string
   subtitle: string
-  gradient: string
+  variant: 'graphite' | 'accent'
   linkUrl?: string | null
   tag?: string
 }
@@ -11,7 +11,7 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
 </script>
 
 <template>
-  <NuxtLink :to="linkUrl || '/promo'" class="promo-card" :style="{ background: gradient }">
+  <NuxtLink :to="linkUrl || '/promo'" :class="['promo-card', `promo-card--${variant}`]">
     <span class="promo-card__tag">{{ tag }}</span>
     <h3 class="promo-card__title">{{ title }}</h3>
     <p class="promo-card__subtitle">{{ subtitle }}</p>
@@ -23,6 +23,8 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 
+// EXPERIMENTAL: temporary hardcoded palette for the glassmorphism visual
+// test — not promoted to variables.scss yet (see branch brief).
 .promo-card {
   display: flex;
   flex-direction: column;
@@ -41,6 +43,20 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
 
   &:hover {
     transform: translateY(-2px);
+  }
+
+  &--graphite {
+    background: #16181d;
+  }
+
+  &--accent {
+    background: linear-gradient(90deg, #00c6ff, #0072ff, #00c6ff);
+    background-size: 200% auto;
+    animation: promo-card-gradient-move 3s linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
   }
 
   &__tag {
@@ -73,6 +89,15 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
     font-weight: $font-weight-semibold;
     opacity: 0.9;
     margin-top: 12px;
+  }
+}
+
+@keyframes promo-card-gradient-move {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
   }
 }
 </style>

@@ -49,6 +49,8 @@ withDefaults(defineProps<Props>(), {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 
+// EXPERIMENTAL: two-tone hero (gradient content panel + static-tint media
+// panel). Colors stay on existing design tokens, not a new hardcoded palette.
 .hero-banner {
   display: flex;
   flex-direction: column;
@@ -56,17 +58,46 @@ withDefaults(defineProps<Props>(), {
   gap: 12px;
   width: 100%;
   min-height: 450px;
-  padding: 16px 20px;
   border-radius: $radius-2xl;
-  background: $color-gray-100;
+  overflow: hidden;
+  position: relative;
   text-decoration: none;
+  background: linear-gradient(180deg, rgba(248, 189, 228, 0.18) 0%, rgba(255, 251, 253, 0.18) 180%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 35%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: $color-white;
+  }
+
+  &::after {
+    content: 'SOUND';
+    position: absolute;
+    inset: 200px 0 0 300px;
+    z-index: 0;
+    font-family: 'Oswald', sans-serif;
+    font-size: 240px;
+    font-weight: $font-weight-bold;
+    color: rgb(79 70 229 / 8%);
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.3;
+  }
 
   @include mixins.respond-to(md) {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    padding: 40px 64px;
-    gap: 48px;
+    gap: 0;
   }
 
   &__content {
@@ -76,11 +107,13 @@ withDefaults(defineProps<Props>(), {
     gap: 6px;
     flex: 1 1 0;
     min-width: 0;
+    padding: 16px 20px;
     text-align: center;
 
     @include mixins.respond-to(md) {
       align-items: flex-start;
       gap: 16px;
+      padding: 40px 64px;
       text-align: left;
     }
   }
@@ -127,6 +160,7 @@ withDefaults(defineProps<Props>(), {
   }
 
   &__image {
+    position: relative;
     display: flex;
     order: -1;
     align-items: center;
