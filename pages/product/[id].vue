@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Thumbs, Navigation } from 'swiper/modules'
-import type { Swiper as SwiperType } from 'swiper'
-import { Heart, ShoppingCart, Minus, Plus, Star, Package, Shield, Truck, X } from 'lucide-vue-next'
+import { Star, Package, Shield, Truck } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 const route = useRoute()
@@ -31,33 +28,6 @@ useSeoMeta({
   ogTitle: () => product.value?.title ?? '',
   ogDescription: () => product.value?.description ?? '',
   ogImage: () => product.value?.thumbnail ?? '',
-})
-
-const { isMd } = useBreakpoints()
-const thumbsSwiper = ref<SwiperType | null>(null)
-const qty = ref(1)
-
-const lightboxOpen = ref(false)
-const lightboxActiveIndex = ref(0)
-const lightboxThumbsSwiper = ref<SwiperType | null>(null)
-
-function openLightbox(index: number) {
-  lightboxActiveIndex.value = index
-  lightboxOpen.value = true
-}
-
-function closeLightbox() {
-  lightboxOpen.value = false
-  lightboxThumbsSwiper.value = null
-}
-
-function handleLightboxKey(e: KeyboardEvent) {
-  if (e.key === 'Escape') closeLightbox()
-}
-
-watch(lightboxOpen, (open) => {
-  if (open) window.addEventListener('keydown', handleLightboxKey)
-  else window.removeEventListener('keydown', handleLightboxKey)
 })
 
 const allImages = computed(() => {
@@ -105,18 +75,8 @@ const activeTab = ref('specs')
 // TODO: remove route.query.oos check — test only, backend will send real stock
 const isOutOfStock = computed(() => (product.value?.stock ?? 0) === 0 || route.query.oos === '1')
 
-function decrement() {
-  if (qty.value > 1) qty.value--
-}
-function increment() {
-  qty.value++
-}
-
-function addToCart() {
-  if (product.value) {
-    cartStore.add(product.value, qty.value)
-    qty.value = 1
-  }
+function onAddToCart(qty: number) {
+  if (product.value) cartStore.add(product.value, qty)
 }
 
 const toastStore = useToastStore()
@@ -132,11 +92,6 @@ function notifyWhenAvailable() {
 function toggleFav() {
   if (product.value) wishlistsStore.toggle(product.value.id)
 }
-
-onBeforeUnmount(() => {
-  thumbsSwiper.value = null
-  window.removeEventListener('keydown', handleLightboxKey)
-})
 </script>
 
 <template>
@@ -159,7 +114,7 @@ onBeforeUnmount(() => {
 
       <!-- Loading -->
       <div v-if="loading" class="product-detail__layout">
-        <div class="product-detail__media">
+        <div class="product-gallery">
           <AppSkeleton width="100%" height="420px" border-radius="16px" />
           <div class="product-detail__thumbs-skeleton">
             <AppSkeleton v-for="n in 4" :key="n" width="72px" height="72px" border-radius="8px" />
@@ -197,56 +152,7 @@ onBeforeUnmount(() => {
       <!-- Content -->
       <div v-else-if="product" class="product-detail__layout">
         <!-- Media -->
-        <div class="product-detail__media">
-          <div v-if="isOutOfStock" class="product-detail__media-oos">
-            <span class="product-detail__media-oos-badge">Немає в наявності</span>
-          </div>
-          <ClientOnly>
-            <Swiper
-              :modules="[Thumbs, Navigation]"
-              :thumbs="isMd ? { swiper: thumbsSwiper } : undefined"
-              navigation
-              class="product-detail__main-swiper swiper-nav-bg swiper-nav-image"
-            >
-              <SwiperSlide
-                v-for="(img, i) in allImages"
-                :key="i"
-                class="product-detail__main-slide"
-                @click="openLightbox(i)"
-              >
-                <AppImage
-                  :src="img"
-                  :alt="product.title"
-                  :lazy="i !== 0"
-                  :sizes="{ mobile: { w: 600, h: 450 }, desktop: { w: 800, h: 600 } }"
-                />
-              </SwiperSlide>
-            </Swiper>
-
-            <Swiper
-              v-if="isMd"
-              :modules="[Thumbs]"
-              slides-per-view="auto"
-              :space-between="8"
-              watch-slides-progress
-              class="product-detail__thumbs"
-              @swiper="thumbsSwiper = $event"
-            >
-              <SwiperSlide
-                v-for="(img, i) in allImages"
-                :key="i"
-                class="product-detail__thumb-slide"
-              >
-                <AppImage
-                  :src="img"
-                  :alt="`thumb ${i}`"
-                  img-class="product-detail__thumb-img"
-                  :sizes="{ mobile: { w: 72, h: 72 }, desktop: { w: 72, h: 72 } }"
-                />
-              </SwiperSlide>
-            </Swiper>
-          </ClientOnly>
-        </div>
+        <ProductGallery :images="allImages" :title="product.title" :out-of-stock="isOutOfStock" />
 
         <!-- Info  -->
         <div class="product-detail__info">
@@ -287,70 +193,16 @@ onBeforeUnmount(() => {
 
           <p class="product-detail__desc">{{ product.description }}</p>
 
-          <!-- Purchase: price + availability + favorite/qty/buy — reflowed via grid per breakpoint -->
-          <div class="product-detail__purchase">
-            <div class="product-detail__price-row">
-              <span class="product-detail__price">${{ product.price }}</span>
-              <span v-if="originalPrice" class="product-detail__price-original"
-                >${{ originalPrice }}</span
-              >
-              <span v-if="product.discountPercentage" class="product-detail__discount">
-                -{{ Math.round(product.discountPercentage) }}%
-              </span>
-            </div>
-
-            <div v-if="isOutOfStock" class="product-detail__oos-banner">
-              <span class="product-detail__oos-label">Немає в наявності</span>
-              <p class="product-detail__oos-hint">
-                Залиште заявку — ми повідомимо, коли товар з'явиться
-              </p>
-            </div>
-
-            <div class="product-detail__controls">
-              <button
-                :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
-                type="button"
-                :title="isFav ? 'Прибрати з обраного' : 'До обраного'"
-                @click="toggleFav"
-              >
-                <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
-              </button>
-
-              <div v-if="!isOutOfStock" class="product-detail__qty">
-                <button
-                  class="product-detail__qty-btn"
-                  type="button"
-                  :disabled="qty <= 1"
-                  @click="decrement"
-                >
-                  <Minus :size="14" />
-                </button>
-                <span class="product-detail__qty-val">{{ qty }}</span>
-                <button class="product-detail__qty-btn" type="button" @click="increment">
-                  <Plus :size="14" />
-                </button>
-              </div>
-            </div>
-
-            <AppButton
-              v-if="!isOutOfStock"
-              variant="gradient"
-              size="xl"
-              class="product-detail__add-btn"
-              @click="addToCart"
-            >
-              <ShoppingCart :size="24" /> Додати до кошика
-            </AppButton>
-            <AppButton
-              v-else
-              variant="outline"
-              size="lg"
-              class="product-detail__notify-btn"
-              @click="notifyWhenAvailable"
-            >
-              Повідомити про наявність
-            </AppButton>
-          </div>
+          <!-- Purchase: price + availability + favorite/qty/buy -->
+          <ProductPurchasePanel
+            :product="product"
+            :original-price="originalPrice"
+            :is-fav="isFav"
+            :is-out-of-stock="isOutOfStock"
+            @add-to-cart="onAddToCart"
+            @toggle-fav="toggleFav"
+            @notify="notifyWhenAvailable"
+          />
 
           <!-- Perks -->
           <div class="product-detail__perks">
@@ -389,16 +241,7 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="product-detail__tab-content">
-            <div v-if="activeTab === 'specs'">
-              <table class="product-detail__specs">
-                <tbody>
-                  <tr v-for="spec in mockSpecs" :key="spec.label">
-                    <td class="product-detail__spec-label">{{ spec.label }}</td>
-                    <td class="product-detail__spec-value">{{ spec.value }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <ProductSpecsTable v-if="activeTab === 'specs'" :specs="mockSpecs" />
 
             <div v-else-if="activeTab === 'reviews'">
               <ProductReviews :product-id="product.id" />
@@ -411,45 +254,6 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
-    <!-- Fullscreen gallery lightbox -->
-    <Teleport to="body">
-      <div v-if="lightboxOpen" class="product-lightbox">
-        <button class="product-lightbox__close" type="button" @click="closeLightbox">
-          <X :size="20" />
-        </button>
-        <div class="product-lightbox__main">
-          <Swiper
-            :modules="[Thumbs, Navigation]"
-            :initial-slide="lightboxActiveIndex"
-            :thumbs="{ swiper: lightboxThumbsSwiper }"
-            navigation
-            class="product-lightbox__swiper swiper-nav-image"
-          >
-            <SwiperSlide v-for="(img, i) in allImages" :key="i">
-              <img :src="img" :alt="product?.title" class="product-lightbox__img" />
-            </SwiperSlide>
-          </Swiper>
-        </div>
-        <div class="product-lightbox__thumb-strip">
-          <Swiper
-            :modules="[Thumbs]"
-            slides-per-view="auto"
-            :space-between="8"
-            watch-slides-progress
-            class="product-lightbox__thumb-swiper"
-            @swiper="lightboxThumbsSwiper = $event"
-          >
-            <SwiperSlide
-              v-for="(img, i) in allImages"
-              :key="i"
-              class="product-lightbox__thumb-slide"
-            >
-              <img :src="img" class="product-lightbox__thumb-img" />
-            </SwiperSlide>
-          </Swiper>
-        </div>
-      </div>
-    </Teleport>
   </div>
 </template>
 
@@ -472,70 +276,6 @@ onBeforeUnmount(() => {
     @include mixins.respond-to(md) {
       grid-template-columns: 1fr 1fr;
       gap: 32px;
-    }
-  }
-
-  // Media
-  &__media {
-    min-width: 0;
-    width: 100%;
-    position: relative;
-  }
-
-  &__media-oos {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    border-radius: $radius-xl;
-    background: rgb(0 0 0 / 35%);
-    backdrop-filter: blur(3px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-
-  &__media-oos-badge {
-    padding: 8px 20px;
-    background: $color-white;
-    color: $color-gray-700;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    border-radius: $radius-full;
-    letter-spacing: 0.03em;
-  }
-
-  &__main-swiper {
-    --swiper-theme-color: $color-primary;
-    --swiper-navigation-size: 20px;
-
-    width: 100%;
-    border-radius: $radius-xl;
-    overflow: hidden;
-    background: $color-gray-50;
-    --ai-ratio: 4/3;
-  }
-
-  &__main-slide {
-    cursor: zoom-in;
-  }
-
-  &__thumbs {
-    margin-top: 8px;
-  }
-
-  &__thumb-slide {
-    width: 72px;
-  }
-
-  &__thumb-img {
-    object-fit: cover;
-    border-radius: $radius-md;
-    border: 2px solid $color-gray-200;
-    cursor: pointer;
-    transition: border-color $transition-fast;
-    .swiper-slide-thumb-active & {
-      border-color: $color-primary;
     }
   }
 
@@ -656,193 +396,6 @@ onBeforeUnmount(() => {
     font-size: $font-size-sm;
   }
 
-  // Purchase: price + availability + favorite/qty/buy, reflowed via grid per breakpoint
-  &__purchase {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      'price controls'
-      'oos oos'
-      'buy buy';
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 24px;
-
-    @include mixins.respond-to(md) {
-      grid-template-columns: auto 1fr;
-      grid-template-areas:
-        'price price'
-        'oos oos'
-        'controls buy';
-      align-items: stretch;
-    }
-  }
-
-  // Price
-  &__price-row {
-    grid-area: price;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  &__price {
-    font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
-    color: $color-gray-900;
-  }
-
-  &__price-original {
-    font-size: $font-size-lg;
-    color: $color-gray-400;
-    text-decoration: line-through;
-  }
-
-  &__discount {
-    background: $color-danger;
-    color: $color-white;
-    padding: 2px 8px;
-    border-radius: $radius-sm;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
-  }
-
-  // Favorite toggle + quantity stepper — pinned beside price on mobile,
-  // beside the buy button on desktop (see &__purchase grid-template-areas)
-  &__controls {
-    grid-area: controls;
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-    justify-self: end;
-
-    @include mixins.respond-to(md) {
-      justify-self: start;
-    }
-  }
-
-  &__fav-btn {
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-md;
-    color: $color-gray-400;
-    cursor: pointer;
-    transition:
-      background $transition-fast,
-      color $transition-fast,
-      border-color $transition-fast;
-
-    @include mixins.respond-to(md) {
-      height: auto;
-    }
-
-    &:hover {
-      border-color: $color-danger;
-      color: $color-danger;
-    }
-    &--active {
-      border-color: $color-danger;
-      color: $color-danger;
-    }
-  }
-
-  &__qty {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex-shrink: 0;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-md;
-    overflow: hidden;
-  }
-
-  &__qty-btn {
-    width: 40px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: $color-gray-600;
-    transition:
-      background $transition-fast,
-      color $transition-fast;
-    &:hover:not(:disabled) {
-      background: $color-gray-100;
-      color: $color-gray-900;
-    }
-    &:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-  }
-
-  &__qty-val {
-    width: 40px;
-    text-align: center;
-    font-size: $font-size-base;
-    font-weight: $font-weight-semibold;
-    color: $color-gray-900;
-    border-inline: 1px solid $color-gray-200;
-  }
-
-  // ".app-btn--gradient" chained in so these layout overrides
-  // out-specificity AppButton's own size/variant rules reliably
-  &__add-btn.app-btn--gradient {
-    grid-area: buy;
-    white-space: nowrap;
-    justify-content: center;
-    min-width: 0;
-
-    @include mixins.respond-to(md) {
-      max-width: 250px;
-      padding: 16px;
-    }
-
-    svg {
-      flex-shrink: 0;
-    }
-  }
-
-  &__oos-banner {
-    grid-area: oos;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 16px;
-    background: $color-gray-50;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-lg;
-  }
-
-  &__oos-label {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    color: $color-gray-500;
-  }
-
-  &__oos-hint {
-    font-size: $font-size-sm;
-    color: $color-gray-400;
-    margin: 0;
-  }
-
-  &__notify-btn {
-    grid-area: buy;
-    justify-content: center;
-
-    @include mixins.respond-to(md) {
-      justify-self: start;
-      width: auto;
-    }
-  }
-
   // Perks
   &__perks {
     display: flex;
@@ -912,29 +465,6 @@ onBeforeUnmount(() => {
     }
   }
 
-  // Specs
-  &__specs {
-    width: 100%;
-    max-width: 640px;
-    border-collapse: collapse;
-  }
-
-  &__spec-label,
-  &__spec-value {
-    padding: 10px 12px;
-    font-size: $font-size-sm;
-    border-bottom: 1px solid $color-gray-100;
-  }
-
-  &__spec-label {
-    color: $color-gray-500;
-    width: 40%;
-  }
-  &__spec-value {
-    color: $color-gray-900;
-    font-weight: $font-weight-medium;
-  }
-
   // Questions
   &__questions {
   }
@@ -953,79 +483,6 @@ onBeforeUnmount(() => {
     border: none;
     font-size: inherit;
     padding: 0;
-  }
-}
-
-.product-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: rgb(0 0 0 / 93%);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 56px 24px 24px;
-
-  &__close {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $radius-full;
-    background: rgb(255 255 255 / 12%);
-    color: $color-white;
-    cursor: pointer;
-    transition: background $transition-fast;
-    z-index: 1;
-
-    &:hover {
-      background: rgb(255 255 255 / 25%);
-    }
-  }
-
-  &__main {
-    flex: 1;
-    min-height: 0;
-  }
-
-  &__swiper {
-    width: 100%;
-    height: 100%;
-  }
-
-  &__img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-
-  &__thumb-strip {
-    flex-shrink: 0;
-  }
-
-  &__thumb-slide {
-    width: 72px !important;
-    height: 72px;
-  }
-
-  &__thumb-img {
-    width: 72px;
-    height: 72px;
-    object-fit: cover;
-    border-radius: $radius-md;
-    border: 2px solid rgb(255 255 255 / 20%);
-    cursor: pointer;
-    display: block;
-    transition: border-color $transition-fast;
-
-    .swiper-slide-thumb-active & {
-      border-color: $color-white;
-    }
   }
 }
 </style>

@@ -105,7 +105,7 @@ withDefaults(defineProps<Props>(), {
     max-width: 440px;
 
     @include mixins.respond-to(md) {
-      font-size: $font-size-base;
+      font-size: $font-size-xl;
     }
   }
 

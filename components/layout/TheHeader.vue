@@ -163,18 +163,24 @@ function onBackToLogin() {
   background: $color-white;
   border-bottom: 1px solid $color-gray-100;
 
+  // Grid, not flex: the left and right blocks hold different content and are
+  // never the same width, so `justify-content: space-between` on 3 flex items
+  // only equalises the gaps — it doesn't put the logo at the true midpoint.
+  // Two equal 1fr tracks flanking a fixed `auto` middle track keep the logo
+  // mathematically centered regardless of how wide either side grows.
   &__inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     height: 64px;
-    gap: 12px;
+    column-gap: 12px;
     position: relative;
   }
 
   &__left {
     display: flex;
     align-items: center;
+    justify-self: start;
     gap: 4px;
   }
 
@@ -189,8 +195,8 @@ function onBackToLogin() {
   &__right {
     display: flex;
     align-items: center;
+    justify-self: end;
     gap: 4px;
-    justify-content: flex-end;
   }
 
   &__burger-btn {
