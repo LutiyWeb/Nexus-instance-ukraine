@@ -139,6 +139,25 @@ async function submit() {
 
     const res = await authFetch<{ data: { id: number } }>('/api/orders', { method: 'POST', body })
     await cartStore.clear()
+
+    if (paymentMethod.value === 'card') {
+      try {
+        const pay = await authFetch<{ data: { pageUrl: string } }>(
+          `/api/orders/${res.data.id}/pay`,
+          { method: 'POST' },
+        )
+        // Full browser redirect — Monobank's checkout page is a different origin,
+        // this must not be a SPA navigation.
+        window.location.href = pay.data.pageUrl
+        return
+      } catch {
+        toastStore.add(
+          'Замовлення оформлено, але не вдалося створити оплату. Спробуйте оплатити ще раз зі сторінки замовлення.',
+          'error',
+        )
+      }
+    }
+
     navigateTo(`/order/${res.data.id}`)
   } catch (err: unknown) {
     const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message
@@ -333,7 +352,7 @@ async function submit() {
               <span class="checkout__summary-qty">{{ item.qty }} шт.</span>
             </div>
             <span class="checkout__summary-price">{{
-              formatPrice(item.product.price * item.qty)
+              formatPrice((item.product.price ?? 0) * item.qty)
             }}</span>
           </div>
         </div>
