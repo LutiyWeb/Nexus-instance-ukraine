@@ -144,21 +144,35 @@ async function submit() {
         <h2 class="product-reviews__title">Відгуки</h2>
         <span class="product-reviews__count">{{ reviews.length }}</span>
       </div>
-      <AppButton variant="primary" size="md" @click="openDialog">
+      <AppButton
+        variant="primary"
+        size="md"
+        @click="openDialog"
+      >
         <MessageSquare :size="16" />
         Написати відгук
       </AppButton>
     </div>
 
     <!-- Summary -->
-    <div v-if="reviews.length" class="product-reviews__summary">
+    <div
+      v-if="reviews.length"
+      class="product-reviews__summary"
+    >
       <div class="product-reviews__avg">
         <span class="product-reviews__avg-num">{{ avgRating }}</span>
-        <ReviewStars :rating="avgRating" :size="20" />
+        <ReviewStars
+          :rating="avgRating"
+          :size="20"
+        />
         <span class="product-reviews__avg-sub">{{ reviews.length }} відгуків</span>
       </div>
       <div class="product-reviews__bars">
-        <div v-for="(count, i) in ratingCounts" :key="i" class="product-reviews__bar-row">
+        <div
+          v-for="(count, i) in ratingCounts"
+          :key="i"
+          class="product-reviews__bar-row"
+        >
           <span class="product-reviews__bar-label">{{ 5 - i }} ★</span>
           <div class="product-reviews__bar-track">
             <div
@@ -172,30 +186,58 @@ async function submit() {
     </div>
 
     <!-- Empty -->
-    <div v-else class="product-reviews__empty">
-      <MessageSquare :size="40" class="product-reviews__empty-icon" />
+    <div
+      v-else
+      class="product-reviews__empty"
+    >
+      <MessageSquare
+        :size="40"
+        class="product-reviews__empty-icon"
+      />
       <p>Відгуків поки немає. Будьте першим!</p>
     </div>
 
     <!-- List -->
-    <div v-if="reviews.length" class="product-reviews__list">
-      <ReviewCard v-for="review in visibleReviews" :key="review.id" :review="review" />
+    <div
+      v-if="reviews.length"
+      class="product-reviews__list"
+    >
+      <ReviewCard
+        v-for="review in visibleReviews"
+        :key="review.id"
+        :review="review"
+      />
     </div>
 
     <!-- Load more -->
-    <div v-if="hasMore" class="product-reviews__more">
-      <AppButton variant="outline" size="md" @click="visibleCount += 3">
+    <div
+      v-if="hasMore"
+      class="product-reviews__more"
+    >
+      <AppButton
+        variant="outline"
+        size="md"
+        @click="visibleCount += 3"
+      >
         Показати ще
       </AppButton>
     </div>
 
     <!-- Dialog -->
     <Teleport to="body">
-      <div v-if="dialogOpen" class="review-dialog-overlay" @click.self="dialogOpen = false">
+      <div
+        v-if="dialogOpen"
+        class="review-dialog-overlay"
+        @click.self="dialogOpen = false"
+      >
         <div class="review-dialog">
           <div class="review-dialog__head">
             <h3 class="review-dialog__title">Написати відгук</h3>
-            <button class="review-dialog__close" type="button" @click="dialogOpen = false">
+            <button
+              class="review-dialog__close"
+              type="button"
+              @click="dialogOpen = false"
+            >
               <X :size="14" />
             </button>
           </div>
@@ -204,10 +246,16 @@ async function submit() {
             <!-- Star picker -->
             <div class="review-dialog__field">
               <label class="review-dialog__label">Оцінка</label>
-              <ReviewStars v-model:rating="formRating" :size="28" interactive />
-              <span v-if="formErrors.rating" class="review-dialog__error">{{
-                formErrors.rating
-              }}</span>
+              <ReviewStars
+                v-model:rating="formRating"
+                :size="28"
+                interactive
+              />
+              <span
+                v-if="formErrors.rating"
+                class="review-dialog__error"
+                >{{ formErrors.rating }}</span
+              >
             </div>
 
             <!-- Text -->
@@ -221,19 +269,29 @@ async function submit() {
                 rows="5"
               />
               <div class="review-dialog__field-footer">
-                <span v-if="formErrors.text" class="review-dialog__error">{{
-                  formErrors.text
-                }}</span>
+                <span
+                  v-if="formErrors.text"
+                  class="review-dialog__error"
+                  >{{ formErrors.text }}</span
+                >
                 <span class="review-dialog__char-count">{{ formText.length }} / 1000</span>
               </div>
             </div>
           </div>
 
           <div class="review-dialog__footer">
-            <AppButton variant="outline" size="md" @click="dialogOpen = false"
+            <AppButton
+              variant="outline"
+              size="md"
+              @click="dialogOpen = false"
               >Скасувати</AppButton
             >
-            <AppButton variant="primary" size="md" :loading="submitting" @click="submit">
+            <AppButton
+              variant="primary"
+              size="md"
+              :loading="submitting"
+              @click="submit"
+            >
               Надіслати відгук
             </AppButton>
           </div>
@@ -270,7 +328,7 @@ async function submit() {
   &__title {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
   }
 
   &__count {

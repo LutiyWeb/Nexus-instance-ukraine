@@ -52,13 +52,27 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
     <div class="product-questions__header">
       <div class="product-questions__header-left">
         <h2 class="product-questions__title">Питання</h2>
-        <span v-if="questions.length" class="product-questions__count">{{ questions.length }}</span>
+        <span
+          v-if="questions.length"
+          class="product-questions__count"
+          >{{ questions.length }}</span
+        >
       </div>
-      <AskQuestionButton :product-id="productId" @submitted="handleSubmitted" />
+      <AskQuestionButton
+        :product-id="productId"
+        @submitted="handleSubmitted"
+      />
     </div>
 
-    <div v-if="questions.length" class="product-questions__list">
-      <QuestionCard v-for="question in questions" :key="question.id" :question="question" />
+    <div
+      v-if="questions.length"
+      class="product-questions__list"
+    >
+      <QuestionCard
+        v-for="question in questions"
+        :key="question.id"
+        :question="question"
+      />
     </div>
 
     <AppEmpty
@@ -67,7 +81,10 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
       description="Будьте першим, хто задасть питання про цей товар"
     >
       <template #icon>
-        <MessageCircleQuestion :size="56" :stroke-width="1.2" />
+        <MessageCircleQuestion
+          :size="56"
+          :stroke-width="1.2"
+        />
       </template>
     </AppEmpty>
   </section>
@@ -103,7 +120,7 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
   &__title {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
   }
 
   &__count {

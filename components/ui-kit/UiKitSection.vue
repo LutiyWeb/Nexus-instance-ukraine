@@ -6,10 +6,18 @@ defineProps<{ title: string; description?: string }>()
   <section class="uk-section">
     <div class="uk-section__header">
       <h2 class="uk-section__title">{{ title }}</h2>
-      <p v-if="description" class="uk-section__desc">{{ description }}</p>
+      <p
+        v-if="description"
+        class="uk-section__desc"
+      >
+        {{ description }}
+      </p>
     </div>
 
-    <div v-if="$slots.preview" class="uk-section__preview">
+    <div
+      v-if="$slots.preview"
+      class="uk-section__preview"
+    >
       <slot name="preview" />
     </div>
 
@@ -36,7 +44,7 @@ defineProps<{ title: string; description?: string }>()
   &__title {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $color-gray-900;
+    color: $color-heading;
   }
 
   &__desc {

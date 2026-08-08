@@ -50,12 +50,23 @@ async function submit() {
 </script>
 
 <template>
-  <AppModal :open="open" @update:open="emit('update:open', $event)">
+  <AppModal
+    :open="open"
+    @update:open="emit('update:open', $event)"
+  >
     <h2 class="forgot-modal__title">Відновлення пароля</h2>
     <p class="forgot-modal__desc">Введіть email, і ми надішлемо посилання для скидання пароля.</p>
 
-    <form class="app-modal__form" @submit.prevent="submit">
-      <AppInputText v-model="email" label="Email" placeholder="email@example.com" type="email" />
+    <form
+      class="app-modal__form"
+      @submit.prevent="submit"
+    >
+      <AppInputText
+        v-model="email"
+        label="Email"
+        placeholder="email@example.com"
+        type="email"
+      />
 
       <AppCaptcha
         ref="captchaRef"
@@ -63,7 +74,10 @@ async function submit() {
         @expired="onCaptchaExpired"
       />
 
-      <p v-if="formError || authStore.error" class="app-modal__error">
+      <p
+        v-if="formError || authStore.error"
+        class="app-modal__error"
+      >
         {{ formError || authStore.error }}
       </p>
 
@@ -77,7 +91,11 @@ async function submit() {
         Відновити пароль
       </AppButton>
 
-      <button type="button" class="app-modal__secondary-btn" @click="$emit('back-to-login')">
+      <button
+        type="button"
+        class="app-modal__secondary-btn"
+        @click="$emit('back-to-login')"
+      >
         ← Назад до входу
       </button>
     </form>

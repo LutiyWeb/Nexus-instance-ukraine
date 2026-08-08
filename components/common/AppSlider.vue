@@ -69,10 +69,17 @@ onBeforeUnmount(() => {
 
 <template>
   <div :class="['app-slider', { 'app-slider--peek': peek }]">
-    <div v-if="title" class="app-slider__header">
+    <div
+      v-if="title"
+      class="app-slider__header"
+    >
       <h2 class="app-slider__title">{{ title }}</h2>
       <div class="app-slider__controls">
-        <NuxtLink v-if="linkTo && linkLabel" :to="linkTo" class="app-slider__link">
+        <NuxtLink
+          v-if="linkTo && linkLabel"
+          :to="linkTo"
+          class="app-slider__link"
+        >
           {{ linkLabel }}<template v-if="linkCount !== undefined"> ({{ linkCount }})</template>
         </NuxtLink>
         <AppArrow
@@ -104,13 +111,26 @@ onBeforeUnmount(() => {
       @swiper="onSwiper"
       @slide-change="onSlideChange"
     >
-      <SwiperSlide v-for="slide in slides" :key="slide.id">
-        <slot v-if="slide" :slide="slide" />
+      <SwiperSlide
+        v-for="slide in slides"
+        :key="slide.id"
+      >
+        <slot
+          v-if="slide"
+          :slide="slide"
+        />
       </SwiperSlide>
     </Swiper>
 
-    <div v-else class="app-slider__static">
-      <slot v-for="slide in slides" :key="slide.id" :slide="slide" />
+    <div
+      v-else
+      class="app-slider__static"
+    >
+      <slot
+        v-for="slide in slides"
+        :key="slide.id"
+        :slide="slide"
+      />
     </div>
   </div>
 </template>
@@ -149,7 +169,7 @@ onBeforeUnmount(() => {
     font-size: $font-size-xl;
 
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
 
     @include mixins.respond-to(md) {
       font-size: $font-size-2xl;

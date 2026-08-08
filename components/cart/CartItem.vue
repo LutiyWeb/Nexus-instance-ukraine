@@ -27,30 +27,53 @@ function formatPrice(p: number) {
       @change="emit('update:selected', ($event.target as HTMLInputElement).checked)"
     />
 
-    <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__img-link">
+    <NuxtLink
+      :to="`/product/${item.product.id}`"
+      class="cart-item__img-link"
+    >
       <img
         v-if="item.product.thumbnail"
         :src="item.product.thumbnail"
         :alt="item.product.title"
         class="cart-item__img"
       />
-      <div v-else class="cart-item__img cart-item__img--placeholder" />
+      <div
+        v-else
+        class="cart-item__img cart-item__img--placeholder"
+      />
     </NuxtLink>
 
     <div class="cart-item__info">
-      <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__title">
+      <NuxtLink
+        :to="`/product/${item.product.id}`"
+        class="cart-item__title"
+      >
         {{ item.product.title }}
       </NuxtLink>
       <span class="cart-item__price">{{ formatPrice(item.product.price) }}</span>
     </div>
 
     <div class="cart-item__qty">
-      <button type="button" @click="emit('updateQty', item.product.id, -1)">−</button>
+      <button
+        type="button"
+        @click="emit('updateQty', item.product.id, -1)"
+      >
+        −
+      </button>
       <span>{{ item.qty }}</span>
-      <button type="button" @click="emit('updateQty', item.product.id, 1)">+</button>
+      <button
+        type="button"
+        @click="emit('updateQty', item.product.id, 1)"
+      >
+        +
+      </button>
     </div>
 
-    <button class="cart-item__remove" type="button" @click="emit('remove', item.product.id)">
+    <button
+      class="cart-item__remove"
+      type="button"
+      @click="emit('remove', item.product.id)"
+    >
       <Trash2 :size="16" />
     </button>
   </div>

@@ -13,14 +13,20 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
 <template>
   <div :class="['card-horizontal', { 'card-horizontal--image-right': imageRight }]">
     <div class="card-horizontal__image">
-      <div v-if="loading" class="card-horizontal__shimmer card-horizontal__shimmer--image" />
+      <div
+        v-if="loading"
+        class="card-horizontal__shimmer card-horizontal__shimmer--image"
+      />
       <AppImage
         v-else-if="image"
         :src="image"
         :alt="title"
         :sizes="{ mobile: { w: 640, h: 300 }, desktop: { w: 280, h: 200 } }"
       />
-      <div v-else class="card-horizontal__placeholder" />
+      <div
+        v-else
+        class="card-horizontal__placeholder"
+      />
     </div>
     <div class="card-horizontal__body">
       <template v-if="loading">
@@ -29,9 +35,23 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
         <div class="card-horizontal__shimmer card-horizontal__shimmer--desc" />
       </template>
       <template v-else>
-        <span v-if="badge" class="card-horizontal__badge">{{ badge }}</span>
-        <h3 v-if="title" class="card-horizontal__title">{{ title }}</h3>
-        <p v-if="description" class="card-horizontal__desc">{{ description }}</p>
+        <span
+          v-if="badge"
+          class="card-horizontal__badge"
+          >{{ badge }}</span
+        >
+        <h3
+          v-if="title"
+          class="card-horizontal__title"
+        >
+          {{ title }}
+        </h3>
+        <p
+          v-if="description"
+          class="card-horizontal__desc"
+        >
+          {{ description }}
+        </p>
       </template>
     </div>
   </div>

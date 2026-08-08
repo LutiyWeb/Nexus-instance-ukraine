@@ -12,14 +12,21 @@ withDefaults(defineProps<Props>(), { loading: false })
 <template>
   <div class="card-vertical">
     <div class="card-vertical__image">
-      <div v-if="loading" class="card-vertical__shimmer card-vertical__shimmer--image" />
+      <div
+        v-if="loading"
+        class="card-vertical__shimmer card-vertical__shimmer--image"
+      />
       <AppImage
         v-else-if="image"
         :src="image"
         :alt="title"
         :sizes="{ mobile: { w: 640, h: 480 }, desktop: { w: 400, h: 300 } }"
       />
-      <span v-if="!loading && badge" class="card-vertical__badge">{{ badge }}</span>
+      <span
+        v-if="!loading && badge"
+        class="card-vertical__badge"
+        >{{ badge }}</span
+      >
     </div>
     <div class="card-vertical__body">
       <template v-if="loading">
@@ -27,8 +34,18 @@ withDefaults(defineProps<Props>(), { loading: false })
         <div class="card-vertical__shimmer card-vertical__shimmer--desc" />
       </template>
       <template v-else>
-        <h3 v-if="title" class="card-vertical__title">{{ title }}</h3>
-        <p v-if="description" class="card-vertical__desc">{{ description }}</p>
+        <h3
+          v-if="title"
+          class="card-vertical__title"
+        >
+          {{ title }}
+        </h3>
+        <p
+          v-if="description"
+          class="card-vertical__desc"
+        >
+          {{ description }}
+        </p>
       </template>
     </div>
   </div>
@@ -38,6 +55,7 @@ withDefaults(defineProps<Props>(), { loading: false })
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .card-vertical {
+  border: 3px solid red;
   border-radius: $radius-xl;
   background: $color-white;
   box-shadow: $shadow-md;

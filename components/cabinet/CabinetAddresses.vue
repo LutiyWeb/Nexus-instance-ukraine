@@ -70,14 +70,20 @@ onMounted(load)
         class="cab-addr__add-btn"
         @click="showForm = !showForm"
       >
-        <component :is="showForm ? X : Plus" :size="14" />
+        <component
+          :is="showForm ? X : Plus"
+          :size="14"
+        />
         <span class="cab-addr__btn-label">{{ showForm ? 'Скасувати' : 'Додати адресу' }}</span>
       </AppButton>
     </div>
 
     <!-- Add form -->
     <Transition name="slide-down">
-      <div v-if="showForm" class="cab-addr__form">
+      <div
+        v-if="showForm"
+        class="cab-addr__form"
+      >
         <div class="cab-addr__grid">
           <div class="cab-addr__field">
             <label class="cab-addr__label">Місто *</label>
@@ -87,7 +93,11 @@ onMounted(load)
               :class="{ 'cab-addr__input--error': errors.city }"
               placeholder="Київ"
             />
-            <span v-if="errors.city" class="cab-addr__error">{{ errors.city }}</span>
+            <span
+              v-if="errors.city"
+              class="cab-addr__error"
+              >{{ errors.city }}</span
+            >
           </div>
 
           <div class="cab-addr__field">
@@ -98,7 +108,11 @@ onMounted(load)
               :class="{ 'cab-addr__input--error': errors.street }"
               placeholder="вул. Хрещатик"
             />
-            <span v-if="errors.street" class="cab-addr__error">{{ errors.street }}</span>
+            <span
+              v-if="errors.street"
+              class="cab-addr__error"
+              >{{ errors.street }}</span
+            >
           </div>
 
           <div class="cab-addr__field">
@@ -109,47 +123,92 @@ onMounted(load)
               :class="{ 'cab-addr__input--error': errors.house }"
               placeholder="10"
             />
-            <span v-if="errors.house" class="cab-addr__error">{{ errors.house }}</span>
+            <span
+              v-if="errors.house"
+              class="cab-addr__error"
+              >{{ errors.house }}</span
+            >
           </div>
 
           <div class="cab-addr__field">
             <label class="cab-addr__label">Квартира</label>
-            <input v-model="form.apartment" class="cab-addr__input" placeholder="42" />
+            <input
+              v-model="form.apartment"
+              class="cab-addr__input"
+              placeholder="42"
+            />
           </div>
         </div>
 
         <label class="cab-addr__checkbox">
-          <input v-model="form.isDefault" type="checkbox" />
+          <input
+            v-model="form.isDefault"
+            type="checkbox"
+          />
           <span>Зробити основною</span>
         </label>
 
-        <AppButton variant="primary" size="md" :loading="submitting" @click="submit">
+        <AppButton
+          variant="primary"
+          size="md"
+          :loading="submitting"
+          @click="submit"
+        >
           Зберегти адресу
         </AppButton>
       </div>
     </Transition>
 
     <!-- Loading -->
-    <div v-if="loading" class="cab-addr__list">
-      <AppSkeleton v-for="n in 2" :key="n" width="100%" height="80px" border-radius="12px" />
+    <div
+      v-if="loading"
+      class="cab-addr__list"
+    >
+      <AppSkeleton
+        v-for="n in 2"
+        :key="n"
+        width="100%"
+        height="80px"
+        border-radius="12px"
+      />
     </div>
 
     <!-- Empty -->
-    <div v-else-if="!addresses.length && !showForm" class="cab-addr__empty">
-      <MapPin :size="40" class="cab-addr__empty-icon" />
+    <div
+      v-else-if="!addresses.length && !showForm"
+      class="cab-addr__empty"
+    >
+      <MapPin
+        :size="40"
+        class="cab-addr__empty-icon"
+      />
       <p>Немає збережених адрес</p>
     </div>
 
     <!-- List -->
-    <div v-else-if="addresses.length" class="cab-addr__list">
-      <div v-for="addr in addresses" :key="addr.id" class="cab-addr__item">
-        <MapPin :size="18" class="cab-addr__item-icon" />
+    <div
+      v-else-if="addresses.length"
+      class="cab-addr__list"
+    >
+      <div
+        v-for="addr in addresses"
+        :key="addr.id"
+        class="cab-addr__item"
+      >
+        <MapPin
+          :size="18"
+          class="cab-addr__item-icon"
+        />
         <div class="cab-addr__item-body">
           <span class="cab-addr__item-text">
             {{ addr.city }}, {{ addr.street }}, {{ addr.house }}
             <template v-if="addr.apartment">, кв. {{ addr.apartment }}</template>
           </span>
-          <span v-if="addr.isDefault" class="cab-addr__badge">Основна</span>
+          <span
+            v-if="addr.isDefault"
+            class="cab-addr__badge"
+            >Основна</span
+          >
         </div>
         <div class="cab-addr__item-actions">
           <button
@@ -215,7 +274,7 @@ onMounted(load)
   &__title {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $color-gray-900;
+    color: $color-heading;
   }
 
   &__form {

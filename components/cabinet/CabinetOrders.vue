@@ -31,29 +31,64 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     <h2 class="cab-orders__title">Історія замовлень</h2>
 
     <!-- Loading -->
-    <div v-if="ordersStore.loading" class="cab-orders__list">
-      <div v-for="n in 3" :key="n" class="cab-orders__skeleton">
-        <AppSkeleton width="120px" height="14px" />
-        <AppSkeleton width="80px" height="14px" />
-        <AppSkeleton width="90px" height="14px" />
+    <div
+      v-if="ordersStore.loading"
+      class="cab-orders__list"
+    >
+      <div
+        v-for="n in 3"
+        :key="n"
+        class="cab-orders__skeleton"
+      >
+        <AppSkeleton
+          width="120px"
+          height="14px"
+        />
+        <AppSkeleton
+          width="80px"
+          height="14px"
+        />
+        <AppSkeleton
+          width="90px"
+          height="14px"
+        />
       </div>
     </div>
 
     <!-- Empty -->
-    <div v-else-if="!ordersStore.orders.length" class="cab-orders__empty">
-      <Package :size="48" class="cab-orders__empty-icon" />
+    <div
+      v-else-if="!ordersStore.orders.length"
+      class="cab-orders__empty"
+    >
+      <Package
+        :size="48"
+        class="cab-orders__empty-icon"
+      />
       <p class="cab-orders__empty-title">Замовлень поки немає</p>
       <p class="cab-orders__empty-desc">Ваші замовлення з'являться тут після першої покупки</p>
-      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')"
+      <AppButton
+        variant="primary"
+        size="md"
+        @click="navigateTo('/catalog')"
         >Перейти до каталогу</AppButton
       >
     </div>
 
     <!-- List -->
-    <div v-else class="cab-orders__list">
-      <div v-for="order in ordersStore.orders" :key="order.id" class="cab-orders__item">
+    <div
+      v-else
+      class="cab-orders__list"
+    >
+      <div
+        v-for="order in ordersStore.orders"
+        :key="order.id"
+        class="cab-orders__item"
+      >
         <!-- Row header -->
-        <div class="cab-orders__row" @click="toggleExpand(order.id)">
+        <div
+          class="cab-orders__row"
+          @click="toggleExpand(order.id)"
+        >
           <div class="cab-orders__meta">
             <span class="cab-orders__number">{{ order.orderNumber }}</span>
             <span class="cab-orders__date">{{
@@ -87,13 +122,22 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
 
         <!-- Expanded details -->
         <Transition name="cab-orders-expand">
-          <div v-if="expandedId === order.id" class="cab-orders__details">
-            <div v-for="item in order.items" :key="item.id" class="cab-orders__product">
+          <div
+            v-if="expandedId === order.id"
+            class="cab-orders__details"
+          >
+            <div
+              v-for="item in order.items"
+              :key="item.id"
+              class="cab-orders__product"
+            >
               <div class="cab-orders__product-info">
                 <span class="cab-orders__product-title">{{ item.productTitle }}</span>
-                <span v-if="item.variant" class="cab-orders__product-variant">{{
-                  (item.variant as any).title
-                }}</span>
+                <span
+                  v-if="item.variant"
+                  class="cab-orders__product-variant"
+                  >{{ (item.variant as any).title }}</span
+                >
                 <span class="cab-orders__product-qty">
                   {{ item.quantity }} шт. ×
                   {{ ordersStore.formatMoney(item.unitPrice, order.currency) }}
@@ -105,7 +149,10 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
             </div>
 
             <div class="cab-orders__details-footer">
-              <NuxtLink :to="`/order/${order.id}`" class="cab-orders__link">
+              <NuxtLink
+                :to="`/order/${order.id}`"
+                class="cab-orders__link"
+              >
                 Детальніше про замовлення <ExternalLink :size="13" />
               </NuxtLink>
             </div>
@@ -115,7 +162,10 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     </div>
 
     <!-- Pagination -->
-    <div v-if="ordersStore.meta.totalPages > 1" class="cab-orders__pagination">
+    <div
+      v-if="ordersStore.meta.totalPages > 1"
+      class="cab-orders__pagination"
+    >
       <button
         v-for="page in ordersStore.meta.totalPages"
         :key="page"
@@ -142,7 +192,7 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
   &__title {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $color-gray-900;
+    color: $color-heading;
     padding-bottom: 16px;
     border-bottom: 1px solid $color-gray-100;
   }

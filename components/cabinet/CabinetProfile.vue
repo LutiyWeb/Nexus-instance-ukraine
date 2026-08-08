@@ -88,9 +88,11 @@ async function confirmDelete() {
             class="cab-profile__input"
             :class="{ 'cab-profile__input--error': profileErrors.firstName }"
           />
-          <span v-if="profileErrors.firstName" class="cab-profile__error">{{
-            profileErrors.firstName
-          }}</span>
+          <span
+            v-if="profileErrors.firstName"
+            class="cab-profile__error"
+            >{{ profileErrors.firstName }}</span
+          >
         </div>
 
         <div class="cab-profile__field">
@@ -100,9 +102,11 @@ async function confirmDelete() {
             class="cab-profile__input"
             :class="{ 'cab-profile__input--error': profileErrors.lastName }"
           />
-          <span v-if="profileErrors.lastName" class="cab-profile__error">{{
-            profileErrors.lastName
-          }}</span>
+          <span
+            v-if="profileErrors.lastName"
+            class="cab-profile__error"
+            >{{ profileErrors.lastName }}</span
+          >
         </div>
 
         <div class="cab-profile__field">
@@ -112,9 +116,11 @@ async function confirmDelete() {
             class="cab-profile__input"
             :class="{ 'cab-profile__input--error': profileErrors.email }"
           />
-          <span v-if="profileErrors.email" class="cab-profile__error">{{
-            profileErrors.email
-          }}</span>
+          <span
+            v-if="profileErrors.email"
+            class="cab-profile__error"
+            >{{ profileErrors.email }}</span
+          >
         </div>
 
         <div class="cab-profile__field">
@@ -129,9 +135,18 @@ async function confirmDelete() {
       </div>
 
       <div class="cab-profile__actions">
-        <AppButton variant="primary" size="md" @click="saveProfile">Зберегти</AppButton>
+        <AppButton
+          variant="primary"
+          size="md"
+          @click="saveProfile"
+          >Зберегти</AppButton
+        >
         <Transition name="fade">
-          <span v-if="profileSaved" class="cab-profile__saved">Збережено</span>
+          <span
+            v-if="profileSaved"
+            class="cab-profile__saved"
+            >Збережено</span
+          >
         </Transition>
       </div>
     </section>
@@ -155,10 +170,17 @@ async function confirmDelete() {
               class="cab-profile__eye"
               @click="showPwd.current = !showPwd.current"
             >
-              <component :is="showPwd.current ? EyeOff : Eye" :size="16" />
+              <component
+                :is="showPwd.current ? EyeOff : Eye"
+                :size="16"
+              />
             </button>
           </div>
-          <span v-if="pwdErrors.current" class="cab-profile__error">{{ pwdErrors.current }}</span>
+          <span
+            v-if="pwdErrors.current"
+            class="cab-profile__error"
+            >{{ pwdErrors.current }}</span
+          >
         </div>
 
         <div />
@@ -172,11 +194,22 @@ async function confirmDelete() {
               class="cab-profile__input"
               :class="{ 'cab-profile__input--error': pwdErrors.next }"
             />
-            <button type="button" class="cab-profile__eye" @click="showPwd.next = !showPwd.next">
-              <component :is="showPwd.next ? EyeOff : Eye" :size="16" />
+            <button
+              type="button"
+              class="cab-profile__eye"
+              @click="showPwd.next = !showPwd.next"
+            >
+              <component
+                :is="showPwd.next ? EyeOff : Eye"
+                :size="16"
+              />
             </button>
           </div>
-          <span v-if="pwdErrors.next" class="cab-profile__error">{{ pwdErrors.next }}</span>
+          <span
+            v-if="pwdErrors.next"
+            class="cab-profile__error"
+            >{{ pwdErrors.next }}</span
+          >
         </div>
 
         <div class="cab-profile__field">
@@ -193,17 +226,33 @@ async function confirmDelete() {
               class="cab-profile__eye"
               @click="showPwd.confirm = !showPwd.confirm"
             >
-              <component :is="showPwd.confirm ? EyeOff : Eye" :size="16" />
+              <component
+                :is="showPwd.confirm ? EyeOff : Eye"
+                :size="16"
+              />
             </button>
           </div>
-          <span v-if="pwdErrors.confirm" class="cab-profile__error">{{ pwdErrors.confirm }}</span>
+          <span
+            v-if="pwdErrors.confirm"
+            class="cab-profile__error"
+            >{{ pwdErrors.confirm }}</span
+          >
         </div>
       </div>
 
       <div class="cab-profile__actions">
-        <AppButton variant="outline" size="md" @click="changePassword">Змінити пароль</AppButton>
+        <AppButton
+          variant="outline"
+          size="md"
+          @click="changePassword"
+          >Змінити пароль</AppButton
+        >
         <Transition name="fade">
-          <span v-if="pwdSaved" class="cab-profile__saved">Пароль змінено</span>
+          <span
+            v-if="pwdSaved"
+            class="cab-profile__saved"
+            >Пароль змінено</span
+          >
         </Transition>
       </div>
     </section>
@@ -216,20 +265,38 @@ async function confirmDelete() {
           Після видалення всі дані будуть знищені та не підлягають відновленню.
         </p>
       </div>
-      <AppButton variant="danger" size="md" @click="isDeleteOpen = true">
+      <AppButton
+        variant="danger"
+        size="md"
+        @click="isDeleteOpen = true"
+      >
         <Trash2 :size="16" /> Видалити обліковий запис
       </AppButton>
     </section>
 
     <!-- Delete confirm modal -->
     <Teleport to="body">
-      <div v-if="isDeleteOpen" class="cab-profile__overlay" @click.self="isDeleteOpen = false">
+      <div
+        v-if="isDeleteOpen"
+        class="cab-profile__overlay"
+        @click.self="isDeleteOpen = false"
+      >
         <div class="cab-profile__modal">
           <h3>Видалити обліковий запис?</h3>
           <p>Ця дія незворотна. Усі ваші дані, замовлення та обране будуть видалені.</p>
-          <p v-if="authStore.error" class="cab-profile__error">{{ authStore.error }}</p>
+          <p
+            v-if="authStore.error"
+            class="cab-profile__error"
+          >
+            {{ authStore.error }}
+          </p>
           <div class="cab-profile__modal-actions">
-            <AppButton variant="outline" size="md" @click="isDeleteOpen = false">Скасувати</AppButton>
+            <AppButton
+              variant="outline"
+              size="md"
+              @click="isDeleteOpen = false"
+              >Скасувати</AppButton
+            >
             <AppButton
               variant="danger"
               size="md"
@@ -262,7 +329,7 @@ async function confirmDelete() {
   &__title {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $color-gray-900;
+    color: $color-heading;
     padding-bottom: 16px;
     border-bottom: 1px solid $color-gray-100;
   }

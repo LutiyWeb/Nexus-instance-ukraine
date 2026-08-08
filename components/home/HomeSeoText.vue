@@ -68,7 +68,11 @@ const open = ref(false)
       </div>
     </div>
 
-    <button class="seo-block__btn" type="button" @click="open = !open">
+    <button
+      class="seo-block__btn"
+      type="button"
+      @click="open = !open"
+    >
       {{ open ? 'Сховати' : 'Читати повністю' }}
       <span :class="['seo-block__arrow', { 'seo-block__arrow--open': open }]">↓</span>
     </button>
@@ -86,7 +90,7 @@ const open = ref(false)
   &__title {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
     margin: 0 0 16px;
     line-height: 1.3;
 

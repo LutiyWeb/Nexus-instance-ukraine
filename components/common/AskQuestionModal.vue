@@ -88,10 +88,16 @@ function close() {
 }
 
 async function submit() {
-  const result = questionSchema.safeParse({ text: text.value, name: name.value, email: email.value })
+  const result = questionSchema.safeParse({
+    text: text.value,
+    name: name.value,
+    email: email.value,
+  })
   if (!result.success) {
     const fieldErrors = result.error.flatten().fieldErrors
-    errors.value = Object.fromEntries(Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']))
+    errors.value = Object.fromEntries(
+      Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
+    )
     return
   }
   errors.value = {}
@@ -119,10 +125,16 @@ onBeforeUnmount(clearFiles)
 </script>
 
 <template>
-  <AppModal :open="open" @update:open="emit('update:open', $event)">
+  <AppModal
+    :open="open"
+    @update:open="emit('update:open', $event)"
+  >
     <h3 class="ask-question-modal__title">Поставити запитання</h3>
 
-    <form class="app-modal__form" @submit.prevent="submit">
+    <form
+      class="app-modal__form"
+      @submit.prevent="submit"
+    >
       <div class="ask-question-modal__field">
         <label class="ask-question-modal__label">Ваше запитання</label>
         <textarea
@@ -132,7 +144,11 @@ onBeforeUnmount(clearFiles)
           placeholder="Опишіть, що б ви хотіли дізнатися про товар..."
           rows="4"
         />
-        <span v-if="errors.text" class="app-modal__error">{{ errors.text }}</span>
+        <span
+          v-if="errors.text"
+          class="app-modal__error"
+          >{{ errors.text }}</span
+        >
       </div>
 
       <div class="ask-question-modal__field">
@@ -145,14 +161,30 @@ onBeforeUnmount(clearFiles)
           class="ask-question-modal__file-input"
           @change="onFilesSelected"
         />
-        <AppButton type="button" variant="outline" size="sm" @click="pickFiles">
+        <AppButton
+          type="button"
+          variant="outline"
+          size="sm"
+          @click="pickFiles"
+        >
           <Paperclip :size="14" />
           Вибрати файли
         </AppButton>
 
-        <div v-if="previews.length" class="ask-question-modal__previews">
-          <div v-for="(src, i) in previews" :key="src" class="ask-question-modal__preview">
-            <img :src="src" alt="" class="ask-question-modal__preview-img" />
+        <div
+          v-if="previews.length"
+          class="ask-question-modal__previews"
+        >
+          <div
+            v-for="(src, i) in previews"
+            :key="src"
+            class="ask-question-modal__preview"
+          >
+            <img
+              :src="src"
+              alt=""
+              class="ask-question-modal__preview-img"
+            />
             <button
               type="button"
               class="ask-question-modal__preview-remove"
@@ -162,27 +194,57 @@ onBeforeUnmount(clearFiles)
             </button>
           </div>
         </div>
-        <span v-if="fileError" class="app-modal__error">{{ fileError }}</span>
+        <span
+          v-if="fileError"
+          class="app-modal__error"
+          >{{ fileError }}</span
+        >
       </div>
 
-      <AppInputText v-model="name" label="Ваше ім'я та прізвище" :error="errors.name" />
-      <AppInputText v-model="email" label="Електронна пошта" :error="errors.email" />
+      <AppInputText
+        v-model="name"
+        label="Ваше ім'я та прізвище"
+        :error="errors.name"
+      />
+      <AppInputText
+        v-model="email"
+        label="Електронна пошта"
+        :error="errors.email"
+      />
 
       <label class="ask-question-modal__checkbox">
-        <input v-model="notifyByEmail" type="checkbox" />
+        <input
+          v-model="notifyByEmail"
+          type="checkbox"
+        />
         Повідомляти про відповіді по електронній пошті
       </label>
 
       <div class="ask-question-modal__actions">
-        <AppButton type="button" variant="outline" size="md" @click="close">Скасувати</AppButton>
-        <AppButton type="submit" variant="primary" size="md" :loading="submitting">
+        <AppButton
+          type="button"
+          variant="outline"
+          size="md"
+          @click="close"
+          >Скасувати</AppButton
+        >
+        <AppButton
+          type="submit"
+          variant="primary"
+          size="md"
+          :loading="submitting"
+        >
           Поставити запитання
         </AppButton>
       </div>
 
       <p class="ask-question-modal__disclaimer">
         Питання проходить модерацію. Ознайомтесь із
-        <NuxtLink to="/rules-questions" @click="close">правилами публікації</NuxtLink>.
+        <NuxtLink
+          to="/rules-questions"
+          @click="close"
+          >правилами публікації</NuxtLink
+        >.
       </p>
     </form>
   </AppModal>

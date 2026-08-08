@@ -17,23 +17,49 @@ withDefaults(defineProps<Props>(), { reverse: false })
     :class="['special-banner', { 'special-banner--reverse': reverse }]"
   >
     <div class="special-banner__image">
-      <img :src="imageUrl" :alt="title" class="special-banner__img" />
+      <img
+        :src="imageUrl"
+        :alt="title"
+        class="special-banner__img"
+      />
     </div>
     <div class="special-banner__content">
       <h2 class="special-banner__title">{{ title }}</h2>
-      <p v-if="description" class="special-banner__description">{{ description }}</p>
+      <p
+        v-if="description"
+        class="special-banner__description"
+      >
+        {{ description }}
+      </p>
       <div class="special-banner__actions">
-        <AppButton variant="primary" size="lg" tag="span">Дивитись</AppButton>
+        <AppButton
+          variant="primary"
+          size="lg"
+          tag="span"
+          >Дивитись</AppButton
+        >
       </div>
     </div>
   </NuxtLink>
-  <div v-else :class="['special-banner', { 'special-banner--reverse': reverse }]">
+  <div
+    v-else
+    :class="['special-banner', { 'special-banner--reverse': reverse }]"
+  >
     <div class="special-banner__image">
-      <img :src="imageUrl" :alt="title" class="special-banner__img" />
+      <img
+        :src="imageUrl"
+        :alt="title"
+        class="special-banner__img"
+      />
     </div>
     <div class="special-banner__content">
       <h2 class="special-banner__title">{{ title }}</h2>
-      <p v-if="description" class="special-banner__description">{{ description }}</p>
+      <p
+        v-if="description"
+        class="special-banner__description"
+      >
+        {{ description }}
+      </p>
     </div>
   </div>
 </template>
@@ -43,12 +69,34 @@ withDefaults(defineProps<Props>(), { reverse: false })
 @use '~/assets/styles/mixins' as mixins;
 
 .special-banner {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
   padding: 32px 24px;
   border-radius: $radius-2xl;
-  background: $color-gray-100;
+  background: $color-gray-50;
+  overflow: hidden;
+
+  &::before {
+    left: 0;
+    top: 0;
+    position: absolute;
+    z-index: 0;
+    opacity: 0.7;
+    width: 100%;
+    height: 100%;
+    transform: rotateZ(180deg);
+    background-image: url('/public/bg-image/tech-bg-3.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    content: '';
+
+    @include mixins.respond-to(md) {
+      width: 30%;
+      height: 100%;
+    }
+  }
 
   @include mixins.respond-to(md) {
     grid-template-columns: 1fr 1fr;
@@ -57,6 +105,11 @@ withDefaults(defineProps<Props>(), { reverse: false })
   }
 
   &--reverse {
+    &::before {
+      left: auto;
+      right: 0;
+      transform: rotateZ(0);
+    }
     .special-banner__image {
       @include mixins.respond-to(md) {
         order: 1;
@@ -65,6 +118,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
   }
 
   &__image {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,6 +135,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
   }
 
   &__content {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -105,7 +160,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
   &__title {
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
     margin: 0;
 
     @include mixins.respond-to(md) {

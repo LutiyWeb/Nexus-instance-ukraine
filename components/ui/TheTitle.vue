@@ -8,7 +8,10 @@ withDefaults(defineProps<Props>(), { tag: 'h2', size: 'm' })
 </script>
 
 <template>
-  <component :is="tag" :class="['the-title', `the-title--${size}`]">
+  <component
+    :is="tag"
+    :class="['the-title', `the-title--${size}`]"
+  >
     <slot />
   </component>
 </template>
@@ -18,7 +21,7 @@ withDefaults(defineProps<Props>(), { tag: 'h2', size: 'm' })
 @use '~/assets/styles/mixins' as mixins;
 .the-title {
   font-weight: $font-weight-bold;
-  color: $color-gray-900;
+  color: $color-heading;
   line-height: $line-height-tight;
 
   &--s {

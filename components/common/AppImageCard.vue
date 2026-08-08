@@ -42,7 +42,10 @@ function handleFavClick(product: Product) {
     :class="['image-card', { 'image-card--loading': loading }]"
   >
     <!-- Shimmer -->
-    <div v-if="loading" class="image-card__shimmer" />
+    <div
+      v-if="loading"
+      class="image-card__shimmer"
+    />
 
     <template v-else-if="product">
       <!-- Background image -->
@@ -60,7 +63,10 @@ function handleFavClick(product: Product) {
       />
 
       <!-- Labels -->
-      <div v-if="product.labels?.length" class="image-card__labels">
+      <div
+        v-if="product.labels?.length"
+        class="image-card__labels"
+      >
         <span
           v-for="label in product.labels"
           :key="label"
@@ -76,12 +82,19 @@ function handleFavClick(product: Product) {
         type="button"
         @click.prevent="handleFavClick(product)"
       >
-        <Heart :size="14" :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'" />
+        <Heart
+          :size="14"
+          :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'"
+        />
       </button>
 
       <!-- Info panel — slides up on hover -->
       <div class="image-card__info">
-        <span v-if="product.category" class="image-card__category">{{ product.category }}</span>
+        <span
+          v-if="product.category"
+          class="image-card__category"
+          >{{ product.category }}</span
+        >
         <h3 class="image-card__title">{{ product.title }}</h3>
         <div class="image-card__price-row">
           <span
@@ -92,7 +105,10 @@ function handleFavClick(product: Product) {
           >
             ${{ product.price }}
           </span>
-          <span v-if="product.compareAtPrice" class="image-card__compare">
+          <span
+            v-if="product.compareAtPrice"
+            class="image-card__compare"
+          >
             ${{ product.compareAtPrice }}
           </span>
         </div>
@@ -105,7 +121,11 @@ function handleFavClick(product: Product) {
           <ShoppingCart :size="14" />
           Додати до кошика
         </button>
-        <span v-else class="image-card__oos">Немає в наявності</span>
+        <span
+          v-else
+          class="image-card__oos"
+          >Немає в наявності</span
+        >
       </div>
     </template>
   </component>

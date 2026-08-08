@@ -27,9 +27,7 @@ function validate(): boolean {
     return true
   }
   const fieldErrors = result.error.flatten().fieldErrors
-  errors.value = Object.fromEntries(
-    Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
-  )
+  errors.value = Object.fromEntries(Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']))
   return false
 }
 
@@ -78,19 +76,44 @@ async function submit() {
 
 <template>
   <div class="admin-login">
-    <form class="admin-login__form" @submit.prevent="submit">
+    <form
+      class="admin-login__form"
+      @submit.prevent="submit"
+    >
       <h1 class="admin-login__title">Вхід в адмінку</h1>
 
-      <AppInputText v-model="email" label="Email" placeholder="email@example.com" :error="errors.email" />
-      <AppPasswordInput v-model="password" label="Пароль" placeholder="Пароль" :error="errors.password" />
+      <AppInputText
+        v-model="email"
+        label="Email"
+        placeholder="email@example.com"
+        :error="errors.email"
+      />
+      <AppPasswordInput
+        v-model="password"
+        label="Пароль"
+        placeholder="Пароль"
+        :error="errors.password"
+      />
 
-      <AppCaptcha ref="captchaRef" @verify="onCaptchaVerify" @expired="onCaptchaExpired" />
+      <AppCaptcha
+        ref="captchaRef"
+        @verify="onCaptchaVerify"
+        @expired="onCaptchaExpired"
+      />
 
-      <p v-if="captchaError || accessError || authStore.error" class="admin-login__error">
+      <p
+        v-if="captchaError || accessError || authStore.error"
+        class="admin-login__error"
+      >
         {{ captchaError || accessError || authStore.error }}
       </p>
 
-      <AppButton type="submit" variant="primary" size="md" :loading="authStore.loading">
+      <AppButton
+        type="submit"
+        variant="primary"
+        size="md"
+        :loading="authStore.loading"
+      >
         Увійти
       </AppButton>
     </form>
