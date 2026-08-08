@@ -13,11 +13,25 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <NuxtLink :to="linkUrl ?? '/'" class="hero-banner">
+  <NuxtLink
+    :to="linkUrl ?? '/'"
+    class="hero-banner"
+  >
     <div class="hero-banner__content">
       <h2 class="hero-banner__title">{{ title }}</h2>
-      <p v-if="description" class="hero-banner__sub">{{ description }}</p>
-      <AppButton v-if="linkUrl" variant="gradient" size="xl" tag="span" class="hero-banner__cta">
+      <p
+        v-if="description"
+        class="hero-banner__sub"
+      >
+        {{ description }}
+      </p>
+      <AppButton
+        v-if="linkUrl"
+        variant="gradient"
+        size="xl"
+        tag="span"
+        class="hero-banner__cta"
+      >
         Дивитись
       </AppButton>
     </div>
@@ -49,71 +63,77 @@ withDefaults(defineProps<Props>(), {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 
-// EXPERIMENTAL: two-tone hero (gradient content panel + static-tint media
-// panel). Colors stay on existing design tokens, not a new hardcoded palette.
 .hero-banner {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 450px;
+  min-height: 400px;
+  padding: 16px 20px;
   border-radius: $radius-2xl;
-  overflow: hidden;
-  position: relative;
+  background: $color-gray-50;
   text-decoration: none;
-  background: linear-gradient(180deg, rgba(248, 189, 228, 0.18) 0%, rgba(255, 251, 253, 0.18) 180%);
 
   &::before {
-    content: '';
-    position: absolute;
-    width: 35%;
+    opacity: 0.7;
+    width: 100%;
     height: 100%;
-    top: 0;
-    bottom: 0;
     right: 0;
+    position: absolute;
     z-index: 0;
-    pointer-events: none;
-    background-color: $color-white;
+    top: 0;
+    background-image: url('/public/bg-image/tech-bg-3.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    content: '';
+
+    @include mixins.respond-to(md) {
+      width: 30%;
+      height: 100%;
+    }
   }
 
-  &::after {
-    content: 'SOUND';
-    position: absolute;
-    inset: 200px 0 0 300px;
-    z-index: 0;
-    font-family: 'Oswald', sans-serif;
-    font-size: 240px;
-    font-weight: $font-weight-bold;
-    color: rgb(79 70 229 / 8%);
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0.3;
+  &::before {
   }
+
+  // &::after {
+  //   position: absolute;
+  //   z-index: 0;
+  //   bottom: 0;
+  //   border-radius: 0 24px 24px 0;
+  //   background-image: linear-gradient(to top, $color-gray-100 0%, rgb(244 248 252 / 0.6) 100%);
+  //   content: '';
+
+  //   @include mixins.respond-to(md) {
+  //     background-image: linear-gradient(to right, $color-gray-100 0%, rgb(244 248 252 / 0.2) 100%);
+  //     width: calc(30% + 10px);
+  //     height: 100%;
+  //   }
+  // }
 
   @include mixins.respond-to(md) {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 0;
+    padding: 40px 64px;
+    gap: 48px;
   }
 
   &__content {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
     flex: 1 1 0;
     min-width: 0;
-    padding: 16px 20px;
     text-align: center;
 
     @include mixins.respond-to(md) {
       align-items: flex-start;
       gap: 16px;
-      padding: 40px 64px;
       text-align: left;
     }
   }
@@ -122,7 +142,7 @@ withDefaults(defineProps<Props>(), {
     font-size: $font-size-lg;
     font-weight: $font-weight-bold;
     margin: 0;
-    color: $color-gray-900;
+    color: $color-heading;
     line-height: 1.2;
     max-width: 520px;
 
@@ -161,6 +181,7 @@ withDefaults(defineProps<Props>(), {
 
   &__image {
     position: relative;
+    z-index: 1;
     display: flex;
     order: -1;
     align-items: center;
