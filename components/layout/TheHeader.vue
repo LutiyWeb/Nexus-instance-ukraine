@@ -58,7 +58,11 @@ function onBackToLogin() {
     <div class="the-header__inner container">
       <!-- Left: burger + mobile search + catalog -->
       <div class="the-header__left">
-        <button class="the-header__burger-btn" type="button" @click="openMenu">
+        <button
+          class="the-header__burger-btn"
+          type="button"
+          @click="openMenu"
+        >
           <Menu :size="20" />
         </button>
 
@@ -97,13 +101,31 @@ function onBackToLogin() {
       </div>
 
       <!-- Center: logo -->
-      <NuxtLink to="/" class="the-header__logo">Nexus</NuxtLink>
+      <NuxtLink
+        to="/"
+        class="the-header__logo"
+      >
+        <img
+          src="/logo.svg"
+          alt="Nexus"
+          width="35"
+          height="40"
+          class="the-header__logo-img"
+        />
+      </NuxtLink>
 
       <!-- Right: search + actions -->
       <div class="the-header__right">
         <!-- Search input (desktop) — opens overlay on focus -->
-        <div class="the-header__search" role="button" @click="uiStore.searchOpen = true">
-          <Search class="the-header__search-icon" :size="16" />
+        <div
+          class="the-header__search"
+          role="button"
+          @click="uiStore.searchOpen = true"
+        >
+          <Search
+            class="the-header__search-icon"
+            :size="16"
+          />
           <span class="the-header__search-placeholder">Пошук товарів...</span>
         </div>
 
@@ -126,26 +148,51 @@ function onBackToLogin() {
           @click="router.push(authStore.isLoggedIn ? '/cabinet?section=favorites' : '/wishlist')"
         >
           <Heart :size="20" />
-          <span v-if="wishlistsStore.count" class="the-header__badge">{{
-            wishlistsStore.count
-          }}</span>
+          <span
+            v-if="wishlistsStore.count"
+            class="the-header__badge"
+            >{{ wishlistsStore.count }}</span
+          >
         </button>
 
         <!-- Cart -->
-        <button class="the-header__action-btn" type="button" @click="handleCart">
+        <button
+          class="the-header__action-btn"
+          type="button"
+          @click="handleCart"
+        >
           <ShoppingCart :size="20" />
-          <span v-if="cartStore.count" class="the-header__badge">{{ cartStore.count }}</span>
+          <span
+            v-if="cartStore.count"
+            class="the-header__badge"
+            >{{ cartStore.count }}</span
+          >
         </button>
       </div>
     </div>
 
-    <HeaderCatalogMenu :open="uiStore.catalogOpen" @close="uiStore.catalogOpen = false" />
+    <HeaderCatalogMenu
+      :open="uiStore.catalogOpen"
+      @close="uiStore.catalogOpen = false"
+    />
   </header>
 
-  <HeaderSearchOverlay :open="uiStore.searchOpen" @close="uiStore.searchOpen = false" />
-  <HeaderSidebar :open="uiStore.sidebarOpen" @close="uiStore.sidebarOpen = false" />
-  <HeaderMenuDrawer :open="uiStore.menuOpen" @close="uiStore.menuOpen = false" />
-  <HeaderAuthModal v-model:open="uiStore.authModalOpen" @forgot-password="onForgotPassword" />
+  <HeaderSearchOverlay
+    :open="uiStore.searchOpen"
+    @close="uiStore.searchOpen = false"
+  />
+  <HeaderSidebar
+    :open="uiStore.sidebarOpen"
+    @close="uiStore.sidebarOpen = false"
+  />
+  <HeaderMenuDrawer
+    :open="uiStore.menuOpen"
+    @close="uiStore.menuOpen = false"
+  />
+  <HeaderAuthModal
+    v-model:open="uiStore.authModalOpen"
+    @forgot-password="onForgotPassword"
+  />
   <HeaderForgotPasswordModal
     v-model:open="uiStore.forgotPasswordModalOpen"
     @back-to-login="onBackToLogin"
@@ -185,11 +232,13 @@ function onBackToLogin() {
   }
 
   &__logo {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    color: $color-primary;
-    text-decoration: none;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+
+  &__logo-img {
+    height: 40px;
+    width: auto;
   }
 
   &__right {
