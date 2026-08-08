@@ -28,7 +28,10 @@ withDefaults(defineProps<Props>(), {
       { 'app-btn--disabled': disabled || loading },
     ]"
   >
-    <span v-if="loading" class="app-btn__spinner" />
+    <span
+      v-if="loading"
+      class="app-btn__spinner"
+    />
     <slot />
   </NuxtLink>
   <component
@@ -37,7 +40,10 @@ withDefaults(defineProps<Props>(), {
     :class="['app-btn', `app-btn--${variant}`, `app-btn--${size}`]"
     :disabled="disabled || loading"
   >
-    <span v-if="loading" class="app-btn__spinner" />
+    <span
+      v-if="loading"
+      class="app-btn__spinner"
+    />
     <slot />
   </component>
 </template>
@@ -156,13 +162,13 @@ withDefaults(defineProps<Props>(), {
   // EXPERIMENTAL: temporary hardcoded accent for the glassmorphism visual test
   // (see .claude/skills branch brief) — not promoted to variables.scss yet.
   &--gradient {
-    --accent-start: #00c6ff;
-    --accent-mid: #0072ff;
+    --accent-start: #f5cc5c;
+    --accent-mid: #ffbd00;
 
     background: linear-gradient(90deg, var(--accent-start), var(--accent-mid), var(--accent-start));
     background-size: 200% auto;
     color: $color-white;
-    box-shadow: 0 8px 20px rgb(0 198 255 / 35%);
+    box-shadow: 0 8px 20px rgb(255 189 0 / 35%);
     animation: app-btn-gradient-move 3s linear infinite;
 
     @media (prefers-reduced-motion: reduce) {
@@ -170,7 +176,7 @@ withDefaults(defineProps<Props>(), {
     }
 
     &:not(:disabled):hover {
-      box-shadow: 0 12px 28px rgb(0 198 255 / 50%);
+      box-shadow: 0 12px 28px rgb(255 189 0 / 50%);
       transform: translateY(-2px);
     }
   }
