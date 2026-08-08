@@ -22,17 +22,31 @@ defineProps<{ rows: PropRow[] }>()
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in rows" :key="row.name">
+        <tr
+          v-for="row in rows"
+          :key="row.name"
+        >
           <td>
             <code class="uk-props__name">{{ row.name }}</code>
-            <span v-if="row.required" class="uk-props__required">*</span>
+            <span
+              v-if="row.required"
+              class="uk-props__required"
+              >*</span
+            >
           </td>
           <td>
             <code class="uk-props__type">{{ row.type }}</code>
           </td>
           <td>
-            <code v-if="row.default" class="uk-props__default">{{ row.default }}</code
-            ><span v-else class="uk-props__none">—</span>
+            <code
+              v-if="row.default"
+              class="uk-props__default"
+              >{{ row.default }}</code
+            ><span
+              v-else
+              class="uk-props__none"
+              >—</span
+            >
           </td>
           <td class="uk-props__desc">{{ row.description }}</td>
         </tr>

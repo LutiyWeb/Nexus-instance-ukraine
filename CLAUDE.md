@@ -21,6 +21,7 @@ npm run dev      # Starts Fastify dev server (tsx watch src/server.ts)
 ```
 
 Both servers must run in parallel. Start backend first, then frontend:
+
 1. Terminal 1 (backend): `cd C:\Users\Юра\Desktop\vue-project\shopmarker-backend && npm run dev`
 2. Terminal 2 (frontend): `npm run dev` (this repo)
 

@@ -8,7 +8,10 @@ withDefaults(defineProps<Props>(), { size: 24 })
 </script>
 
 <template>
-  <span class="app-icon" :style="{ width: `${size}px`, height: `${size}px` }">
+  <span
+    class="app-icon"
+    :style="{ width: `${size}px`, height: `${size}px` }"
+  >
     <slot />
   </span>
 </template>

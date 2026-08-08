@@ -37,15 +37,23 @@ function handleAddToCart() {
   <div class="product-purchase">
     <div class="product-purchase__price-row">
       <span class="product-purchase__price">${{ product.price }}</span>
-      <span v-if="originalPrice" class="product-purchase__price-original"
+      <span
+        v-if="originalPrice"
+        class="product-purchase__price-original"
         >${{ originalPrice }}</span
       >
-      <span v-if="product.discountPercentage" class="product-purchase__discount">
+      <span
+        v-if="product.discountPercentage"
+        class="product-purchase__discount"
+      >
         -{{ Math.round(product.discountPercentage) }}%
       </span>
     </div>
 
-    <div v-if="isOutOfStock" class="product-purchase__oos-banner">
+    <div
+      v-if="isOutOfStock"
+      class="product-purchase__oos-banner"
+    >
       <span class="product-purchase__oos-label">Немає в наявності</span>
       <p class="product-purchase__oos-hint">Залиште заявку — ми повідомимо, коли товар з'явиться</p>
     </div>
@@ -57,10 +65,16 @@ function handleAddToCart() {
         :title="isFav ? 'Прибрати з обраного' : 'До обраного'"
         @click="emit('toggleFav')"
       >
-        <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
+        <Heart
+          :size="18"
+          :fill="isFav ? 'currentColor' : 'none'"
+        />
       </button>
 
-      <div v-if="!isOutOfStock" class="product-purchase__qty">
+      <div
+        v-if="!isOutOfStock"
+        class="product-purchase__qty"
+      >
         <button
           class="product-purchase__qty-btn"
           type="button"
@@ -70,7 +84,11 @@ function handleAddToCart() {
           <Minus :size="14" />
         </button>
         <span class="product-purchase__qty-val">{{ qty }}</span>
-        <button class="product-purchase__qty-btn" type="button" @click="increment">
+        <button
+          class="product-purchase__qty-btn"
+          type="button"
+          @click="increment"
+        >
           <Plus :size="14" />
         </button>
       </div>

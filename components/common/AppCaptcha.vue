@@ -30,7 +30,10 @@ defineExpose({ reset })
 </script>
 
 <template>
-  <div v-if="mounted" class="app-captcha">
+  <div
+    v-if="mounted"
+    class="app-captcha"
+  >
     <VueHcaptcha
       ref="captchaRef"
       :sitekey="config.public.hcaptchaSiteKey"

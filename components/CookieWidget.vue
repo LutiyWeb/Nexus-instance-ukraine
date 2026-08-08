@@ -10,15 +10,25 @@ function accept() {
 
 <template>
   <Transition name="cookie-widget">
-    <div v-if="visible" class="cookie-widget">
+    <div
+      v-if="visible"
+      class="cookie-widget"
+    >
       <p class="cookie-widget__text">
         Ми використовуємо файли cookie для покращення роботи сайту. Залишаючись на сайті, ви
         погоджуєтесь з нашою
-        <NuxtLink to="/privacy-policy" class="cookie-widget__link"
+        <NuxtLink
+          to="/privacy-policy"
+          class="cookie-widget__link"
           >політикою конфіденційності</NuxtLink
         >.
       </p>
-      <AppButton variant="primary" size="sm" @click="accept">Прийняти</AppButton>
+      <AppButton
+        variant="primary"
+        size="sm"
+        @click="accept"
+        >Прийняти</AppButton
+      >
     </div>
   </Transition>
 </template>

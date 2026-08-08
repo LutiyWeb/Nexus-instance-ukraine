@@ -71,9 +71,16 @@ onUnmounted(() => {
       @click="scrollLeft"
     />
 
-    <div ref="scrollEl" class="category-ribbon__track">
+    <div
+      ref="scrollEl"
+      class="category-ribbon__track"
+    >
       <template v-if="categoriesStore.loading">
-        <div v-for="n in 8" :key="n" class="category-ribbon__skeleton" />
+        <div
+          v-for="n in 8"
+          :key="n"
+          class="category-ribbon__skeleton"
+        />
       </template>
       <NuxtLink
         v-for="cat in categoriesStore.categories"
@@ -81,7 +88,11 @@ onUnmounted(() => {
         :to="`/catalog?categorySlug=${cat.slug}`"
         class="category-ribbon__item"
       >
-        <component :is="getIcon(cat.slug)" :size="16" class="category-ribbon__icon" />
+        <component
+          :is="getIcon(cat.slug)"
+          :size="16"
+          class="category-ribbon__icon"
+        />
         <span class="category-ribbon__label">{{ cat.name }}</span>
       </NuxtLink>
     </div>

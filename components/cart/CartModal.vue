@@ -66,13 +66,23 @@ function addSelectedToFavorites() {
 <template>
   <Teleport to="body">
     <Transition name="cart-modal">
-      <div v-if="open" class="cart-modal">
-        <div class="cart-modal__backdrop" @click="emit('update:open', false)" />
+      <div
+        v-if="open"
+        class="cart-modal"
+      >
+        <div
+          class="cart-modal__backdrop"
+          @click="emit('update:open', false)"
+        />
 
         <div class="cart-modal__panel">
           <div class="cart-modal__head">
             <h2 class="cart-modal__title">Кошик ({{ cartStore.count }})</h2>
-            <button class="cart-modal__close" type="button" @click="emit('update:open', false)">
+            <button
+              class="cart-modal__close"
+              type="button"
+              @click="emit('update:open', false)"
+            >
               <X :size="14" />
             </button>
           </div>
@@ -81,25 +91,50 @@ function addSelectedToFavorites() {
             <template v-if="cartStore.items.length">
               <div class="cart-modal__bulk">
                 <label class="cart-modal__select-all">
-                  <input type="checkbox" :checked="allSelected" @change="toggleAll" />
+                  <input
+                    type="checkbox"
+                    :checked="allSelected"
+                    @change="toggleAll"
+                  />
                   Обрано {{ selectedIds.length }} з {{ cartStore.items.length }}
                 </label>
-                <div v-if="selectedIds.length" class="cart-modal__bulk-actions">
-                  <button type="button" @click="addSelectedToFavorites">
+                <div
+                  v-if="selectedIds.length"
+                  class="cart-modal__bulk-actions"
+                >
+                  <button
+                    type="button"
+                    @click="addSelectedToFavorites"
+                  >
                     <Heart :size="14" /> До обраного
                   </button>
-                  <button type="button" @click="pendingDelete = true">
+                  <button
+                    type="button"
+                    @click="pendingDelete = true"
+                  >
                     <Trash2 :size="14" /> Видалити
                   </button>
                 </div>
               </div>
 
-              <div v-if="pendingDelete" class="cart-modal__confirm">
+              <div
+                v-if="pendingDelete"
+                class="cart-modal__confirm"
+              >
                 <span>Видалити {{ selectedIds.length }} товар(ів)?</span>
-                <button type="button" class="cart-modal__confirm-ok" @click="removeSelected">
+                <button
+                  type="button"
+                  class="cart-modal__confirm-ok"
+                  @click="removeSelected"
+                >
                   Видалити
                 </button>
-                <button type="button" @click="pendingDelete = false">Скасувати</button>
+                <button
+                  type="button"
+                  @click="pendingDelete = false"
+                >
+                  Скасувати
+                </button>
               </div>
 
               <CartItem
@@ -112,12 +147,21 @@ function addSelectedToFavorites() {
                 @update-qty="(id, delta) => cartStore.updateQty(id, delta)"
               />
             </template>
-            <div v-else class="cart-modal__empty">
-              <ShoppingCart :size="48" :stroke-width="1.5" />
+            <div
+              v-else
+              class="cart-modal__empty"
+            >
+              <ShoppingCart
+                :size="48"
+                :stroke-width="1.5"
+              />
               <p>Кошик порожній</p>
             </div>
 
-            <div v-if="recommendations.length" class="cart-modal__recs">
+            <div
+              v-if="recommendations.length"
+              class="cart-modal__recs"
+            >
               <AppSlider
                 title="Рекомендуємо"
                 :slides="recommendations"
@@ -130,7 +174,10 @@ function addSelectedToFavorites() {
                 }"
               >
                 <template #default="slotProps">
-                  <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+                  <TheProductCard
+                    v-if="slotProps?.slide"
+                    :product="slotProps.slide as any"
+                  />
                 </template>
               </AppSlider>
             </div>
@@ -138,7 +185,11 @@ function addSelectedToFavorites() {
 
           <div class="cart-modal__footer">
             <span class="cart-modal__total">Разом: {{ formatPrice(totalPrice) }}</span>
-            <NuxtLink to="/checkout" class="cart-modal__checkout">Оформити замовлення</NuxtLink>
+            <NuxtLink
+              to="/checkout"
+              class="cart-modal__checkout"
+              >Оформити замовлення</NuxtLink
+            >
           </div>
         </div>
       </div>

@@ -141,7 +141,13 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
         <div style="width: 100%; display: flex; flex-direction: column; gap: 16px">
           <div style="display: flex; align-items: center; gap: 12px">
             <span style="font-size: 13px; color: #6b7280">Розмір:</span>
-            <input v-model="iconSize" type="range" min="16" max="40" style="width: 120px" />
+            <input
+              v-model="iconSize"
+              type="range"
+              min="16"
+              max="40"
+              style="width: 120px"
+            />
             <span style="font-size: 13px; font-weight: 600; color: #374151">{{ iconSize }}px</span>
           </div>
           <div class="uikit-icons__grid">
@@ -153,7 +159,10 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
               :title="icon.name"
               @click="copyName(icon.name)"
             >
-              <component :is="icon.component" :size="iconSize" />
+              <component
+                :is="icon.component"
+                :size="iconSize"
+              />
               <span class="uikit-icons__name">{{ copied === icon.name ? '✓' : icon.name }}</span>
             </button>
           </div>

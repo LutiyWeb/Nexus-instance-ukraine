@@ -43,9 +43,7 @@ function validate(): boolean {
     return true
   }
   const fieldErrors = result.error.flatten().fieldErrors
-  errors.value = Object.fromEntries(
-    Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
-  )
+  errors.value = Object.fromEntries(Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']))
   return false
 }
 
@@ -111,7 +109,10 @@ async function submit() {
 </script>
 
 <template>
-  <AppModal :open="open" @update:open="emit('update:open', $event)">
+  <AppModal
+    :open="open"
+    @update:open="emit('update:open', $event)"
+  >
     <div class="auth-modal__tabs">
       <button
         :class="['auth-modal__tab', { 'auth-modal__tab--active': mode === 'login' }]"
@@ -129,17 +130,47 @@ async function submit() {
       </button>
     </div>
 
-    <form class="app-modal__form" @submit.prevent="submit">
+    <form
+      class="app-modal__form"
+      @submit.prevent="submit"
+    >
       <template v-if="mode === 'register'">
-        <AppInputText v-model="firstName" label="Ім'я" placeholder="Введіть ім'я" :error="errors.firstName" />
-        <AppInputText v-model="lastName" label="Прізвище" placeholder="Введіть прізвище" :error="errors.lastName" />
+        <AppInputText
+          v-model="firstName"
+          label="Ім'я"
+          placeholder="Введіть ім'я"
+          :error="errors.firstName"
+        />
+        <AppInputText
+          v-model="lastName"
+          label="Прізвище"
+          placeholder="Введіть прізвище"
+          :error="errors.lastName"
+        />
       </template>
-      <AppInputText v-model="email" label="Email" placeholder="email@example.com" :error="errors.email" />
-      <AppPasswordInput v-model="password" label="Пароль" placeholder="Мінімум 8 символів" :error="errors.password" />
+      <AppInputText
+        v-model="email"
+        label="Email"
+        placeholder="email@example.com"
+        :error="errors.email"
+      />
+      <AppPasswordInput
+        v-model="password"
+        label="Пароль"
+        placeholder="Мінімум 8 символів"
+        :error="errors.password"
+      />
 
-      <AppCaptcha ref="captchaRef" @verify="onCaptchaVerify" @expired="onCaptchaExpired" />
+      <AppCaptcha
+        ref="captchaRef"
+        @verify="onCaptchaVerify"
+        @expired="onCaptchaExpired"
+      />
 
-      <p v-if="captchaError || authStore.error" class="app-modal__error">
+      <p
+        v-if="captchaError || authStore.error"
+        class="app-modal__error"
+      >
         {{ captchaError || authStore.error }}
       </p>
 

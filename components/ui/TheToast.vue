@@ -19,7 +19,11 @@ const ICONS = {
           :key="toast.id"
           :class="['toast', `toast--${toast.type}`]"
         >
-          <component :is="ICONS[toast.type]" :size="18" class="toast__icon" />
+          <component
+            :is="ICONS[toast.type]"
+            :size="18"
+            class="toast__icon"
+          />
           <span class="toast__msg">{{ toast.message }}</span>
           <NuxtLink
             v-if="toast.action"
@@ -29,7 +33,11 @@ const ICONS = {
           >
             {{ toast.action.label }}
           </NuxtLink>
-          <button class="toast__close" type="button" @click="toastStore.remove(toast.id)">
+          <button
+            class="toast__close"
+            type="button"
+            @click="toastStore.remove(toast.id)"
+          >
             <X :size="14" />
           </button>
         </div>

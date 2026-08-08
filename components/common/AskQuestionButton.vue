@@ -20,7 +20,12 @@ function handleClick() {
 </script>
 
 <template>
-  <AppButton variant="outline" size="md" @click="handleClick">Поставити запитання</AppButton>
+  <AppButton
+    variant="outline"
+    size="md"
+    @click="handleClick"
+    >Поставити запитання</AppButton
+  >
   <AskQuestionModal
     v-model:open="open"
     :product-id="productId"

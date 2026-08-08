@@ -233,7 +233,10 @@ async function submit() {
 
             <div class="checkout__delivery-col">
               <template v-if="deliveryMethod === 'np_branch'">
-                <CheckoutCityAutocomplete v-model="selectedCity" :error="errors.npCityRef" />
+                <CheckoutCityAutocomplete
+                  v-model="selectedCity"
+                  :error="errors.npCityRef"
+                />
                 <CheckoutWarehouseSelect
                   v-model="selectedWarehouse"
                   :city-ref="selectedCity?.deliveryCityRef ?? null"
@@ -242,7 +245,10 @@ async function submit() {
               </template>
 
               <template v-else>
-                <div v-if="savedAddresses.length" class="checkout__addresses">
+                <div
+                  v-if="savedAddresses.length"
+                  class="checkout__addresses"
+                >
                   <button
                     v-for="addr in savedAddresses"
                     :key="addr.id"
@@ -257,14 +263,19 @@ async function submit() {
                       >{{ addr.city }}, {{ addr.street }}, {{ addr.house
                       }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span
                     >
-                    <span v-if="addr.isDefault" class="checkout__address-badge"
+                    <span
+                      v-if="addr.isDefault"
+                      class="checkout__address-badge"
                       >За замовчуванням</span
                     >
                   </button>
                 </div>
 
                 <template v-if="!selectedAddressId">
-                  <CheckoutCityAutocomplete v-model="selectedCity" :error="errors.npCityRef" />
+                  <CheckoutCityAutocomplete
+                    v-model="selectedCity"
+                    :error="errors.npCityRef"
+                  />
                   <div class="checkout__fields-row">
                     <AppInputText
                       v-model="form.street"
@@ -278,7 +289,11 @@ async function submit() {
                       placeholder="1"
                       :error="errors.house"
                     />
-                    <AppInputText v-model="form.apartment" label="Квартира" placeholder="42" />
+                    <AppInputText
+                      v-model="form.apartment"
+                      label="Квартира"
+                      placeholder="42"
+                    />
                   </div>
                 </template>
               </template>
@@ -314,7 +329,10 @@ async function submit() {
           </div>
 
           <label class="checkout__checkbox">
-            <input v-model="noCallback" type="checkbox" />
+            <input
+              v-model="noCallback"
+              type="checkbox"
+            />
             <span>Не передзвонювати мені, замовлення підтверджено</span>
           </label>
         </div>

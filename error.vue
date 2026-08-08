@@ -12,12 +12,25 @@ useHead({ title: is404.value ? '404 — Сторінку не знайдено' 
 
 <template>
   <div class="error-page container">
-    <p class="error-page__code" aria-hidden="true">{{ error.statusCode }}</p>
+    <p
+      class="error-page__code"
+      aria-hidden="true"
+    >
+      {{ error.statusCode }}
+    </p>
 
     <div class="error-page__body">
       <div class="error-page__icon">
-        <SearchX v-if="is404" :size="56" :stroke-width="1.3" />
-        <ServerCrash v-else :size="56" :stroke-width="1.3" />
+        <SearchX
+          v-if="is404"
+          :size="56"
+          :stroke-width="1.3"
+        />
+        <ServerCrash
+          v-else
+          :size="56"
+          :stroke-width="1.3"
+        />
       </div>
 
       <h1 class="error-page__title">
@@ -33,11 +46,20 @@ useHead({ title: is404.value ? '404 — Сторінку не знайдено' 
       </p>
 
       <div class="error-page__actions">
-        <AppButton variant="primary" size="md" @click="clearError({ redirect: '/' })">
+        <AppButton
+          variant="primary"
+          size="md"
+          @click="clearError({ redirect: '/' })"
+        >
           <HomeIcon :size="16" />
           На головну
         </AppButton>
-        <AppButton v-if="!is404" variant="outline" size="md" @click="clearError()">
+        <AppButton
+          v-if="!is404"
+          variant="outline"
+          size="md"
+          @click="clearError()"
+        >
           Спробувати знову
         </AppButton>
       </div>

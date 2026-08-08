@@ -35,9 +35,11 @@ watch(() => wishlistsStore.guestIds.length, loadProducts)
     <div class="wishlist-page__title-row">
       <h1 class="wishlist-page__heading">
         Обране
-        <span v-if="wishlistsStore.count" class="wishlist-page__count">{{
-          wishlistsStore.count
-        }}</span>
+        <span
+          v-if="wishlistsStore.count"
+          class="wishlist-page__count"
+          >{{ wishlistsStore.count }}</span
+        >
       </h1>
       <AppBreadcrumbs :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Обране' }]" />
     </div>
@@ -49,23 +51,44 @@ watch(() => wishlistsStore.guestIds.length, loadProducts)
       description="Додавайте товари, що сподобались, натискаючи на сердечко"
     >
       <template #icon>
-        <Heart :size="56" :stroke-width="1.2" />
+        <Heart
+          :size="56"
+          :stroke-width="1.2"
+        />
       </template>
       <template #action>
-        <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
+        <AppButton
+          variant="primary"
+          size="md"
+          @click="navigateTo('/catalog')"
+        >
           Перейти до каталогу
         </AppButton>
       </template>
     </AppEmpty>
 
     <!-- Grid -->
-    <div v-else-if="products.length" class="wishlist-page__grid">
-      <TheProductCard v-for="product in products" :key="product.id" :product="product" />
+    <div
+      v-else-if="products.length"
+      class="wishlist-page__grid"
+    >
+      <TheProductCard
+        v-for="product in products"
+        :key="product.id"
+        :product="product"
+      />
     </div>
 
     <!-- Skeleton -->
-    <div v-else-if="loading" class="wishlist-page__grid">
-      <TheProductCard v-for="n in wishlistsStore.guestIds.length" :key="n" :loading="true" />
+    <div
+      v-else-if="loading"
+      class="wishlist-page__grid"
+    >
+      <TheProductCard
+        v-for="n in wishlistsStore.guestIds.length"
+        :key="n"
+        :loading="true"
+      />
     </div>
   </div>
 </template>

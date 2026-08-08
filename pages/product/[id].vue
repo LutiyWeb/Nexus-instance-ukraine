@@ -113,30 +113,67 @@ function toggleFav() {
       />
 
       <!-- Loading -->
-      <div v-if="loading" class="product-detail__layout">
+      <div
+        v-if="loading"
+        class="product-detail__layout"
+      >
         <div class="product-gallery">
-          <AppSkeleton width="100%" height="420px" border-radius="16px" />
+          <AppSkeleton
+            width="100%"
+            height="420px"
+            border-radius="16px"
+          />
           <div class="product-detail__thumbs-skeleton">
-            <AppSkeleton v-for="n in 4" :key="n" width="72px" height="72px" border-radius="8px" />
+            <AppSkeleton
+              v-for="n in 4"
+              :key="n"
+              width="72px"
+              height="72px"
+              border-radius="8px"
+            />
           </div>
         </div>
         <div class="product-detail__info">
-          <AppSkeleton width="100px" height="14px" class="product-detail__skel-gap" />
-          <AppSkeleton width="80%" height="32px" class="product-detail__skel-gap" />
-          <AppSkeleton width="100%" height="14px" class="product-detail__skel-gap" />
-          <AppSkeleton width="90%" height="14px" class="product-detail__skel-gap" />
+          <AppSkeleton
+            width="100px"
+            height="14px"
+            class="product-detail__skel-gap"
+          />
+          <AppSkeleton
+            width="80%"
+            height="32px"
+            class="product-detail__skel-gap"
+          />
+          <AppSkeleton
+            width="100%"
+            height="14px"
+            class="product-detail__skel-gap"
+          />
+          <AppSkeleton
+            width="90%"
+            height="14px"
+            class="product-detail__skel-gap"
+          />
           <AppSkeleton
             width="140px"
             height="40px"
             class="product-detail__skel-gap"
             style="margin-top: 16px"
           />
-          <AppSkeleton width="100%" height="56px" border-radius="12px" style="margin-top: 24px" />
+          <AppSkeleton
+            width="100%"
+            height="56px"
+            border-radius="12px"
+            style="margin-top: 24px"
+          />
         </div>
       </div>
 
       <!-- Error -->
-      <div v-else-if="error || !product" class="product-detail__error">
+      <div
+        v-else-if="error || !product"
+        class="product-detail__error"
+      >
         <p>
           Не вдалося завантажити товар. Спробуйте
           <button
@@ -150,9 +187,16 @@ function toggleFav() {
       </div>
 
       <!-- Content -->
-      <div v-else-if="product" class="product-detail__layout">
+      <div
+        v-else-if="product"
+        class="product-detail__layout"
+      >
         <!-- Media -->
-        <ProductGallery :images="allImages" :title="product.title" :out-of-stock="isOutOfStock" />
+        <ProductGallery
+          :images="allImages"
+          :title="product.title"
+          :out-of-stock="isOutOfStock"
+        />
 
         <!-- Info  -->
         <div class="product-detail__info">
@@ -169,11 +213,21 @@ function toggleFav() {
 
           <!-- Rating & meta -->
           <div class="product-detail__meta">
-            <span v-if="product.rating" class="product-detail__rating">
-              <Star :size="14" fill="currentColor" />
+            <span
+              v-if="product.rating"
+              class="product-detail__rating"
+            >
+              <Star
+                :size="14"
+                fill="currentColor"
+              />
               {{ product.rating }}
             </span>
-            <span v-if="product.brand" class="product-detail__brand">{{ product.brand }}</span>
+            <span
+              v-if="product.brand"
+              class="product-detail__brand"
+              >{{ product.brand }}</span
+            >
             <span
               :class="[
                 'product-detail__stock',
@@ -185,7 +239,11 @@ function toggleFav() {
 
           <!-- Quick specs -->
           <div class="product-detail__quick-specs">
-            <div v-for="spec in quickSpecs" :key="spec.label" class="product-detail__quick-spec">
+            <div
+              v-for="spec in quickSpecs"
+              :key="spec.label"
+              class="product-detail__quick-spec"
+            >
               <span class="product-detail__quick-spec-label">{{ spec.label }}</span>
               <span class="product-detail__quick-spec-value">{{ spec.value }}</span>
             </div>
@@ -224,7 +282,10 @@ function toggleFav() {
 
       <!-- Tabs -->
       <div class="product-detail__content">
-        <div v-if="product" class="product-detail__tabs">
+        <div
+          v-if="product"
+          class="product-detail__tabs"
+        >
           <div class="product-detail__tabs-nav">
             <button
               v-for="tab in tabs"
@@ -241,7 +302,10 @@ function toggleFav() {
           </div>
 
           <div class="product-detail__tab-content">
-            <ProductSpecsTable v-if="activeTab === 'specs'" :specs="mockSpecs" />
+            <ProductSpecsTable
+              v-if="activeTab === 'specs'"
+              :specs="mockSpecs"
+            />
 
             <div v-else-if="activeTab === 'reviews'">
               <ProductReviews :product-id="product.id" />
@@ -249,7 +313,10 @@ function toggleFav() {
           </div>
         </div>
         <!-- Questions — always visible, not tucked behind a tab -->
-        <div v-if="product" class="product-detail__questions">
+        <div
+          v-if="product"
+          class="product-detail__questions"
+        >
           <ProductQuestions :product-id="product.id" />
         </div>
       </div>

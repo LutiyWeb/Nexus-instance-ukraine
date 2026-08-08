@@ -48,7 +48,11 @@ const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
         </NuxtLink>
       </nav>
       <div class="uikit__sidebar-footer">
-        <NuxtLink to="/" class="uikit__back-link">← На сайт</NuxtLink>
+        <NuxtLink
+          to="/"
+          class="uikit__back-link"
+          >← На сайт</NuxtLink
+        >
       </div>
     </aside>
 
@@ -59,8 +63,14 @@ const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
       </div>
 
       <div class="uikit__content">
-        <component :is="CurrentComponent" v-if="CurrentComponent" />
-        <div v-else class="uikit__empty">
+        <component
+          :is="CurrentComponent"
+          v-if="CurrentComponent"
+        />
+        <div
+          v-else
+          class="uikit__empty"
+        >
           <p>Оберіть компонент у сайдбарі</p>
         </div>
       </div>

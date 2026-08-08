@@ -4,10 +4,17 @@ useHead({ title: 'Публічна оферта — Nexus Commerce' })
 
 <template>
   <div class="legal-page container">
-    <TheTitle tag="h1" size="m">Публічна оферта</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Публічна оферта</TheTitle
+    >
     <p class="legal-page__updated">Дата останнього оновлення: 11 липня 2026 року</p>
 
-    <AppAccordion title="1. Загальні положення" :default-open="true">
+    <AppAccordion
+      title="1. Загальні положення"
+      :default-open="true"
+    >
       <p class="legal-page__text">
         Цей документ є офіційною публічною офертою інтернет-магазину Nexus Commerce (далі —
         «Продавець») та адресований будь-якій фізичній особі (далі — «Покупець»), яка здійснює

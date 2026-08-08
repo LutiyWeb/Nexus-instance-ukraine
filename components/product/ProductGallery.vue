@@ -45,7 +45,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="product-gallery">
-    <div v-if="outOfStock" class="product-gallery__oos">
+    <div
+      v-if="outOfStock"
+      class="product-gallery__oos"
+    >
       <span class="product-gallery__oos-badge">Немає в наявності</span>
     </div>
 
@@ -80,7 +83,11 @@ onBeforeUnmount(() => {
         class="product-gallery__thumbs"
         @swiper="thumbsSwiper = $event"
       >
-        <SwiperSlide v-for="(img, i) in images" :key="i" class="product-gallery__thumb-slide">
+        <SwiperSlide
+          v-for="(img, i) in images"
+          :key="i"
+          class="product-gallery__thumb-slide"
+        >
           <AppImage
             :src="img"
             :alt="`thumb ${i}`"
@@ -93,8 +100,15 @@ onBeforeUnmount(() => {
 
     <!-- Fullscreen gallery lightbox -->
     <Teleport to="body">
-      <div v-if="lightboxOpen" class="product-lightbox">
-        <button class="product-lightbox__close" type="button" @click="closeLightbox">
+      <div
+        v-if="lightboxOpen"
+        class="product-lightbox"
+      >
+        <button
+          class="product-lightbox__close"
+          type="button"
+          @click="closeLightbox"
+        >
           <X :size="20" />
         </button>
         <div class="product-lightbox__main">
@@ -105,8 +119,15 @@ onBeforeUnmount(() => {
             navigation
             class="product-lightbox__swiper swiper-nav-image"
           >
-            <SwiperSlide v-for="(img, i) in images" :key="i">
-              <img :src="img" :alt="title" class="product-lightbox__img" />
+            <SwiperSlide
+              v-for="(img, i) in images"
+              :key="i"
+            >
+              <img
+                :src="img"
+                :alt="title"
+                class="product-lightbox__img"
+              />
             </SwiperSlide>
           </Swiper>
         </div>
@@ -119,8 +140,15 @@ onBeforeUnmount(() => {
             class="product-lightbox__thumb-swiper"
             @swiper="lightboxThumbsSwiper = $event"
           >
-            <SwiperSlide v-for="(img, i) in images" :key="i" class="product-lightbox__thumb-slide">
-              <img :src="img" class="product-lightbox__thumb-img" />
+            <SwiperSlide
+              v-for="(img, i) in images"
+              :key="i"
+              class="product-lightbox__thumb-slide"
+            >
+              <img
+                :src="img"
+                class="product-lightbox__thumb-img"
+              />
             </SwiperSlide>
           </Swiper>
         </div>

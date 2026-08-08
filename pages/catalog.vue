@@ -214,13 +214,24 @@ const breadcrumbs = computed(() => {
     <div class="catalog__head">
       <div class="catalog__title-row">
         <TheTitle tag="h1">{{ pageTitle }}</TheTitle>
-        <AppBreadcrumbs :crumbs="breadcrumbs" class="catalog__breadcrumbs" />
+        <AppBreadcrumbs
+          :crumbs="breadcrumbs"
+          class="catalog__breadcrumbs"
+        />
       </div>
       <div class="catalog__mobile-actions">
-        <button class="catalog__action-btn" type="button" @click="isMobileFiltersOpen = true">
+        <button
+          class="catalog__action-btn"
+          type="button"
+          @click="isMobileFiltersOpen = true"
+        >
           Фільтри
         </button>
-        <button class="catalog__action-btn" type="button" @click="isMobileSortOpen = true">
+        <button
+          class="catalog__action-btn"
+          type="button"
+          @click="isMobileSortOpen = true"
+        >
           Сортування
         </button>
         <div class="catalog__grid-toggle">
@@ -253,7 +264,10 @@ const breadcrumbs = computed(() => {
 
     <!-- Mobile sort drawer -->
     <Transition name="slide-up">
-      <div v-if="isMobileSortOpen" class="catalog__sort-drawer">
+      <div
+        v-if="isMobileSortOpen"
+        class="catalog__sort-drawer"
+      >
         <div class="catalog__sort-drawer-head">
           <span class="catalog__sort-drawer-title">Сортування</span>
           <button
@@ -317,8 +331,15 @@ const breadcrumbs = computed(() => {
       </CatalogFilters>
 
       <div class="catalog__main">
-        <div v-if="isLg" class="catalog__toolbar-row">
-          <CatalogChips :chips="activeChips" @remove="removeChip" @clear-all="clearAllFilters" />
+        <div
+          v-if="isLg"
+          class="catalog__toolbar-row"
+        >
+          <CatalogChips
+            :chips="activeChips"
+            @remove="removeChip"
+            @clear-all="clearAllFilters"
+          />
           <CatalogToolbar
             :sort="sortKey"
             :per-page="perPage"
@@ -331,7 +352,11 @@ const breadcrumbs = computed(() => {
           v-if="productsStore.loading"
           :class="['catalog__grid', { 'catalog__grid--single': !isLg && mobileGridCols === 1 }]"
         >
-          <TheProductCard v-for="n in perPage" :key="n" :loading="true" />
+          <TheProductCard
+            v-for="n in perPage"
+            :key="n"
+            :loading="true"
+          />
         </div>
 
         <div
@@ -351,10 +376,17 @@ const breadcrumbs = computed(() => {
           description="Спробуйте змінити фільтри або скинути їх"
         >
           <template #icon>
-            <SearchX :size="56" :stroke-width="1.2" />
+            <SearchX
+              :size="56"
+              :stroke-width="1.2"
+            />
           </template>
           <template #action>
-            <AppButton variant="outline" size="md" @click="clearAllFilters">
+            <AppButton
+              variant="outline"
+              size="md"
+              @click="clearAllFilters"
+            >
               Скинути фільтри
             </AppButton>
           </template>

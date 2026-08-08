@@ -4,16 +4,26 @@ useHead({ title: 'Правила публікації запитань — Nexus
 
 <template>
   <div class="legal-page container">
-    <TheTitle tag="h1" size="m">Правила публікації запитань</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Правила публікації запитань</TheTitle
+    >
 
-    <AppAccordion title="Загальні положення" :default-open="true">
+    <AppAccordion
+      title="Загальні положення"
+      :default-open="true"
+    >
       <p class="legal-page__text">
         Перш ніж поставити запитання про товар, ознайомтесь із правилами публікації. Усі запитання
         проходять модерацію — ми відхиляємо ті, що порушують перелічені нижче вимоги.
       </p>
     </AppAccordion>
 
-    <AppAccordion title="Що заборонено" :default-open="true">
+    <AppAccordion
+      title="Що заборонено"
+      :default-open="true"
+    >
       <ul class="legal-page__list">
         <li>Використання ненормативної лексики, образ та проявів агресії.</li>
         <li>Розміщення спаму, реклами та посилань на сторонні комерційні ресурси чи магазини.</li>

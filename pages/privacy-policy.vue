@@ -4,10 +4,17 @@ useHead({ title: 'Політика конфіденційності — Nexus Co
 
 <template>
   <div class="legal-page container">
-    <TheTitle tag="h1" size="m">Політика конфіденційності</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Політика конфіденційності</TheTitle
+    >
     <p class="legal-page__updated">Дата останнього оновлення: 11 липня 2026 року</p>
 
-    <AppAccordion title="1. Загальні положення" :default-open="true">
+    <AppAccordion
+      title="1. Загальні положення"
+      :default-open="true"
+    >
       <p class="legal-page__text">
         Ця Політика конфіденційності описує, як Nexus Commerce збирає, використовує та захищає
         персональні дані користувачів сайту. Використовуючи сайт, ви погоджуєтесь з умовами цієї

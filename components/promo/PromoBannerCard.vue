@@ -11,7 +11,10 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
 </script>
 
 <template>
-  <NuxtLink :to="linkUrl || '/promo'" :class="['promo-card', `promo-card--${variant}`]">
+  <NuxtLink
+    :to="linkUrl || '/promo'"
+    :class="['promo-card', `promo-card--${variant}`]"
+  >
     <span class="promo-card__tag">{{ tag }}</span>
     <h3 class="promo-card__title">{{ title }}</h3>
     <p class="promo-card__subtitle">{{ subtitle }}</p>

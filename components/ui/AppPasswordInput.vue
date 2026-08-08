@@ -17,7 +17,11 @@ const showPassword = ref(false)
 
 <template>
   <div class="app-input">
-    <label v-if="label" class="app-input__label">{{ label }}</label>
+    <label
+      v-if="label"
+      class="app-input__label"
+      >{{ label }}</label
+    >
     <div :class="['app-input__field', { 'app-input__field--error': error }]">
       <input
         :value="modelValue"
@@ -33,11 +37,21 @@ const showPassword = ref(false)
         tabindex="-1"
         @click="showPassword = !showPassword"
       >
-        <EyeOff v-if="showPassword" :size="16" />
-        <Eye v-else :size="16" />
+        <EyeOff
+          v-if="showPassword"
+          :size="16"
+        />
+        <Eye
+          v-else
+          :size="16"
+        />
       </button>
     </div>
-    <span v-if="error" class="app-input__error">{{ error }}</span>
+    <span
+      v-if="error"
+      class="app-input__error"
+      >{{ error }}</span
+    >
   </div>
 </template>
 

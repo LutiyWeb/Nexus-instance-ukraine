@@ -58,19 +58,29 @@ interface Toast {
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Конструктор тоста" description="Створи своє повідомлення">
+    <UiKitSection
+      title="Конструктор тоста"
+      description="Створи своє повідомлення"
+    >
       <template #preview>
         <div
           style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px"
         >
-          <AppInputText v-model="customMessage" label="Текст повідомлення" />
+          <AppInputText
+            v-model="customMessage"
+            label="Текст повідомлення"
+          />
           <div style="display: flex; gap: 8px">
             <label
               v-for="t in ['success', 'error', 'warning']"
               :key="t"
               class="uikit-toasts__radio"
             >
-              <input v-model="customType" type="radio" :value="t" />
+              <input
+                v-model="customType"
+                type="radio"
+                :value="t"
+              />
               {{ t }}
             </label>
           </div>
@@ -85,7 +95,10 @@ interface Toast {
         </div>
       </template>
       <template #code>
-        <UiKitCodeBlock :code="USAGE_CODE" language="ts" />
+        <UiKitCodeBlock
+          :code="USAGE_CODE"
+          language="ts"
+        />
       </template>
     </UiKitSection>
 
@@ -101,7 +114,10 @@ interface Toast {
           { name: 'toasts', type: 'Toast[]', description: 'Поточний список тостів' },
         ]"
       />
-      <UiKitCodeBlock :code="STORE_CODE" language="ts" />
+      <UiKitCodeBlock
+        :code="STORE_CODE"
+        language="ts"
+      />
     </UiKitSection>
   </div>
 </template>

@@ -43,19 +43,38 @@ function onPageChange(p: number) {
 
 <template>
   <div class="search-page container">
-    <TheTitle tag="h1" size="m">
+    <TheTitle
+      tag="h1"
+      size="m"
+    >
       {{ q ? `Результати: "${q}"` : 'Пошук' }}
     </TheTitle>
 
-    <p v-if="q && !loading" class="search-page__count">Знайдено: {{ meta.total }} товарів</p>
+    <p
+      v-if="q && !loading"
+      class="search-page__count"
+    >
+      Знайдено: {{ meta.total }} товарів
+    </p>
 
-    <div v-if="loading" class="search-page__grid">
-      <TheProductCard v-for="n in LIMIT" :key="n" :loading="true" />
+    <div
+      v-if="loading"
+      class="search-page__grid"
+    >
+      <TheProductCard
+        v-for="n in LIMIT"
+        :key="n"
+        :loading="true"
+      />
     </div>
 
     <template v-else-if="products.length">
       <div class="search-page__grid">
-        <TheProductCard v-for="p in products" :key="p.id" :product="p" />
+        <TheProductCard
+          v-for="p in products"
+          :key="p.id"
+          :product="p"
+        />
       </div>
 
       <CatalogPagination
@@ -72,10 +91,17 @@ function onPageChange(p: number) {
       description="Спробуйте змінити запит або пошукати щось інше"
     >
       <template #icon>
-        <SearchX :size="56" :stroke-width="1.2" />
+        <SearchX
+          :size="56"
+          :stroke-width="1.2"
+        />
       </template>
       <template #action>
-        <AppButton variant="outline" size="md" @click="router.push('/catalog')">
+        <AppButton
+          variant="outline"
+          size="md"
+          @click="router.push('/catalog')"
+        >
           Перейти до каталогу
         </AppButton>
       </template>

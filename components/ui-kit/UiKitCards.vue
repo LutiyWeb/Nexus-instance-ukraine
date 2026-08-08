@@ -126,7 +126,10 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
         </div>
       </template>
       <template #code>
-        <UiKitCodeBlock :code="SHADOW_CODE" language="scss" />
+        <UiKitCodeBlock
+          :code="SHADOW_CODE"
+          language="scss"
+        />
       </template>
     </UiKitSection>
   </div>

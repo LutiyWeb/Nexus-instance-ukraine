@@ -26,8 +26,15 @@ const perPageOptions = [
 
 <template>
   <div class="catalog-toolbar">
-    <select v-model="sortModel" class="catalog-toolbar__select">
-      <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
+    <select
+      v-model="sortModel"
+      class="catalog-toolbar__select"
+    >
+      <option
+        v-for="opt in sortOptions"
+        :key="opt.value"
+        :value="opt.value"
+      >
         {{ opt.label }}
       </option>
     </select>
@@ -36,7 +43,11 @@ const perPageOptions = [
       class="catalog-toolbar__select"
       @change="emit('update:perPage', Number(($event.target as HTMLSelectElement).value))"
     >
-      <option v-for="opt in perPageOptions" :key="opt.value" :value="opt.value">
+      <option
+        v-for="opt in perPageOptions"
+        :key="opt.value"
+        :value="opt.value"
+      >
         {{ opt.label }}
       </option>
     </select>

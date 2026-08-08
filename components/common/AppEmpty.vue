@@ -11,8 +11,16 @@ defineProps<{
       <slot name="icon" />
     </div>
     <p class="app-empty__title">{{ title }}</p>
-    <p v-if="description" class="app-empty__desc">{{ description }}</p>
-    <div v-if="$slots.action" class="app-empty__action">
+    <p
+      v-if="description"
+      class="app-empty__desc"
+    >
+      {{ description }}
+    </p>
+    <div
+      v-if="$slots.action"
+      class="app-empty__action"
+    >
       <slot name="action" />
     </div>
   </div>

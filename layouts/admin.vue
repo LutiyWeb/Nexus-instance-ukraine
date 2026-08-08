@@ -24,10 +24,20 @@ function handleLogout() {
 
 <template>
   <a-layout class="admin-layout">
-    <a-layout-sider class="admin-layout__sider" theme="light" width="240">
+    <a-layout-sider
+      class="admin-layout__sider"
+      theme="light"
+      width="240"
+    >
       <div class="admin-layout__logo">Адмінка</div>
-      <a-menu :selected-keys="selectedKeys" mode="inline">
-        <a-menu-item v-for="item in NAV_ITEMS" :key="item.key">
+      <a-menu
+        :selected-keys="selectedKeys"
+        mode="inline"
+      >
+        <a-menu-item
+          v-for="item in NAV_ITEMS"
+          :key="item.key"
+        >
           <NuxtLink :to="item.key">{{ item.label }}</NuxtLink>
         </a-menu-item>
       </a-menu>

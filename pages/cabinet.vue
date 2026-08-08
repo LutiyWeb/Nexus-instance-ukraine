@@ -32,7 +32,7 @@ const sections = [
 ]
 
 const activeSectionIcon = computed(
-  () => sections.find(s => s.key === activeSection.value)?.icon ?? User,
+  () => sections.find((s) => s.key === activeSection.value)?.icon ?? User,
 )
 
 function select(key: string) {
@@ -61,8 +61,15 @@ function logout() {
             </p>
             <p class="cabinet__email">{{ authStore.user?.email }}</p>
           </div>
-          <button class="cabinet__nav-toggle" type="button" @click="isMobileNavOpen = true">
-            <component :is="activeSectionIcon" :size="18" />
+          <button
+            class="cabinet__nav-toggle"
+            type="button"
+            @click="isMobileNavOpen = true"
+          >
+            <component
+              :is="activeSectionIcon"
+              :size="18"
+            />
           </button>
         </div>
 
@@ -74,12 +81,19 @@ function logout() {
             type="button"
             @click="select(s.key)"
           >
-            <component :is="s.icon" :size="16" />
+            <component
+              :is="s.icon"
+              :size="16"
+            />
             {{ s.label }}
           </button>
         </nav>
 
-        <button class="cabinet__logout" type="button" @click="logout">
+        <button
+          class="cabinet__logout"
+          type="button"
+          @click="logout"
+        >
           <LogOut :size="16" /> Вийти
         </button>
 
@@ -93,7 +107,10 @@ function logout() {
             />
           </Transition>
           <Transition name="slide-up">
-            <div v-if="isMobileNavOpen" class="cabinet__drawer">
+            <div
+              v-if="isMobileNavOpen"
+              class="cabinet__drawer"
+            >
               <div class="cabinet__drawer-head">
                 <span class="cabinet__drawer-title">Навігація</span>
                 <button
@@ -115,11 +132,18 @@ function logout() {
                   type="button"
                   @click="selectAndClose(s.key)"
                 >
-                  <component :is="s.icon" :size="16" />
+                  <component
+                    :is="s.icon"
+                    :size="16"
+                  />
                   {{ s.label }}
                 </button>
               </nav>
-              <button class="cabinet__drawer-logout" type="button" @click="logout">
+              <button
+                class="cabinet__drawer-logout"
+                type="button"
+                @click="logout"
+              >
                 <LogOut :size="16" /> Вийти
               </button>
             </div>

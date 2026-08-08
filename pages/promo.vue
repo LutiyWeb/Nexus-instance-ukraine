@@ -106,23 +106,45 @@ const bentoSections = computed(() =>
   <div class="promo-page">
     <div class="container">
       <div class="promo-page__head">
-        <TheTitle tag="h1" size="m" class="promo-page__title">Акції</TheTitle>
+        <TheTitle
+          tag="h1"
+          size="m"
+          class="promo-page__title"
+          >Акції</TheTitle
+        >
         <AppBreadcrumbs
           :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Акції та знижки' }]"
           class="promo-page__breadcrumbs"
         />
       </div>
 
-      <PromoBannerList :banners="PROMO_BANNERS" class="promo-page__banners" />
+      <PromoBannerList
+        :banners="PROMO_BANNERS"
+        class="promo-page__banners"
+      />
 
-      <div v-if="store.loading" class="promo-page__skeleton">
-        <TheProductCard v-for="n in 10" :key="n" :loading="true" />
+      <div
+        v-if="store.loading"
+        class="promo-page__skeleton"
+      >
+        <TheProductCard
+          v-for="n in 10"
+          :key="n"
+          :loading="true"
+        />
       </div>
 
       <template v-else>
         <!-- Mobile -->
-        <div v-if="!isMd" class="promo-page__flat">
-          <TheProductCard v-for="p in store.products" :key="p.id" :product="p" />
+        <div
+          v-if="!isMd"
+          class="promo-page__flat"
+        >
+          <TheProductCard
+            v-for="p in store.products"
+            :key="p.id"
+            :product="p"
+          />
         </div>
 
         <!-- Desktop -->
@@ -151,8 +173,15 @@ const bentoSections = computed(() =>
           </div>
 
           <!-- Bento: sections -->
-          <div v-if="viewMode === 'bento'" class="promo-page__sections">
-            <div v-for="(section, i) in bentoSections" :key="i" class="promo-section">
+          <div
+            v-if="viewMode === 'bento'"
+            class="promo-page__sections"
+          >
+            <div
+              v-for="(section, i) in bentoSections"
+              :key="i"
+              class="promo-section"
+            >
               <!-- Banner row: [banner][tall][tall] or [tall][tall][banner] -->
               <div class="promo-section__banner-row">
                 <template v-if="section.bannerSide === 'left'">
@@ -193,10 +222,17 @@ const bentoSections = computed(() =>
 
               <!-- SM cards row: gray bg, 7 products + 1 CTA -->
               <div class="promo-section__cards">
-                <AppImageCard v-for="p in section.sm" :key="p.id" :product="p" />
+                <AppImageCard
+                  v-for="p in section.sm"
+                  :key="p.id"
+                  :product="p"
+                />
 
                 <!-- CTA card -->
-                <NuxtLink :to="section.ctaTo" class="promo-section__cta">
+                <NuxtLink
+                  :to="section.ctaTo"
+                  class="promo-section__cta"
+                >
                   <div
                     v-if="section.ctaImage"
                     class="promo-section__cta-bg"
@@ -205,7 +241,10 @@ const bentoSections = computed(() =>
                   <div class="promo-section__cta-overlay" />
                   <span class="promo-section__cta-label">
                     Дивитись усі
-                    <ArrowDownRight :size="20" class="promo-section__cta-arrow" />
+                    <ArrowDownRight
+                      :size="20"
+                      class="promo-section__cta-arrow"
+                    />
                   </span>
                 </NuxtLink>
               </div>
@@ -213,8 +252,15 @@ const bentoSections = computed(() =>
           </div>
 
           <!-- Regular grid -->
-          <div v-else class="promo-page__grid">
-            <TheProductCard v-for="p in store.products" :key="p.id" :product="p" />
+          <div
+            v-else
+            class="promo-page__grid"
+          >
+            <TheProductCard
+              v-for="p in store.products"
+              :key="p.id"
+              :product="p"
+            />
           </div>
         </div>
       </template>

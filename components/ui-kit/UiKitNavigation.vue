@@ -85,7 +85,10 @@ const ARROW_CODE = `<!-- AppArrow — універсальна стрілка д
             }"
           >
             <template #default="slotProps">
-              <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+              <TheProductCard
+                v-if="slotProps?.slide"
+                :product="slotProps.slide as any"
+              />
             </template>
           </AppSlider>
         </div>
@@ -106,8 +109,14 @@ const ARROW_CODE = `<!-- AppArrow — універсальна стрілка д
           <span style="color: #9ca3af; font-size: 13px; margin-left: 8px">активні</span>
         </div>
         <div style="display: flex; gap: 12px; align-items: center">
-          <AppArrow direction="prev" :disabled="true" />
-          <AppArrow direction="next" :disabled="true" />
+          <AppArrow
+            direction="prev"
+            :disabled="true"
+          />
+          <AppArrow
+            direction="next"
+            :disabled="true"
+          />
           <span style="color: #9ca3af; font-size: 13px; margin-left: 8px">disabled</span>
         </div>
       </template>

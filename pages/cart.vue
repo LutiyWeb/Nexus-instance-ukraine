@@ -66,42 +66,78 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
       description="Додайте товари, щоб оформити замовлення"
     >
       <template #icon>
-        <ShoppingCart :size="56" :stroke-width="1.2" />
+        <ShoppingCart
+          :size="56"
+          :stroke-width="1.2"
+        />
       </template>
       <template #action>
-        <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
+        <AppButton
+          variant="primary"
+          size="md"
+          @click="navigateTo('/catalog')"
+        >
           Перейти до каталогу
         </AppButton>
       </template>
     </AppEmpty>
 
     <!-- Layout with items -->
-    <div v-else class="cart-page__layout">
+    <div
+      v-else
+      class="cart-page__layout"
+    >
       <!-- Items column -->
       <div class="cart-page__items">
         <!-- Bulk bar -->
         <div class="cart-page__bulk">
           <label class="cart-page__select-all">
-            <input type="checkbox" :checked="allSelected" @change="toggleAll" />
+            <input
+              type="checkbox"
+              :checked="allSelected"
+              @change="toggleAll"
+            />
             Обрано {{ selectedIds.length }} з {{ cartStore.items.length }}
           </label>
-          <div v-if="selectedIds.length" class="cart-page__bulk-actions">
-            <button type="button" @click="addSelectedToFavorites">
+          <div
+            v-if="selectedIds.length"
+            class="cart-page__bulk-actions"
+          >
+            <button
+              type="button"
+              @click="addSelectedToFavorites"
+            >
               <Heart :size="14" /> До обраного
             </button>
-            <button type="button" class="cart-page__bulk-delete" @click="pendingDelete = true">
+            <button
+              type="button"
+              class="cart-page__bulk-delete"
+              @click="pendingDelete = true"
+            >
               <Trash2 :size="14" /> Видалити
             </button>
           </div>
         </div>
 
         <!-- Delete confirm -->
-        <div v-if="pendingDelete" class="cart-page__confirm">
+        <div
+          v-if="pendingDelete"
+          class="cart-page__confirm"
+        >
           <span>Видалити {{ selectedIds.length }} товар(ів)?</span>
-          <button type="button" class="cart-page__confirm-ok" @click="removeSelected">
+          <button
+            type="button"
+            class="cart-page__confirm-ok"
+            @click="removeSelected"
+          >
             Видалити
           </button>
-          <button type="button" @click="pendingDelete = false">Скасувати</button>
+          <button
+            type="button"
+            @click="pendingDelete = false"
+          >
+            Скасувати
+          </button>
         </div>
 
         <CartItem
@@ -135,15 +171,26 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
           <span>{{ formatPrice(cartStore.total) }}</span>
         </div>
 
-        <NuxtLink to="/checkout" class="cart-page__checkout">Оформити замовлення</NuxtLink>
-        <button type="button" class="cart-page__continue" @click="navigateTo('/catalog')">
+        <NuxtLink
+          to="/checkout"
+          class="cart-page__checkout"
+          >Оформити замовлення</NuxtLink
+        >
+        <button
+          type="button"
+          class="cart-page__continue"
+          @click="navigateTo('/catalog')"
+        >
           Продовжити покупки
         </button>
       </aside>
     </div>
 
     <!-- Recommendations -->
-    <div v-if="recommendations.length" class="cart-page__recs">
+    <div
+      v-if="recommendations.length"
+      class="cart-page__recs"
+    >
       <AppSlider
         title="Рекомендуємо"
         :slides="recommendations"
@@ -157,7 +204,10 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
         }"
       >
         <template #default="slotProps">
-          <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+          <TheProductCard
+            v-if="slotProps?.slide"
+            :product="slotProps.slide as any"
+          />
         </template>
       </AppSlider>
     </div>

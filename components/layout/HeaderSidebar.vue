@@ -36,18 +36,32 @@ function close() {
 <template>
   <Teleport to="body">
     <Transition name="sidebar">
-      <div v-if="open" class="header-sidebar">
-        <div class="header-sidebar__backdrop" @click="close" />
+      <div
+        v-if="open"
+        class="header-sidebar"
+      >
+        <div
+          class="header-sidebar__backdrop"
+          @click="close"
+        />
         <div class="header-sidebar__panel">
           <Transition
             :name="direction === 'forward' ? 'slide-forward' : 'slide-back'"
             mode="out-in"
           >
             <!-- Level 1: Categories -->
-            <div v-if="!activeCategory" key="level1" class="header-sidebar__level">
+            <div
+              v-if="!activeCategory"
+              key="level1"
+              class="header-sidebar__level"
+            >
               <div class="header-sidebar__head">
                 <span class="header-sidebar__title">Каталог</span>
-                <button class="header-sidebar__close" type="button" @click="close">
+                <button
+                  class="header-sidebar__close"
+                  type="button"
+                  @click="close"
+                >
                   <X :size="14" />
                 </button>
               </div>
@@ -69,19 +83,35 @@ function close() {
                 </button>
               </nav>
 
-              <NuxtLink to="/promo" class="header-sidebar__promo" @click="close">
+              <NuxtLink
+                to="/promo"
+                class="header-sidebar__promo"
+                @click="close"
+              >
                 <Flame :size="16" /> Акції та знижки
               </NuxtLink>
             </div>
 
             <!-- Level 2: Subcategories -->
-            <div v-else key="level2" class="header-sidebar__level">
+            <div
+              v-else
+              key="level2"
+              class="header-sidebar__level"
+            >
               <div class="header-sidebar__head">
-                <button class="header-sidebar__back" type="button" @click="goBack">
+                <button
+                  class="header-sidebar__back"
+                  type="button"
+                  @click="goBack"
+                >
                   <ArrowLeft :size="16" />
                   Назад
                 </button>
-                <button class="header-sidebar__close" type="button" @click="close">
+                <button
+                  class="header-sidebar__close"
+                  type="button"
+                  @click="close"
+                >
                   <X :size="14" />
                 </button>
               </div>

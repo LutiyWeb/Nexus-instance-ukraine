@@ -20,11 +20,18 @@ function formatDate(iso: string) {
         <span class="question-card__author">{{ question.author }}</span>
         <span class="question-card__date">{{ formatDate(question.createdAt) }}</span>
       </div>
-      <span v-if="!question.answer" class="question-card__pending">Очікує на відповідь</span>
+      <span
+        v-if="!question.answer"
+        class="question-card__pending"
+        >Очікує на відповідь</span
+      >
     </div>
     <p class="question-card__text">{{ question.text }}</p>
 
-    <div v-if="question.answer" class="question-card__answer">
+    <div
+      v-if="question.answer"
+      class="question-card__answer"
+    >
       <span class="question-card__answer-label">Відповідь продавця</span>
       <p class="question-card__answer-text">{{ question.answer }}</p>
     </div>

@@ -11,9 +11,20 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
 </script>
 
 <template>
-  <div v-if="chips.length" class="catalog-chips">
-    <TransitionGroup name="chip" tag="div" class="catalog-chips__list">
-      <span v-for="chip in chips" :key="chip.key" class="catalog-chips__item">
+  <div
+    v-if="chips.length"
+    class="catalog-chips"
+  >
+    <TransitionGroup
+      name="chip"
+      tag="div"
+      class="catalog-chips__list"
+    >
+      <span
+        v-for="chip in chips"
+        :key="chip.key"
+        class="catalog-chips__item"
+      >
         {{ chip.label }}
         <button
           class="catalog-chips__remove"

@@ -100,7 +100,13 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
   <aside :class="['catalog-filters', { 'catalog-filters--open': isOpen }]">
     <div class="catalog-filters__head">
       <span class="catalog-filters__title">Фільтри</span>
-      <button class="catalog-filters__close" type="button" @click="$emit('close')">✕</button>
+      <button
+        class="catalog-filters__close"
+        type="button"
+        @click="$emit('close')"
+      >
+        ✕
+      </button>
     </div>
 
     <slot name="chips" />
@@ -108,7 +114,11 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     <!-- Categories -->
     <div class="catalog-filters__section">
       <span class="catalog-filters__label">Категорії</span>
-      <label v-for="cat in categoriesStore.categories" :key="cat.id" class="catalog-filters__check">
+      <label
+        v-for="cat in categoriesStore.categories"
+        :key="cat.id"
+        class="catalog-filters__check"
+      >
         <input
           type="checkbox"
           :checked="local.categories.includes(cat.slug)"
@@ -121,8 +131,16 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     <!-- Price presets -->
     <div class="catalog-filters__section">
       <span class="catalog-filters__label">Ціна</span>
-      <label v-for="preset in pricePresets" :key="preset.label" class="catalog-filters__check">
-        <input type="checkbox" :checked="activePreset === preset" @change="togglePreset(preset)" />
+      <label
+        v-for="preset in pricePresets"
+        :key="preset.label"
+        class="catalog-filters__check"
+      >
+        <input
+          type="checkbox"
+          :checked="activePreset === preset"
+          @change="togglePreset(preset)"
+        />
         {{ preset.label }}
       </label>
     </div>
@@ -132,7 +150,10 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
       <span class="catalog-filters__label">Бренди</span>
 
       <div class="catalog-filters__search">
-        <Search :size="14" class="catalog-filters__search-icon" />
+        <Search
+          :size="14"
+          class="catalog-filters__search-icon"
+        />
         <input
           v-model="brandSearch"
           class="catalog-filters__search-input"
@@ -142,8 +163,15 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
       </div>
 
       <div class="catalog-filters__brand-list">
-        <div v-if="brandsStore.loading" class="catalog-filters__brand-loading">
-          <div v-for="n in 4" :key="n" class="catalog-filters__brand-shimmer" />
+        <div
+          v-if="brandsStore.loading"
+          class="catalog-filters__brand-loading"
+        >
+          <div
+            v-for="n in 4"
+            :key="n"
+            class="catalog-filters__brand-shimmer"
+          />
         </div>
         <template v-else>
           <label
@@ -159,7 +187,10 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
             <span class="catalog-filters__brand-name">{{ brand.name }}</span>
             <span class="catalog-filters__brand-count">({{ brand.count }})</span>
           </label>
-          <p v-if="!brandsStore.brands.length" class="catalog-filters__no-results">
+          <p
+            v-if="!brandsStore.brands.length"
+            class="catalog-filters__no-results"
+          >
             Нічого не знайдено
           </p>
         </template>

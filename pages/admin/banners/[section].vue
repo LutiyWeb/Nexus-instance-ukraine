@@ -149,10 +149,19 @@ watch(section, load, { immediate: true })
   <div class="admin-banners">
     <div class="admin-banners__header">
       <h1 class="admin-banners__title">{{ title }}</h1>
-      <a-button v-if="isSingle" type="primary" @click="editSingle">
+      <a-button
+        v-if="isSingle"
+        type="primary"
+        @click="editSingle"
+      >
         {{ banners[0] ? 'Редагувати' : 'Створити' }}
       </a-button>
-      <a-button v-else type="primary" @click="openCreate">Додати слайд</a-button>
+      <a-button
+        v-else
+        type="primary"
+        @click="openCreate"
+        >Додати слайд</a-button
+      >
     </div>
 
     <a-table
@@ -169,16 +178,30 @@ watch(section, load, { immediate: true })
         </template>
         <template v-if="column.key === 'actions'">
           <a-space>
-            <a-button size="small" @click="openEdit(record)">Редагувати</a-button>
-            <a-popconfirm title="Видалити банер?" @confirm="remove(record)">
-              <a-button size="small" danger>Видалити</a-button>
+            <a-button
+              size="small"
+              @click="openEdit(record)"
+              >Редагувати</a-button
+            >
+            <a-popconfirm
+              title="Видалити банер?"
+              @confirm="remove(record)"
+            >
+              <a-button
+                size="small"
+                danger
+                >Видалити</a-button
+              >
             </a-popconfirm>
           </a-space>
         </template>
       </template>
     </a-table>
 
-    <a-empty v-else-if="!loading && !banners.length" description="Банер ще не створено" />
+    <a-empty
+      v-else-if="!loading && !banners.length"
+      description="Банер ще не створено"
+    />
 
     <a-modal
       v-model:open="modalOpen"
@@ -191,7 +214,10 @@ watch(section, load, { immediate: true })
           <a-input v-model:value="form.title" />
         </a-form-item>
         <a-form-item label="Опис">
-          <a-textarea v-model:value="form.description" :rows="3" />
+          <a-textarea
+            v-model:value="form.description"
+            :rows="3"
+          />
         </a-form-item>
         <template v-if="showMedia">
           <a-form-item label="Тип медіа">
@@ -200,15 +226,27 @@ watch(section, load, { immediate: true })
               <a-select-option value="video">Відео</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item v-if="form.mediaType === 'image'" label="Зображення">
+          <a-form-item
+            v-if="form.mediaType === 'image'"
+            label="Зображення"
+          >
             <AdminImageUpload v-model="form.mediaUrl" />
           </a-form-item>
-          <a-form-item v-else label="Посилання на відео">
+          <a-form-item
+            v-else
+            label="Посилання на відео"
+          >
             <a-input v-model:value="form.mediaUrl" />
           </a-form-item>
         </template>
-        <a-form-item v-if="showGradient" label="Градієнт (CSS)">
-          <a-input v-model:value="form.gradient" placeholder="linear-gradient(...)" />
+        <a-form-item
+          v-if="showGradient"
+          label="Градієнт (CSS)"
+        >
+          <a-input
+            v-model:value="form.gradient"
+            placeholder="linear-gradient(...)"
+          />
         </a-form-item>
         <a-form-item label="Посилання при кліку">
           <a-input v-model:value="form.linkUrl" />
@@ -216,8 +254,15 @@ watch(section, load, { immediate: true })
         <a-form-item label="Текст кнопки">
           <a-input v-model:value="form.buttonText" />
         </a-form-item>
-        <a-form-item v-if="!isSingle" label="Порядок сортування">
-          <a-input-number v-model:value="form.sortOrder" :min="0" class="admin-banners__number" />
+        <a-form-item
+          v-if="!isSingle"
+          label="Порядок сортування"
+        >
+          <a-input-number
+            v-model:value="form.sortOrder"
+            :min="0"
+            class="admin-banners__number"
+          />
         </a-form-item>
         <a-form-item label="Активний">
           <a-switch v-model:checked="form.isActive" />

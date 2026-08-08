@@ -4,7 +4,11 @@ useHead({ title: 'Про нас — Nexus Commerce' })
 
 <template>
   <div class="about-page container">
-    <TheTitle tag="h1" size="m">Про нас</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Про нас</TheTitle
+    >
     <p class="about-page__lead">
       Nexus Commerce — сучасна платформа шаблонів для e-commerce проєктів на Nuxt 3.
     </p>

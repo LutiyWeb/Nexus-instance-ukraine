@@ -80,9 +80,15 @@ const PROPS = [
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Стани" description="Натисни на кнопку 'Завантаження' для демонстрації">
+    <UiKitSection
+      title="Стани"
+      description="Натисни на кнопку 'Завантаження' для демонстрації"
+    >
       <template #preview>
-        <AppButton :loading="loadingDemo" @click="triggerLoading">
+        <AppButton
+          :loading="loadingDemo"
+          @click="triggerLoading"
+        >
           {{ loadingDemo ? 'Завантажується...' : 'Натисни для завантаження' }}
         </AppButton>
         <AppButton :disabled="true">Недоступна</AppButton>

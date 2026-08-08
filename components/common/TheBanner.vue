@@ -7,11 +7,17 @@ withDefaults(defineProps<Props>(), { variant: 'default' })
 
 <template>
   <div :class="['the-banner', `the-banner--${variant}`]">
-    <div v-if="$slots.eyebrow" class="the-banner__eyebrow">
+    <div
+      v-if="$slots.eyebrow"
+      class="the-banner__eyebrow"
+    >
       <slot name="eyebrow" />
     </div>
     <slot />
-    <div v-if="$slots.actions" class="the-banner__actions">
+    <div
+      v-if="$slots.actions"
+      class="the-banner__actions"
+    >
       <slot name="actions" />
     </div>
   </div>

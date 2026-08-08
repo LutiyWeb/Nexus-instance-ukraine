@@ -20,7 +20,11 @@ function formatDate(iso: string) {
         <span class="review-card__author">{{ review.author }}</span>
         <span class="review-card__date">{{ formatDate(review.createdAt) }}</span>
       </div>
-      <ReviewStars :rating="review.rating" :size="14" class="review-card__stars" />
+      <ReviewStars
+        :rating="review.rating"
+        :size="14"
+        class="review-card__stars"
+      />
     </div>
     <p class="review-card__text">{{ review.text }}</p>
   </article>

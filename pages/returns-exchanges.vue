@@ -4,9 +4,16 @@ useHead({ title: 'Повернення та обмін — Nexus Commerce' })
 
 <template>
   <div class="legal-page container">
-    <TheTitle tag="h1" size="m">Повернення та обмін</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Повернення та обмін</TheTitle
+    >
 
-    <AppAccordion title="Загальні умови" :default-open="true">
+    <AppAccordion
+      title="Загальні умови"
+      :default-open="true"
+    >
       <p class="legal-page__text">
         Ми дотримуємось вимог Закону України «Про захист прав споживачів». Ви маєте право повернути
         або обміняти товар належної якості протягом 14 днів з моменту отримання, якщо він не

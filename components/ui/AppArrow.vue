@@ -11,9 +11,20 @@ defineEmits<{ click: [] }>()
 </script>
 
 <template>
-  <button class="app-arrow" type="button" :disabled="disabled" @click="$emit('click')">
-    <ChevronLeft v-if="direction === 'left'" :size="16" />
-    <ChevronRight v-else :size="16" />
+  <button
+    class="app-arrow"
+    type="button"
+    :disabled="disabled"
+    @click="$emit('click')"
+  >
+    <ChevronLeft
+      v-if="direction === 'left'"
+      :size="16"
+    />
+    <ChevronRight
+      v-else
+      :size="16"
+    />
   </button>
 </template>
 

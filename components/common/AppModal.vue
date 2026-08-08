@@ -8,9 +8,17 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 <template>
   <Teleport to="body">
     <Transition name="app-modal">
-      <div v-if="open" class="app-modal-overlay" @click.self="emit('update:open', false)">
+      <div
+        v-if="open"
+        class="app-modal-overlay"
+        @click.self="emit('update:open', false)"
+      >
         <div class="app-modal">
-          <button class="app-modal__close" type="button" @click="emit('update:open', false)">
+          <button
+            class="app-modal__close"
+            type="button"
+            @click="emit('update:open', false)"
+          >
             <X :size="14" />
           </button>
           <slot />

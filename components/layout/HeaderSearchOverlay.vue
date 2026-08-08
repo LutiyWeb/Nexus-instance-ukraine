@@ -266,11 +266,21 @@ onBeforeUnmount(() => {
 <template>
   <Teleport to="body">
     <Transition name="search-modal">
-      <div v-if="open" class="search-modal" @click.self="closeModal">
-        <div class="search-modal__box" @keydown="onKeydown">
+      <div
+        v-if="open"
+        class="search-modal"
+        @click.self="closeModal"
+      >
+        <div
+          class="search-modal__box"
+          @keydown="onKeydown"
+        >
           <!-- Header -->
           <div class="search-modal__header">
-            <Search :size="20" class="search-modal__icon" />
+            <Search
+              :size="20"
+              class="search-modal__icon"
+            />
             <input
               ref="inputRef"
               v-model="query"
@@ -296,7 +306,10 @@ onBeforeUnmount(() => {
             <!-- ── EMPTY STATE ─────────────────────────────────────── -->
             <template v-if="!isActive">
               <!-- Recent searches -->
-              <section v-if="searchStore.history.length" class="search-modal__section">
+              <section
+                v-if="searchStore.history.length"
+                class="search-modal__section"
+              >
                 <div class="search-modal__section-f">
                   <span class="search-modal__section-title"><Clock :size="13" />Недавні</span>
                   <button
@@ -317,7 +330,10 @@ onBeforeUnmount(() => {
                     @click="submitSearch(item)"
                     @keydown.enter="submitSearch(item)"
                   >
-                    <Clock :size="13" class="search-modal__history-clock" />
+                    <Clock
+                      :size="13"
+                      class="search-modal__history-clock"
+                    />
                     <span>{{ item }}</span>
                     <button
                       class="search-modal__history-remove"
@@ -381,7 +397,10 @@ onBeforeUnmount(() => {
                       :key="p.id"
                       class="search-modal__trend-slide"
                     >
-                      <div class="search-modal__trend-wrap" @click="closeModal">
+                      <div
+                        class="search-modal__trend-wrap"
+                        @click="closeModal"
+                      >
                         <TheProductCard :product="p" />
                       </div>
                     </SwiperSlide>
@@ -456,9 +475,15 @@ onBeforeUnmount(() => {
                       :to="`/catalog?categorySlug=${cat.slug}`"
                       @click="closeModal"
                     >
-                      <component :is="getCatIcon(cat.slug)" :size="14" />
+                      <component
+                        :is="getCatIcon(cat.slug)"
+                        :size="14"
+                      />
                       <span>{{ cat.name }}</span>
-                      <ChevronRight :size="13" class="search-modal__suggestion-arrow" />
+                      <ChevronRight
+                        :size="13"
+                        class="search-modal__suggestion-arrow"
+                      />
                     </NuxtLink>
                   </template>
                 </div>
@@ -467,7 +492,11 @@ onBeforeUnmount(() => {
                 <div class="search-modal__products">
                   <!-- Skeleton -->
                   <template v-if="isSearching">
-                    <div v-for="n in 4" :key="n" class="search-modal__product-skeleton" />
+                    <div
+                      v-for="n in 4"
+                      :key="n"
+                      class="search-modal__product-skeleton"
+                    />
                   </template>
 
                   <!-- Results -->
@@ -488,7 +517,12 @@ onBeforeUnmount(() => {
                       @click="closeModal"
                     >
                       <div class="search-modal__product-img">
-                        <img v-if="p.thumbnail" :src="p.thumbnail" :alt="p.title" loading="lazy" />
+                        <img
+                          v-if="p.thumbnail"
+                          :src="p.thumbnail"
+                          :alt="p.title"
+                          loading="lazy"
+                        />
                       </div>
                       <div class="search-modal__product-info">
                         <span class="search-modal__product-cat">{{ p.category }}</span>
@@ -507,7 +541,12 @@ onBeforeUnmount(() => {
                   </template>
 
                   <!-- No results -->
-                  <p v-else class="search-modal__no-results">Нічого не знайдено</p>
+                  <p
+                    v-else
+                    class="search-modal__no-results"
+                  >
+                    Нічого не знайдено
+                  </p>
                 </div>
               </div>
             </template>

@@ -134,7 +134,11 @@ onMounted(() => {
   <div class="admin-products">
     <div class="admin-products__header">
       <h1 class="admin-products__title">Товари</h1>
-      <a-button type="primary" @click="openCreate">Додати товар</a-button>
+      <a-button
+        type="primary"
+        @click="openCreate"
+        >Додати товар</a-button
+      >
     </div>
 
     <a-table
@@ -147,9 +151,20 @@ onMounted(() => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'actions'">
           <a-space>
-            <a-button size="small" @click="openEdit(record)">Редагувати</a-button>
-            <a-popconfirm title="Видалити товар?" @confirm="remove(record)">
-              <a-button size="small" danger>Видалити</a-button>
+            <a-button
+              size="small"
+              @click="openEdit(record)"
+              >Редагувати</a-button
+            >
+            <a-popconfirm
+              title="Видалити товар?"
+              @confirm="remove(record)"
+            >
+              <a-button
+                size="small"
+                danger
+                >Видалити</a-button
+              >
             </a-popconfirm>
           </a-space>
         </template>
@@ -170,13 +185,20 @@ onMounted(() => {
           <a-input v-model:value="form.slug" />
         </a-form-item>
         <a-form-item label="Опис">
-          <a-textarea v-model:value="form.description" :rows="3" />
+          <a-textarea
+            v-model:value="form.description"
+            :rows="3"
+          />
         </a-form-item>
         <a-form-item label="SKU">
           <a-input v-model:value="form.sku" />
         </a-form-item>
         <a-form-item label="Ціна">
-          <a-input-number v-model:value="form.price" :min="0" class="admin-products__number" />
+          <a-input-number
+            v-model:value="form.price"
+            :min="0"
+            class="admin-products__number"
+          />
         </a-form-item>
         <a-form-item label="Ціна до знижки">
           <a-input-number
@@ -186,7 +208,11 @@ onMounted(() => {
           />
         </a-form-item>
         <a-form-item label="Залишок">
-          <a-input-number v-model:value="form.stock" :min="0" class="admin-products__number" />
+          <a-input-number
+            v-model:value="form.stock"
+            :min="0"
+            class="admin-products__number"
+          />
         </a-form-item>
         <a-form-item label="Статус">
           <a-select v-model:value="form.status">
@@ -196,15 +222,29 @@ onMounted(() => {
           </a-select>
         </a-form-item>
         <a-form-item label="Категорія">
-          <a-select v-model:value="form.categoryId" allow-clear>
-            <a-select-option v-for="cat in categories" :key="cat.id" :value="cat.id">
+          <a-select
+            v-model:value="form.categoryId"
+            allow-clear
+          >
+            <a-select-option
+              v-for="cat in categories"
+              :key="cat.id"
+              :value="cat.id"
+            >
               {{ cat.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="Бренд">
-          <a-select v-model:value="form.brandId" allow-clear>
-            <a-select-option v-for="brand in brands" :key="brand.id" :value="brand.id">
+          <a-select
+            v-model:value="form.brandId"
+            allow-clear
+          >
+            <a-select-option
+              v-for="brand in brands"
+              :key="brand.id"
+              :value="brand.id"
+            >
               {{ brand.name }}
             </a-select-option>
           </a-select>

@@ -132,7 +132,7 @@ export const useAuthStore = defineStore('auth', () => {
       const lockAt = Number(localStorage.getItem(REFRESH_LOCK_KEY) ?? 0)
       if (lockAt && Date.now() - lockAt < REFRESH_LOCK_TTL_MS) {
         for (let i = 0; i < 20; i++) {
-          await new Promise(r => setTimeout(r, 250))
+          await new Promise((resolve) => setTimeout(resolve, 250))
           if (!localStorage.getItem(REFRESH_LOCK_KEY)) break
         }
         token.value = localStorage.getItem('access_token')

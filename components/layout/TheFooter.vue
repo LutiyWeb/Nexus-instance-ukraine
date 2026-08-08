@@ -11,9 +11,17 @@ function toggle(i: number) {
   <footer class="the-footer">
     <div class="the-footer__inner container">
       <div class="the-footer__brand">
-        <NuxtLink to="/" class="the-footer__logo">Nexus</NuxtLink>
+        <NuxtLink
+          to="/"
+          class="the-footer__logo"
+          >Nexus</NuxtLink
+        >
         <p class="the-footer__desc">Найкращі шаблони для сучасних проєктів.</p>
-        <NuxtLink v-if="$config.public.isDev" to="/ui" class="the-footer__dev-link">
+        <NuxtLink
+          v-if="$config.public.isDev"
+          to="/ui"
+          class="the-footer__dev-link"
+        >
           Dev: UI Kit
         </NuxtLink>
       </div>
@@ -59,7 +67,10 @@ function toggle(i: number) {
             @click="toggle(i)"
           >
             {{ col.title }}
-            <ChevronDown class="the-footer__col-icon" :size="14" />
+            <ChevronDown
+              class="the-footer__col-icon"
+              :size="14"
+            />
           </button>
           <div :class="['the-footer__col-body', { 'the-footer__col-body--open': open[i] }]">
             <div class="the-footer__col-body-inner">

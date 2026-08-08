@@ -62,7 +62,10 @@ const MODAL_CODE = `<!-- Базовий компонент, перевикори
     >
       <template #preview>
         <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
-          <AppButton variant="primary" @click="uiStore.authModalOpen = true">
+          <AppButton
+            variant="primary"
+            @click="uiStore.authModalOpen = true"
+          >
             Відкрити Auth Modal
           </AppButton>
           <span style="font-size: 13px; color: #9ca3af">uiStore.authModalOpen = true</span>
@@ -79,7 +82,10 @@ const MODAL_CODE = `<!-- Базовий компонент, перевикори
     >
       <template #preview>
         <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
-          <AppButton variant="outline" @click="uiStore.forgotPasswordModalOpen = true">
+          <AppButton
+            variant="outline"
+            @click="uiStore.forgotPasswordModalOpen = true"
+          >
             Відкрити Forgot Password Modal
           </AppButton>
           <span style="font-size: 13px; color: #9ca3af"
@@ -98,7 +104,10 @@ const MODAL_CODE = `<!-- Базовий компонент, перевикори
     >
       <template #preview>
         <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
-          <AppButton variant="outline" @click="uiStore.searchOpen = true">
+          <AppButton
+            variant="outline"
+            @click="uiStore.searchOpen = true"
+          >
             Відкрити Search Overlay
           </AppButton>
           <span style="font-size: 13px; color: #9ca3af">uiStore.searchOpen = true</span>
@@ -115,7 +124,10 @@ const MODAL_CODE = `<!-- Базовий компонент, перевикори
     >
       <template #preview>
         <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
-          <AppButton variant="outline" @click="uiStore.catalogOpen = true">
+          <AppButton
+            variant="outline"
+            @click="uiStore.catalogOpen = true"
+          >
             Відкрити Catalog Menu
           </AppButton>
           <span style="font-size: 13px; color: #9ca3af">uiStore.catalogOpen = true</span>
@@ -126,7 +138,10 @@ const MODAL_CODE = `<!-- Базовий компонент, перевикори
       </template>
     </UiKitSection>
 
-    <UiKitSection title="UiStore API" description="Централізоване керування всіма оверлеями">
+    <UiKitSection
+      title="UiStore API"
+      description="Централізоване керування всіма оверлеями"
+    >
       <UiKitPropsTable
         :rows="[
           {
@@ -141,7 +156,12 @@ const MODAL_CODE = `<!-- Базовий компонент, перевикори
             default: 'false',
             description: 'Forgot Password Modal відкрита',
           },
-          { name: 'catalogOpen', type: 'boolean', default: 'false', description: 'Каталог відкритий' },
+          {
+            name: 'catalogOpen',
+            type: 'boolean',
+            default: 'false',
+            description: 'Каталог відкритий',
+          },
           { name: 'searchOpen', type: 'boolean', default: 'false', description: 'Пошук відкритий' },
           {
             name: 'sidebarOpen',

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 
-const props = defineProps<{ modelValue: string }>()
+defineProps<{ modelValue: string }>()
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
 const { authFetch } = useAuthFetch()
@@ -37,9 +37,21 @@ function remove() {
 
 <template>
   <div class="admin-image-upload">
-    <div v-if="modelValue" class="admin-image-upload__preview">
-      <img :src="modelValue" alt="" class="admin-image-upload__img" />
-      <a-button size="small" danger @click="remove">Видалити</a-button>
+    <div
+      v-if="modelValue"
+      class="admin-image-upload__preview"
+    >
+      <img
+        :src="modelValue"
+        alt=""
+        class="admin-image-upload__img"
+      />
+      <a-button
+        size="small"
+        danger
+        @click="remove"
+        >Видалити</a-button
+      >
     </div>
     <a-upload-dragger
       v-else

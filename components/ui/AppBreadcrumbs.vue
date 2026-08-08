@@ -10,10 +10,21 @@ defineProps<{ crumbs: Crumb[] }>()
 </script>
 
 <template>
-  <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <nav
+    class="breadcrumbs"
+    aria-label="Breadcrumb"
+  >
     <ol class="breadcrumbs__list">
-      <li v-for="(crumb, i) in crumbs" :key="i" class="breadcrumbs__item">
-        <NuxtLink v-if="crumb.to && i < crumbs.length - 1" :to="crumb.to" class="breadcrumbs__link">
+      <li
+        v-for="(crumb, i) in crumbs"
+        :key="i"
+        class="breadcrumbs__item"
+      >
+        <NuxtLink
+          v-if="crumb.to && i < crumbs.length - 1"
+          :to="crumb.to"
+          class="breadcrumbs__link"
+        >
           {{ crumb.label }}
         </NuxtLink>
         <span

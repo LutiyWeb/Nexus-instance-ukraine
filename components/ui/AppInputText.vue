@@ -25,7 +25,11 @@ function onFocus() {
 
 <template>
   <div class="app-input">
-    <label v-if="label" class="app-input__label">{{ label }}</label>
+    <label
+      v-if="label"
+      class="app-input__label"
+      >{{ label }}</label
+    >
     <input
       v-model="modelValue"
       v-maska="type === 'phone' ? { mask: PHONE_MASK, eager: true } : undefined"
@@ -35,7 +39,11 @@ function onFocus() {
       :class="['app-input__field', { 'app-input__field--error': error }]"
       @focus="onFocus"
     />
-    <span v-if="error" class="app-input__error">{{ error }}</span>
+    <span
+      v-if="error"
+      class="app-input__error"
+      >{{ error }}</span
+    >
   </div>
 </template>
 

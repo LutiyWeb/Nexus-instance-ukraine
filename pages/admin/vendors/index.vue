@@ -254,14 +254,24 @@ onMounted(() => {
         >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'status'">
-              <a-tag v-if="!record.mapping" color="orange">Не вирішено</a-tag>
+              <a-tag
+                v-if="!record.mapping"
+                color="orange"
+                >Не вирішено</a-tag
+              >
               <a-tag v-else-if="record.mapping.import_action === 'skip'">Пропущено</a-tag>
-              <a-tag v-else color="green">
+              <a-tag
+                v-else
+                color="green"
+              >
                 Прив'язано: {{ record.mapping.category?.name ?? '—' }}
               </a-tag>
             </template>
             <template v-else-if="column.key === 'actions'">
-              <a-button size="small" @click.stop="openMappingModal(record)">
+              <a-button
+                size="small"
+                @click.stop="openMappingModal(record)"
+              >
                 Додати категорію
               </a-button>
             </template>
@@ -269,10 +279,16 @@ onMounted(() => {
         </a-table>
       </div>
 
-      <div v-if="selectedCategory" class="admin-vendors__section">
+      <div
+        v-if="selectedCategory"
+        class="admin-vendors__section"
+      >
         <h2 class="admin-vendors__section-title">
           Товари: {{ selectedCategory.source_category_name }}
-          <span v-if="productsMeta" class="admin-vendors__meta">
+          <span
+            v-if="productsMeta"
+            class="admin-vendors__meta"
+          >
             (нових: {{ productsMeta.new_to_us }}, вже у нас: {{ productsMeta.already_imported }})
           </span>
         </h2>
@@ -293,7 +309,11 @@ onMounted(() => {
               />
             </template>
             <template v-else-if="column.key === 'in_our_catalog'">
-              <a-tag v-if="record.in_our_catalog" color="green">Так</a-tag>
+              <a-tag
+                v-if="record.in_our_catalog"
+                color="green"
+                >Так</a-tag
+              >
               <a-tag v-else>Ні</a-tag>
             </template>
           </template>
@@ -307,11 +327,17 @@ onMounted(() => {
       :confirm-loading="mappingSubmitting"
       @ok="submitMapping"
     >
-      <p v-if="mappingTarget" class="admin-vendors__modal-source">
+      <p
+        v-if="mappingTarget"
+        class="admin-vendors__modal-source"
+      >
         Категорія постачальника: <strong>{{ mappingTarget.source_category_name }}</strong>
       </p>
 
-      <a-radio-group v-model:value="mappingMode" class="admin-vendors__modal-mode">
+      <a-radio-group
+        v-model:value="mappingMode"
+        class="admin-vendors__modal-mode"
+      >
         <a-radio value="existing">Наша існуюча категорія</a-radio>
         <a-radio value="new">Створити нову</a-radio>
       </a-radio-group>

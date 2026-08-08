@@ -22,8 +22,15 @@ const pages = computed(() => {
       ‹
     </button>
 
-    <template v-for="(p, i) in pages" :key="p">
-      <span v-if="i > 0 && p - pages[i - 1] > 1" class="catalog-pagination__dots">…</span>
+    <template
+      v-for="(p, i) in pages"
+      :key="p"
+    >
+      <span
+        v-if="i > 0 && p - pages[i - 1] > 1"
+        class="catalog-pagination__dots"
+        >…</span
+      >
       <button
         :class="['catalog-pagination__btn', { 'catalog-pagination__btn--active': p === page }]"
         type="button"

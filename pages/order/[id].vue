@@ -15,7 +15,8 @@ const { data, pending, error } = useAsyncData(`order-${route.params.id}`, () =>
 const order = computed(() => data.value?.data ?? null)
 
 useSeoMeta({
-  title: () => (order.value ? `Замовлення ${order.value.orderNumber} — Nexus Commerce` : 'Замовлення'),
+  title: () =>
+    order.value ? `Замовлення ${order.value.orderNumber} — Nexus Commerce` : 'Замовлення',
 })
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
@@ -50,14 +51,28 @@ function formatDate(iso: string) {
     />
 
     <!-- Loading -->
-    <div v-if="pending" class="order-page__loading">
-      <AppSkeleton width="100%" height="200px" border-radius="16px" />
+    <div
+      v-if="pending"
+      class="order-page__loading"
+    >
+      <AppSkeleton
+        width="100%"
+        height="200px"
+        border-radius="16px"
+      />
     </div>
 
     <!-- Error -->
-    <div v-else-if="error || !order" class="order-page__error">
+    <div
+      v-else-if="error || !order"
+      class="order-page__error"
+    >
       <p>Замовлення не знайдено.</p>
-      <NuxtLink to="/cabinet?section=orders" class="order-page__error-link">Мої замовлення</NuxtLink>
+      <NuxtLink
+        to="/cabinet?section=orders"
+        class="order-page__error-link"
+        >Мої замовлення</NuxtLink
+      >
     </div>
 
     <!-- Content -->
@@ -92,11 +107,23 @@ function formatDate(iso: string) {
           <section class="order-page__card">
             <h2 class="order-page__card-title"><Package :size="16" />Склад замовлення</h2>
             <div class="order-page__items">
-              <div v-for="item in order.items" :key="item.id" class="order-page__item">
+              <div
+                v-for="item in order.items"
+                :key="item.id"
+                class="order-page__item"
+              >
                 <div class="order-page__item-info">
                   <p class="order-page__item-title">{{ item.productTitle }}</p>
-                  <p v-if="item.sku" class="order-page__item-sku">SKU: {{ item.sku }}</p>
-                  <p v-if="item.variant" class="order-page__item-variant">
+                  <p
+                    v-if="item.sku"
+                    class="order-page__item-sku"
+                  >
+                    SKU: {{ item.sku }}
+                  </p>
+                  <p
+                    v-if="item.variant"
+                    class="order-page__item-variant"
+                  >
                     {{ (item.variant as any).title }}
                   </p>
                 </div>
@@ -109,7 +136,10 @@ function formatDate(iso: string) {
           </section>
 
           <!-- Delivery address -->
-          <section v-if="order.deliveryAddressSnapshot" class="order-page__card">
+          <section
+            v-if="order.deliveryAddressSnapshot"
+            class="order-page__card"
+          >
             <h2 class="order-page__card-title"><MapPin :size="16" />Адреса доставки</h2>
             <div class="order-page__address">
               <p>
@@ -133,7 +163,10 @@ function formatDate(iso: string) {
           </section>
 
           <!-- Notes -->
-          <section v-if="order.notes" class="order-page__card">
+          <section
+            v-if="order.notes"
+            class="order-page__card"
+          >
             <h2 class="order-page__card-title"><FileText :size="16" />Коментар</h2>
             <p class="order-page__notes">{{ order.notes }}</p>
           </section>
@@ -170,7 +203,10 @@ function formatDate(iso: string) {
             </div>
 
             <div class="order-page__summary-actions">
-              <NuxtLink to="/catalog" class="order-page__btn order-page__btn--primary">
+              <NuxtLink
+                to="/catalog"
+                class="order-page__btn order-page__btn--primary"
+              >
                 Продовжити покупки
               </NuxtLink>
               <NuxtLink

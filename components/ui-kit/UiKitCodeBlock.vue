@@ -16,7 +16,11 @@ async function copy(code: string) {
   <div class="uk-code">
     <div class="uk-code__bar">
       <span class="uk-code__lang">{{ language ?? 'vue' }}</span>
-      <button class="uk-code__copy" type="button" @click="copy(code)">
+      <button
+        class="uk-code__copy"
+        type="button"
+        @click="copy(code)"
+      >
         {{ copied ? '✓ Скопійовано' : 'Копіювати' }}
       </button>
     </div>

@@ -4,9 +4,16 @@ useHead({ title: 'Оплата та доставка — Nexus Commerce' })
 
 <template>
   <div class="legal-page container">
-    <TheTitle tag="h1" size="m">Оплата та доставка</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Оплата та доставка</TheTitle
+    >
 
-    <AppAccordion title="Способи оплати" :default-open="true">
+    <AppAccordion
+      title="Способи оплати"
+      :default-open="true"
+    >
       <table class="legal-page__table">
         <thead>
           <tr>

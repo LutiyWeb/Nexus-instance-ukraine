@@ -72,7 +72,11 @@ const imgAttrs = computed(() => ({
     :img-attrs="imgAttrs"
     format="webp,jpg"
   />
-  <div v-else class="app-image app-image__fallback" :aria-label="alt">
+  <div
+    v-else
+    class="app-image app-image__fallback"
+    :aria-label="alt"
+  >
     <ImageOff :size="24" />
   </div>
 </template>

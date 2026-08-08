@@ -54,14 +54,25 @@ const EXTRA = [
 <template>
   <Teleport to="body">
     <Transition name="menu-drawer">
-      <div v-if="open" class="menu-drawer">
+      <div
+        v-if="open"
+        class="menu-drawer"
+      >
         <!-- Header -->
         <div class="menu-drawer__header">
-          <button class="menu-drawer__feedback" type="button" @click="handleFeedback">
+          <button
+            class="menu-drawer__feedback"
+            type="button"
+            @click="handleFeedback"
+          >
             <MessageCircle :size="15" />
             Зворотній зв'язок
           </button>
-          <button class="menu-drawer__close" type="button" @click="$emit('close')">
+          <button
+            class="menu-drawer__close"
+            type="button"
+            @click="$emit('close')"
+          >
             <X :size="20" />
           </button>
         </div>
@@ -77,7 +88,11 @@ const EXTRA = [
               class="menu-drawer__link"
               @click="$emit('close')"
             >
-              <component :is="item.icon" :size="17" class="menu-drawer__link-icon" />
+              <component
+                :is="item.icon"
+                :size="17"
+                class="menu-drawer__link-icon"
+              />
               {{ item.label }}
             </NuxtLink>
           </nav>
@@ -94,7 +109,11 @@ const EXTRA = [
               class="menu-drawer__link"
               @click="$emit('close')"
             >
-              <component :is="item.icon" :size="17" class="menu-drawer__link-icon" />
+              <component
+                :is="item.icon"
+                :size="17"
+                class="menu-drawer__link-icon"
+              />
               {{ item.label }}
             </NuxtLink>
           </div>
@@ -111,7 +130,11 @@ const EXTRA = [
               class="menu-drawer__link"
               @click="$emit('close')"
             >
-              <component :is="item.icon" :size="17" class="menu-drawer__link-icon" />
+              <component
+                :is="item.icon"
+                :size="17"
+                class="menu-drawer__link-icon"
+              />
               {{ item.label }}
             </NuxtLink>
           </div>
@@ -119,7 +142,11 @@ const EXTRA = [
 
         <!-- Footer -->
         <div class="menu-drawer__footer">
-          <button class="menu-drawer__auth-btn" type="button" @click="handleAuth">
+          <button
+            class="menu-drawer__auth-btn"
+            type="button"
+            @click="handleAuth"
+          >
             <User :size="16" />
             {{ authStore.isLoggedIn ? (authStore.user?.firstName ?? 'Кабінет') : 'Увійти' }}
           </button>
@@ -128,7 +155,11 @@ const EXTRA = [
     </Transition>
 
     <Transition name="fade">
-      <div v-if="open" class="menu-drawer__backdrop" @click="$emit('close')" />
+      <div
+        v-if="open"
+        class="menu-drawer__backdrop"
+        @click="$emit('close')"
+      />
     </Transition>
   </Teleport>
 </template>

@@ -4,17 +4,28 @@ useHead({ title: 'Контакти — Nexus Commerce' })
 
 <template>
   <div class="contacts-page container">
-    <TheTitle tag="h1" size="m">Контакти</TheTitle>
+    <TheTitle
+      tag="h1"
+      size="m"
+      >Контакти</TheTitle
+    >
     <div class="contacts-page__layout">
       <div class="contacts-page__info">
         <div class="contacts-page__block">
           <span class="contacts-page__block-label">Служба підтримки</span>
-          <a href="tel:+380440000000" class="contacts-page__contact-link">+38 (044) 000-00-00</a>
+          <a
+            href="tel:+380440000000"
+            class="contacts-page__contact-link"
+            >+38 (044) 000-00-00</a
+          >
           <span class="contacts-page__hint">Пн–Пт, 9:00–18:00</span>
         </div>
         <div class="contacts-page__block">
           <span class="contacts-page__block-label">Email</span>
-          <a href="mailto:support@nexus-commerce.ua" class="contacts-page__contact-link">
+          <a
+            href="mailto:support@nexus-commerce.ua"
+            class="contacts-page__contact-link"
+          >
             support@nexus-commerce.ua
           </a>
         </div>
@@ -24,19 +35,35 @@ useHead({ title: 'Контакти — Nexus Commerce' })
         </div>
         <div class="contacts-page__block">
           <span class="contacts-page__block-label">Юридичні питання</span>
-          <a href="mailto:legal@nexus-commerce.ua" class="contacts-page__contact-link">
+          <a
+            href="mailto:legal@nexus-commerce.ua"
+            class="contacts-page__contact-link"
+          >
             legal@nexus-commerce.ua
           </a>
         </div>
       </div>
       <form class="contacts-page__form">
-        <AppInputText label="Ваше ім'я" placeholder="Іван Іваненко" />
-        <AppInputText label="Email" placeholder="email@example.com" />
+        <AppInputText
+          label="Ваше ім'я"
+          placeholder="Іван Іваненко"
+        />
+        <AppInputText
+          label="Email"
+          placeholder="email@example.com"
+        />
         <div>
           <label class="contacts-page__label">Повідомлення</label>
-          <textarea class="contacts-page__textarea" placeholder="Ваше запитання..." />
+          <textarea
+            class="contacts-page__textarea"
+            placeholder="Ваше запитання..."
+          />
         </div>
-        <AppButton variant="primary" size="md">Надіслати</AppButton>
+        <AppButton
+          variant="primary"
+          size="md"
+          >Надіслати</AppButton
+        >
       </form>
     </div>
   </div>

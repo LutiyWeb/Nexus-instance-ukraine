@@ -74,8 +74,14 @@ function onBlur() {
         @focus="onFocus"
         @blur="onBlur"
       />
-      <ul v-if="open && results.length" class="checkout-city-autocomplete__dropdown">
-        <li v-for="settlement in results" :key="settlement.ref">
+      <ul
+        v-if="open && results.length"
+        class="checkout-city-autocomplete__dropdown"
+      >
+        <li
+          v-for="settlement in results"
+          :key="settlement.ref"
+        >
           <button
             type="button"
             class="checkout-city-autocomplete__option"
@@ -85,9 +91,18 @@ function onBlur() {
           </button>
         </li>
       </ul>
-      <p v-else-if="open && !loading" class="checkout-city-autocomplete__empty">Нічого не знайдено</p>
+      <p
+        v-else-if="open && !loading"
+        class="checkout-city-autocomplete__empty"
+      >
+        Нічого не знайдено
+      </p>
     </div>
-    <span v-if="error" class="checkout-city-autocomplete__error">{{ error }}</span>
+    <span
+      v-if="error"
+      class="checkout-city-autocomplete__error"
+      >{{ error }}</span
+    >
   </div>
 </template>
 

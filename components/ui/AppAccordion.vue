@@ -12,7 +12,11 @@ const open = ref(props.defaultOpen)
 
 <template>
   <div class="app-accordion">
-    <button class="app-accordion__trigger" type="button" @click="open = !open">
+    <button
+      class="app-accordion__trigger"
+      type="button"
+      @click="open = !open"
+    >
       {{ title }}
       <ChevronDown
         :class="['app-accordion__icon', { 'app-accordion__icon--open': open }]"

@@ -42,11 +42,19 @@ async function submit() {
     <!-- No token in URL -->
     <template v-if="!token">
       <div class="reset-page__card reset-page__card--error">
-        <TheTitle tag="h1" size="m">Недійсне посилання</TheTitle>
+        <TheTitle
+          tag="h1"
+          size="m"
+          >Недійсне посилання</TheTitle
+        >
         <p class="reset-page__text">
           Посилання для скидання пароля недійсне або застаріло. Спробуйте надіслати запит знову.
         </p>
-        <NuxtLink to="/" class="reset-page__back">← На головну</NuxtLink>
+        <NuxtLink
+          to="/"
+          class="reset-page__back"
+          >← На головну</NuxtLink
+        >
       </div>
     </template>
 
@@ -54,19 +62,36 @@ async function submit() {
     <template v-else-if="done">
       <div class="reset-page__card reset-page__card--success">
         <div class="reset-page__icon">✓</div>
-        <TheTitle tag="h1" size="m">Пароль змінено</TheTitle>
+        <TheTitle
+          tag="h1"
+          size="m"
+          >Пароль змінено</TheTitle
+        >
         <p class="reset-page__text">Ви можете увійти до облікового запису з новим паролем.</p>
-        <AppButton variant="primary" size="md" @click="router.push('/')"> На головну </AppButton>
+        <AppButton
+          variant="primary"
+          size="md"
+          @click="router.push('/')"
+        >
+          На головну
+        </AppButton>
       </div>
     </template>
 
     <!-- Form -->
     <template v-else>
       <div class="reset-page__card">
-        <TheTitle tag="h1" size="m">Створення нового пароля</TheTitle>
+        <TheTitle
+          tag="h1"
+          size="m"
+          >Створення нового пароля</TheTitle
+        >
         <p class="reset-page__text">Введіть новий пароль для вашого облікового запису.</p>
 
-        <form class="reset-page__form" @submit.prevent="submit">
+        <form
+          class="reset-page__form"
+          @submit.prevent="submit"
+        >
           <AppPasswordInput
             v-model="password"
             label="Новий пароль"
@@ -78,7 +103,10 @@ async function submit() {
             placeholder="Повторіть пароль"
           />
 
-          <p v-if="fieldError || authStore.error" class="reset-page__error">
+          <p
+            v-if="fieldError || authStore.error"
+            class="reset-page__error"
+          >
             {{ fieldError || authStore.error }}
           </p>
 

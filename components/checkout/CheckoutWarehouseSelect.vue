@@ -79,9 +79,20 @@ function onInput() {
         @focus="onFocus"
         @blur="onBlur"
       />
-      <p v-if="loading" class="checkout-warehouse-select__empty">Завантаження...</p>
-      <ul v-else-if="open && filtered.length" class="checkout-warehouse-select__dropdown">
-        <li v-for="warehouse in filtered" :key="warehouse.ref">
+      <p
+        v-if="loading"
+        class="checkout-warehouse-select__empty"
+      >
+        Завантаження...
+      </p>
+      <ul
+        v-else-if="open && filtered.length"
+        class="checkout-warehouse-select__dropdown"
+      >
+        <li
+          v-for="warehouse in filtered"
+          :key="warehouse.ref"
+        >
           <button
             type="button"
             class="checkout-warehouse-select__option"
@@ -91,11 +102,18 @@ function onInput() {
           </button>
         </li>
       </ul>
-      <p v-else-if="open && cityRef && !filtered.length" class="checkout-warehouse-select__empty">
+      <p
+        v-else-if="open && cityRef && !filtered.length"
+        class="checkout-warehouse-select__empty"
+      >
         Нічого не знайдено
       </p>
     </div>
-    <span v-if="error" class="checkout-warehouse-select__error">{{ error }}</span>
+    <span
+      v-if="error"
+      class="checkout-warehouse-select__error"
+      >{{ error }}</span
+    >
   </div>
 </template>
 

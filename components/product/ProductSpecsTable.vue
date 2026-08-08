@@ -10,7 +10,10 @@ defineProps<{ specs: Spec[] }>()
 <template>
   <table class="product-specs-table">
     <tbody>
-      <tr v-for="spec in specs" :key="spec.label">
+      <tr
+        v-for="spec in specs"
+        :key="spec.label"
+      >
         <td class="product-specs-table__label">{{ spec.label }}</td>
         <td class="product-specs-table__value">{{ spec.value }}</td>
       </tr>
