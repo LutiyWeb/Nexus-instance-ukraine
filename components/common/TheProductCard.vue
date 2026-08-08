@@ -1,18 +1,32 @@
 <script setup lang="ts">
-import { ShoppingCart, Heart, Bell } from 'lucide-vue-next'
+import { ShoppingCart, Heart, Mail } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 interface Props {
   product?: Product
   loading?: boolean
+  imageMobileW?: number
+  imageMobileH?: number
+  imageDesktopW?: number
+  imageDesktopH?: number
 }
-withDefaults(defineProps<Props>(), { loading: false })
+const props = withDefaults(defineProps<Props>(), {
+  loading: false,
+  imageMobileW: 240,
+  imageMobileH: 360,
+  imageDesktopW: 320,
+  imageDesktopH: 300,
+})
 
 const NuxtLink = resolveComponent('NuxtLink')
 
 const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()
 const toastStore = useToastStore()
+const authStore = useAuthStore()
+const config = useRuntimeConfig()
+
+const notifyModalOpen = ref(false)
 
 const LABEL_MAP: Record<string, string> = {
   new: 'Новинка',
@@ -36,9 +50,24 @@ function handleFavClick(product: Product) {
   wishlistsStore.toggle(product.id)
 }
 
-function handleNotifyClick(e: Event) {
+async function handleNotifyClick(e: Event, product: Product) {
   e.preventDefault()
-  toastStore.add("Ми повідомимо вас, коли товар з'явиться в наявності", 'success')
+
+  const userEmail = authStore.user?.email
+  if (!userEmail) {
+    notifyModalOpen.value = true
+    return
+  }
+
+  try {
+    await $fetch(`${config.public.apiBase}/api/products/${product.id}/notify-stock`, {
+      method: 'POST',
+      body: { email: userEmail },
+    })
+    toastStore.add("Ми повідомимо вас, коли товар з'явиться в наявності", 'success')
+  } catch {
+    toastStore.add('Не вдалося зберегти запит, спробуйте ще раз', 'error')
+  }
 }
 </script>
 
@@ -58,12 +87,20 @@ function handleNotifyClick(e: Event) {
         { 'product-card__media--oos': !loading && product && isOutOfStock(product) },
       ]"
     >
-      <div v-if="loading" class="product-card__shimmer product-card__shimmer--image" />
+      <div
+        v-if="loading"
+        class="product-card__shimmer product-card__shimmer--image"
+      />
       <AppImage
         v-else-if="product?.thumbnail"
         :src="product.thumbnail"
         :alt="product.title"
-        :sizes="{ mobile: { w: 240, h: 360 }, desktop: { w: 320, h: 480 } }"
+        :image-desktop-w="330"
+        :image-desktop-h="250"
+        :sizes="{
+          mobile: { w: props.imageMobileW, h: props.imageMobileH },
+          desktop: { w: props.imageDesktopW, h: props.imageDesktopH },
+        }"
       />
 
       <div
@@ -72,11 +109,17 @@ function handleNotifyClick(e: Event) {
         :style="{ backgroundImage: `url(${getHoverImage(product)})` }"
       />
 
-      <div v-if="!loading && product && isOutOfStock(product)" class="product-card__oos">
+      <div
+        v-if="!loading && product && isOutOfStock(product)"
+        class="product-card__oos"
+      >
         <span class="product-card__oos-badge">Немає в наявності</span>
       </div>
 
-      <div v-if="!loading && product" class="product-card__labels">
+      <div
+        v-if="!loading && product"
+        class="product-card__labels"
+      >
         <span
           v-for="label in product.labels"
           :key="label"
@@ -84,7 +127,10 @@ function handleNotifyClick(e: Event) {
         >
           {{ LABEL_MAP[label] ?? label }}
         </span>
-        <span v-if="product.category" class="product-card__category-badge">
+        <span
+          v-if="product.category"
+          class="product-card__category-badge"
+        >
           {{ product.category }}
         </span>
       </div>
@@ -98,7 +144,10 @@ function handleNotifyClick(e: Event) {
         type="button"
         @click.prevent="handleFavClick(product)"
       >
-        <Heart :size="14" :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'" />
+        <Heart
+          :size="14"
+          :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'"
+        />
       </button>
 
       <button
@@ -122,8 +171,12 @@ function handleNotifyClick(e: Event) {
         <h3 class="product-card__title">{{ product.title }}</h3>
         <div class="product-card__price-row">
           <div class="product-card__prices">
-            <span v-if="product.compareAtPrice" class="product-card__compare-price">
-              ${{ product.compareAtPrice }}
+            <span
+              v-if="product.compareAtPrice"
+              class="product-card__compare-price"
+            >
+              {{ product.compareAtPrice }}
+              <span>₴</span>
             </span>
             <span
               :class="[
@@ -131,10 +184,15 @@ function handleNotifyClick(e: Event) {
                 { 'product-card__price--discounted': product.compareAtPrice },
               ]"
             >
-              ${{ product.price }}
+              {{ product.price }}
+              <span>₴</span>
             </span>
           </div>
-          <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
+          <span
+            v-if="product.category"
+            class="product-card__category"
+            >{{ product.category }}</span
+          >
           <button
             v-if="!isOutOfStock(product)"
             class="product-card__cart-icon-btn"
@@ -147,14 +205,20 @@ function handleNotifyClick(e: Event) {
             v-else
             class="product-card__notify-icon-btn"
             type="button"
-            @click="handleNotifyClick"
+            title="Повідомити про наявність"
+            aria-label="Повідомити про наявність"
+            @click="handleNotifyClick($event, product)"
           >
-            <Bell :size="14" />
-            Повідомте про наявність
+            <Mail :size="16" />
           </button>
         </div>
       </template>
     </div>
+    <NotifyStockModal
+      v-if="product"
+      v-model:open="notifyModalOpen"
+      :product-id="product.id"
+    />
   </component>
 </template>
 
@@ -185,7 +249,7 @@ function handleNotifyClick(e: Event) {
 
   &__media {
     position: relative;
-    aspect-ratio: 5 / 5.1;
+    aspect-ratio: 33 / 25;
     background: $color-gray-100;
     display: flex;
     align-items: center;
@@ -379,19 +443,15 @@ function handleNotifyClick(e: Event) {
   &__notify-icon-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 10px;
-    height: 37px;
-    border-radius: $radius-sm;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
     background: $color-primary;
     color: $color-white;
     border: none;
     cursor: pointer;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-    white-space: nowrap;
-    flex-shrink: 1;
-    min-width: 0;
+    flex-shrink: 0;
     transition: background $transition-fast;
 
     &:hover {
