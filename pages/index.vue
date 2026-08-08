@@ -40,7 +40,11 @@ const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
   baseURL: config.public.apiBase,
 })
 
+const { isXl } = useBreakpoints()
+const mounted = ref(false)
+
 onMounted(() => {
+  mounted.value = true
   store.fetchProducts({ limit: 20 })
   categoriesStore.fetchCategories()
 })
@@ -151,50 +155,72 @@ const FALLBACK_HOT_TILES = [
   {
     id: 1,
     label: "Комп'ютери",
+    description: 'Знижки до 30%',
+    buttonText: 'Детальніше',
     gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
     to: '/catalog',
   },
   {
     id: 2,
     label: 'Ноутбуки',
+    description: 'Знижка 20%',
+    buttonText: 'Детальніше',
     gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
     to: '/catalog',
   },
   {
     id: 3,
     label: 'Навушники',
+    description: null,
+    buttonText: 'Детальніше',
     gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
     to: '/catalog',
   },
   {
     id: 4,
     label: 'Смартфони',
+    description: null,
+    buttonText: 'Детальніше',
     gradient: 'linear-gradient(135deg, rgb(124 58 237) 0%, rgb(91 33 182) 100%)',
     to: '/catalog',
   },
   {
     id: 5,
     label: 'Аксесуари',
+    description: null,
+    buttonText: 'Детальніше',
     gradient: 'linear-gradient(135deg, rgb(5 150 105) 0%, rgb(4 120 87) 100%)',
     to: '/catalog',
   },
 ]
 
+// Bento layout for .home__tiles-grid: shape describes the tile's own
+// proportions (tall / wide / even), independent of what content lands in it.
+// Row 1 (right side): horizontal | square — Row 2: square | horizontal (mirrored)
+const TILE_SHAPES = ['vertical', 'horizontal', 'square', 'square', 'horizontal'] as const
+
 const promoTiles = computed(() => {
   const fromApi = bannersData.value?.data?.hotTiles ?? []
-  if (!fromApi.length) {
-    return FALLBACK_HOT_TILES.map((tile, i) => ({
-      ...tile,
-      image: store.products[5 + i]?.thumbnail ?? '',
-    }))
-  }
+  const tiles = !fromApi.length
+    ? FALLBACK_HOT_TILES.map((tile, i) => ({
+        ...tile,
+        image: store.products[5 + i]?.thumbnail ?? '',
+      }))
+    : fromApi.map((tile) => ({
+        id: tile.id,
+        label: tile.title,
+        description: tile.description,
+        buttonText: tile.buttonText,
+        gradient: tile.gradient ?? '',
+        to: tile.linkUrl ?? '/catalog',
+        image: tile.mediaUrl ?? '',
+      }))
 
-  return fromApi.map(tile => ({
-    id: tile.id,
-    label: tile.title,
-    gradient: tile.gradient ?? '',
-    to: tile.linkUrl ?? '/catalog',
-    image: tile.mediaUrl ?? '',
+  const showShapes = mounted.value && isXl.value
+
+  return tiles.map((tile, i) => ({
+    ...tile,
+    shape: showShapes ? (TILE_SHAPES[i] ?? 'square') : 'square',
   }))
 })
 </script>
@@ -204,7 +230,11 @@ const promoTiles = computed(() => {
     <!-- Hero -->
     <section class="py-13">
       <div class="container">
-        <AppSlider :slides="heroSlides" :loop="true" swiper-class="swiper-nav-image">
+        <AppSlider
+          :slides="heroSlides"
+          :loop="true"
+          swiper-class="swiper-nav-image"
+        >
           <template #default="slotProps">
             <HeroBanner
               v-if="slotProps?.slide"
@@ -231,20 +261,33 @@ const promoTiles = computed(() => {
       <div class="container">
         <div class="home__promo-header">
           <h2 class="home__promo-title">Акції</h2>
-          <NuxtLink to="/promo" class="home__promo-link">
+          <NuxtLink
+            to="/promo"
+            class="home__promo-link"
+          >
             Всі акції ({{ promoBanners.length }})
           </NuxtLink>
         </div>
 
-        <PromoBannerList :banners="promoBanners" class="home__promo-list" />
+        <PromoBannerList
+          :banners="promoBanners"
+          class="home__promo-list"
+        />
       </div>
     </section>
 
     <!-- All products -->
     <section class="py-13">
       <div class="container">
-        <div v-if="store.loading" class="home__skeleton-row">
-          <TheProductCard v-for="(_, i) in skeletons" :key="i" :loading="true" />
+        <div
+          v-if="store.loading"
+          class="home__skeleton-row"
+        >
+          <TheProductCard
+            v-for="(_, i) in skeletons"
+            :key="i"
+            :loading="true"
+          />
         </div>
         <AppSlider
           v-else
@@ -258,7 +301,12 @@ const promoTiles = computed(() => {
           :link-count="store.meta.total"
         >
           <template #default="slotProps">
-            <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+            <TheProductCard
+              v-if="slotProps?.slide"
+              :image-desktop-w="330"
+              :image-desktop-h="250"
+              :product="slotProps.slide as any"
+            />
           </template>
         </AppSlider>
       </div>
@@ -270,7 +318,10 @@ const promoTiles = computed(() => {
         <div class="home__tiles-header">
           <h2 class="home__tiles-title">Гарячі пропозиції</h2>
         </div>
-        <div v-if="store.loading" class="home__tiles-grid">
+        <div
+          v-if="store.loading"
+          class="home__tiles-grid"
+        >
           <AppSkeleton
             v-for="n in 5"
             :key="n"
@@ -279,14 +330,20 @@ const promoTiles = computed(() => {
             class="home__tile-skeleton"
           />
         </div>
-        <div v-else class="home__tiles-grid">
+        <div
+          v-else
+          class="home__tiles-grid"
+        >
           <PromoImageTile
             v-for="tile in promoTiles"
             :key="tile.id"
             :image="tile.image"
             :label="tile.label"
+            :description="tile.description"
+            :link-label="tile.buttonText"
             :gradient="tile.gradient"
             :to="tile.to"
+            :shape="tile.shape"
           />
         </div>
       </div>
@@ -295,8 +352,15 @@ const promoTiles = computed(() => {
     <!-- Popular products -->
     <section class="py-13">
       <div class="container">
-        <div v-if="store.loading" class="home__skeleton-row">
-          <TheProductCard v-for="(_, i) in skeletons" :key="i" :loading="true" />
+        <div
+          v-if="store.loading"
+          class="home__skeleton-row"
+        >
+          <TheProductCard
+            v-for="(_, i) in skeletons"
+            :key="i"
+            :loading="true"
+          />
         </div>
         <AppSlider
           v-else
@@ -310,14 +374,22 @@ const promoTiles = computed(() => {
           :link-count="store.meta.total"
         >
           <template #default="slotProps">
-            <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+            <TheProductCard
+              v-if="slotProps?.slide"
+              :image-desktop-w="330"
+              :image-desktop-h="250"
+              :product="slotProps.slide as any"
+            />
           </template>
         </AppSlider>
       </div>
     </section>
 
     <!-- Banner special_1 -->
-    <section v-if="special1" class="py-13">
+    <section
+      v-if="special1"
+      class="py-13"
+    >
       <div class="container">
         <SpecialBanner
           :title="special1.title"
@@ -331,8 +403,15 @@ const promoTiles = computed(() => {
     <!-- New products -->
     <section class="py-13">
       <div class="container">
-        <div v-if="store.loading" class="home__skeleton-row">
-          <TheProductCard v-for="(_, i) in skeletonsSmall" :key="i" :loading="true" />
+        <div
+          v-if="store.loading"
+          class="home__skeleton-row"
+        >
+          <TheProductCard
+            v-for="(_, i) in skeletonsSmall"
+            :key="i"
+            :loading="true"
+          />
         </div>
         <AppSlider
           v-else
@@ -343,14 +422,22 @@ const promoTiles = computed(() => {
           title="Новинки"
         >
           <template #default="slotProps">
-            <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+            <TheProductCard
+              v-if="slotProps?.slide"
+              :image-desktop-w="330"
+              :image-desktop-h="250"
+              :product="slotProps.slide as any"
+            />
           </template>
         </AppSlider>
       </div>
     </section>
 
     <!-- Banner special_2 -->
-    <section v-if="special2" class="py-13">
+    <section
+      v-if="special2"
+      class="py-13"
+    >
       <div class="container">
         <SpecialBanner
           :title="special2.title"
@@ -403,7 +490,7 @@ const promoTiles = computed(() => {
   &__promo-title {
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
   }
 
   &__promo-link {
@@ -424,7 +511,7 @@ const promoTiles = computed(() => {
   &__tiles-title {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: $color-heading;
 
     @include mixins.respond-to(md) {
       font-size: $font-size-2xl;
@@ -436,32 +523,50 @@ const promoTiles = computed(() => {
     gap: 12px;
     overflow-x: auto;
     scrollbar-width: none;
-    padding-block: 12px;
-    margin-block: -12px;
+    padding-block: 20px;
+    margin-block: -20px;
 
     &::-webkit-scrollbar {
       display: none;
     }
 
-    > * {
-      flex: 0 0 260px;
-
-      @include mixins.respond-to(md) {
-        flex: 0 0 300px;
-      }
-    }
-
     @include mixins.respond-to(xl) {
+      display: grid;
       overflow: visible;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 12px;
 
-      > * {
-        flex: 1 1 0;
+      /* > * {
+        flex: initial;
+        height: auto;
       }
-    }
-  }
 
-  &__tile-skeleton {
-    aspect-ratio: 4 / 2;
+      > *:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1 / 3;
+      }
+
+      > *:nth-child(2) {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
+
+      > *:nth-child(3) {
+        grid-column: 4;
+        grid-row: 1;
+      }
+
+      > *:nth-child(4) {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      > *:nth-child(5) {
+        grid-column: 3 / 5;
+        grid-row: 2;
+      } */
+    }
   }
 
   &__skeleton-row {
