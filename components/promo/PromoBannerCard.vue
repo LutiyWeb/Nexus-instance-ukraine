@@ -4,10 +4,11 @@ interface Props {
   title: string
   subtitle: string
   variant: 'graphite' | 'accent'
+  hexVariant?: 'scatter' | 'cluster' | 'sparse'
   linkUrl?: string | null
   tag?: string
 }
-withDefaults(defineProps<Props>(), { tag: 'Акція' })
+withDefaults(defineProps<Props>(), { tag: 'Акція', hexVariant: 'scatter' })
 </script>
 
 <template>
@@ -15,6 +16,11 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
     :to="linkUrl || '/promo'"
     :class="['promo-card', `promo-card--${variant}`]"
   >
+    <AppHexPattern
+      :variant="hexVariant"
+      class="promo-card__hex"
+    />
+
     <span class="promo-card__tag">{{ tag }}</span>
     <h3 class="promo-card__title">{{ title }}</h3>
     <p class="promo-card__subtitle">{{ subtitle }}</p>
@@ -26,19 +32,21 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 
-// EXPERIMENTAL: temporary hardcoded palette for the glassmorphism visual
-// test — not promoted to variables.scss yet (see branch brief).
 .promo-card {
   display: flex;
   flex-direction: column;
   border-radius: $radius-xl;
   padding: 16px;
-  color: $color-white;
+  color: $color-heading;
   min-height: 160px;
   position: relative;
+  z-index: 0;
   overflow: hidden;
-  transition: transform $transition-base;
+  transition:
+    transform $transition-base,
+    box-shadow $transition-base;
   text-decoration: none;
+  box-shadow: $shadow-sm;
 
   @include mixins.respond-to(tablet) {
     padding: 24px;
@@ -46,26 +54,44 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
 
   &:hover {
     transform: translateY(-2px);
+    box-shadow: $shadow-md;
   }
 
   &--graphite {
-    background: #16181d;
+    background: $color-white;
+    border: 1px solid $color-gray-200;
   }
 
   &--accent {
-    background: linear-gradient(90deg, #00c6ff, #0072ff, #00c6ff);
-    background-size: 200% auto;
-    animation: promo-card-gradient-move 3s linear infinite;
+    background: $color-gray-50;
+    border: 1px solid $color-gray-200;
+  }
 
-    @media (prefers-reduced-motion: reduce) {
-      animation: none;
+  .promo-card__hex {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    right: -30px;
+    transform: translateY(-50%);
+    width: 140px;
+    height: auto;
+    opacity: 0.5;
+    transition: opacity $transition-base;
+
+    @include mixins.respond-to(tablet) {
+      width: 170px;
     }
+  }
+
+  &:hover .promo-card__hex {
+    opacity: 1;
   }
 
   &__tag {
     display: inline-block;
     width: fit-content;
-    background: rgb(255 255 255 / 20%);
+    background: rgba($color-primary, 12%);
+    color: $color-primary-dark;
     border-radius: $radius-full;
     font-size: 11px;
     font-weight: $font-weight-semibold;
@@ -75,12 +101,13 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
   &__title {
     font-size: 28px;
     font-weight: $font-weight-bold;
+    color: $color-heading;
     margin: 8px 0 4px;
   }
 
   &__subtitle {
     font-size: $font-size-sm;
-    opacity: 0.85;
+    color: $color-gray-600;
     margin: 0;
   }
 
@@ -90,17 +117,13 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
     gap: 4px;
     font-size: 13px;
     font-weight: $font-weight-semibold;
-    opacity: 0.9;
+    color: $color-primary-dark;
     margin-top: 12px;
+    transition: color $transition-fast;
   }
-}
 
-@keyframes promo-card-gradient-move {
-  from {
-    background-position: 0% 50%;
-  }
-  to {
-    background-position: 200% 50%;
+  &:hover &__cta {
+    color: $color-primary;
   }
 }
 </style>

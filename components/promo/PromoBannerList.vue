@@ -8,6 +8,9 @@ interface PromoBanner {
 }
 
 defineProps<{ banners: PromoBanner[] }>()
+
+// Temporary — cycling all three hex-pattern layouts so they can be compared side by side.
+const HEX_VARIANTS = ['scatter', 'cluster', 'sparse'] as const
 </script>
 
 <template>
@@ -16,6 +19,7 @@ defineProps<{ banners: PromoBanner[] }>()
       v-for="(banner, index) in banners"
       :key="banner.id"
       :variant="index % 2 === 0 ? 'graphite' : 'accent'"
+      :hex-variant="HEX_VARIANTS[index % HEX_VARIANTS.length]"
       :title="banner.title"
       :subtitle="banner.subtitle"
       :link-url="banner.linkUrl"
