@@ -7,6 +7,7 @@ const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()
 const authStore = useAuthStore()
 const uiStore = useUiStore()
+const productsStore = useProductsStore()
 
 const config = useRuntimeConfig()
 
@@ -21,6 +22,17 @@ const {
 
 const product = computed(() => productData.value?.data ?? null)
 const loading = computed(() => pending.value)
+
+onMounted(() => {
+  if (!productsStore.products.length) productsStore.fetchProducts({ limit: 24 })
+})
+
+// PROTOTYPE DATA — "related to this product" is currently just other items
+// from the catalog, not a real relation. Swap for real data once the backend
+// exposes it (see ProductRecommendations / ProductBundleWidget for context).
+const relatedPool = computed(() => productsStore.products.filter((p) => p.id !== product.value?.id))
+const recommendedProducts = computed(() => relatedPool.value.slice(0, 8))
+const bundleAccessories = computed(() => relatedPool.value.slice(8, 14))
 
 useSeoMeta({
   title: () => (product.value ? `${product.value.title} — Honey Store` : 'Товар'),
@@ -280,6 +292,14 @@ function toggleFav() {
         </div>
       </div>
 
+      <!-- Bundle widget (prototype) -->
+      <ProductBundleWidget
+        v-if="product && bundleAccessories.length"
+        :product="product"
+        :accessories="bundleAccessories"
+        class="product-detail__bundle"
+      />
+
       <!-- Tabs -->
       <div class="product-detail__content">
         <div
@@ -320,6 +340,12 @@ function toggleFav() {
           <ProductQuestions :product-id="product.id" />
         </div>
       </div>
+
+      <!-- Recommendations (prototype) -->
+      <ProductRecommendations
+        :products="recommendedProducts"
+        class="product-detail__recs"
+      />
     </div>
   </div>
 </template>
@@ -486,6 +512,24 @@ function toggleFav() {
     svg {
       color: $color-primary;
       flex-shrink: 0;
+    }
+  }
+
+  &__bundle {
+    margin-top: 24px;
+    margin-bottom: 24px;
+
+    @include mixins.respond-to(tablet) {
+      margin-top: 32px;
+      margin-bottom: 32px;
+    }
+  }
+
+  &__recs {
+    margin-top: 24px;
+
+    @include mixins.respond-to(tablet) {
+      margin-top: 32px;
     }
   }
 
