@@ -52,7 +52,7 @@ Stores in `stores/` are auto-imported. Auth state (`token` + `user`) is persiste
 
 - SCSS with BEM; component styles use `<style lang="scss">` with the component root class as the BEM block
 - Design tokens in `assets/styles/_variables.scss` (colors, typography, spacing, breakpoints, shadows)
-- `respond-to($bp)` mixin in `_mixins.scss` — **min-width, mobile-first**: `sm` (640px) / `md` (768px) / `lg` (1024px) / `xl` (1280px) / `2xl` (1536px)
+- `respond-to($bp)` mixin in `_mixins.scss` — **min-width, mobile-first**: `mobile` (640px) / `tablet` (768px) / `notebook` (1024px) / `laptop` (1280px) / `desktop` (1536px)
 - Utility classes: `py-13` (padding-block), `grid-col-2`, `grid-col-3` (responsive grids)
 - Container: `max-width: 1440px`, `margin-inline: auto`, `padding-inline: 16px`
 - Font: Helvetica / Helvetica Neue / Arial (project convention)
@@ -168,7 +168,7 @@ Before any code, output a planning breakdown:
 
 ## ADDITIONAL RULES (AI-recommended)
 
-6. **Explicit breakpoints per component**: Every component must have styles explicitly written for all breakpoints it uses (`sm`, `md`, `lg`, `xl`). Never rely on implicit inheritance between breakpoints — missing a middle breakpoint causes tablet layout breaks.
+6. **Explicit breakpoints per component**: Every component must have styles explicitly written for all breakpoints it uses (`mobile`, `tablet`, `notebook`, `laptop`). Never rely on implicit inheritance between breakpoints — missing a middle breakpoint causes tablet layout breaks.
 
 7. **`<img>` width + height attributes required**: Always set `width` and `height` HTML attributes on every `<img>`, even if CSS controls the visual size. Without them the browser can't reserve space before the image loads — causes layout shift (CLS).
 

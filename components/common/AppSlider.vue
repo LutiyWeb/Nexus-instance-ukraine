@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
 
     overflow: visible;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       overflow: unset;
     }
   }
@@ -159,6 +159,8 @@ onBeforeUnmount(() => {
   }
 
   &__header {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -171,7 +173,7 @@ onBeforeUnmount(() => {
     font-weight: $font-weight-bold;
     color: $color-heading;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-2xl;
     }
   }
@@ -185,16 +187,18 @@ onBeforeUnmount(() => {
   &__link {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    color: $color-primary;
+    color: $color-primary-dark;
     margin-right: 8px;
     transition: color $transition-fast;
 
     &:hover {
-      color: $color-primary-dark;
+      color: $color-primary-light;
     }
   }
 
   &__swiper {
+    position: relative;
+    z-index: 0;
     overflow: hidden;
     border-radius: $radius-xl;
 
@@ -202,7 +206,7 @@ onBeforeUnmount(() => {
       overflow: visible;
       border-radius: 0;
 
-      @include mixins.respond-to(sm) {
+      @include mixins.respond-to(mobile) {
         overflow: hidden;
         border-radius: $radius-xl;
       }

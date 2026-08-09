@@ -95,7 +95,7 @@ function isNew(cat: { slug?: string; name?: string }) {
     display: flex;
     flex-direction: column;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       width: 220px;
     }
   }
@@ -141,7 +141,7 @@ function isNew(cat: { slug?: string; name?: string }) {
   &__subs {
     display: none;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: flex;
       flex: 1;
       flex-direction: column;

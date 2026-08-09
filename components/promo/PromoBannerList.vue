@@ -42,7 +42,7 @@ defineProps<{ banners: PromoBanner[] }>()
     flex: 0 0 300px;
   }
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     overflow: visible;

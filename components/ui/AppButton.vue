@@ -95,7 +95,7 @@ withDefaults(defineProps<Props>(), {
     padding: var(--btn-padding, 12px);
     font-size: $font-size-sm;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       min-width: 240px;
       padding: var(--btn-padding, 20px);
       font-size: $font-size-xl;

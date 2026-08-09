@@ -99,7 +99,7 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
   gap: 12px;
   margin-top: 16px;
 
-  @include mixins.respond-to(lg) {
+  @include mixins.respond-to(notebook) {
     margin-top: 0;
   }
 
@@ -137,7 +137,7 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
     grid-template-columns: 1fr;
     gap: 16px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: repeat(2, 1fr);
     }
   }

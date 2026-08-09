@@ -436,7 +436,7 @@ async function submit() {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: repeat(2, 1fr);
     }
   }

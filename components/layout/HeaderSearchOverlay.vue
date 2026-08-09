@@ -756,7 +756,7 @@ onBeforeUnmount(() => {
       background: $color-primary;
     }
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       padding: 24px 12px 36px;
 
       :deep(.swiper-pagination) {
@@ -780,7 +780,7 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr;
     min-height: 240px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: 220px 1fr;
     }
   }
@@ -792,7 +792,7 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       border-bottom: none;
       border-right: 1px solid $color-gray-100;
     }

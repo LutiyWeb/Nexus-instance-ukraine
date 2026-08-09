@@ -224,7 +224,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     transform: translateX(0);
   }
 
-  @include mixins.respond-to(lg) {
+  @include mixins.respond-to(notebook) {
     position: static;
     width: 240px;
     background: none;
@@ -241,7 +241,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     align-items: center;
     justify-content: space-between;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       display: none;
     }
   }

@@ -92,13 +92,13 @@ withDefaults(defineProps<Props>(), { reverse: false })
     background-repeat: no-repeat;
     content: '';
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       width: 30%;
       height: 100%;
     }
   }
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     grid-template-columns: 1fr 1fr;
     gap: 48px;
     padding: 48px;
@@ -111,7 +111,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
       transform: rotateZ(0);
     }
     .special-banner__image {
-      @include mixins.respond-to(md) {
+      @include mixins.respond-to(tablet) {
         order: 1;
       }
     }
@@ -129,7 +129,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
     max-height: 260px;
     object-fit: contain;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       max-height: 320px;
     }
   }
@@ -143,7 +143,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
     text-align: center;
     gap: 16px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       align-items: flex-end;
       text-align: right;
       gap: 20px;
@@ -151,7 +151,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
   }
 
   &--reverse &__content {
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       align-items: flex-start;
       text-align: left;
     }
@@ -163,7 +163,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
     color: $color-heading;
     margin: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-3xl;
     }
   }

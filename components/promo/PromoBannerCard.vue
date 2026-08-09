@@ -40,7 +40,7 @@ withDefaults(defineProps<Props>(), { tag: 'Акція' })
   transition: transform $transition-base;
   text-decoration: none;
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     padding: 24px;
   }
 

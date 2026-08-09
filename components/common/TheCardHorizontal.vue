@@ -79,7 +79,7 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
     transform: translateY(-2px);
   }
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     grid-template-columns: 280px 1fr;
   }
 

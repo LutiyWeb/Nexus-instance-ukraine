@@ -12,7 +12,7 @@
   grid-template-columns: 1fr;
   gap: 12px;
 
-  @include mixins.respond-to(sm) {
+  @include mixins.respond-to(mobile) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -22,11 +22,11 @@
   grid-template-columns: 1fr;
   gap: 12px;
 
-  @include mixins.respond-to(sm) {
+  @include mixins.respond-to(mobile) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     grid-template-columns: repeat(3, 1fr);
   }
 }

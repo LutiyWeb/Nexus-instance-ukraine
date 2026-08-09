@@ -89,7 +89,7 @@ useHead({ title: is404.value ? '404 — Сторінку не знайдено' 
     z-index: 0;
     margin: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: 320px;
     }
   }
@@ -117,7 +117,7 @@ useHead({ title: is404.value ? '404 — Сторінку не знайдено' 
     color: $color-gray-900;
     margin: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-3xl;
     }
   }

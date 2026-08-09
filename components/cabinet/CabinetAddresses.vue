@@ -247,7 +247,7 @@ onMounted(load)
     height: 32px;
     flex-shrink: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       --btn-min-width: 165px;
       --btn-padding: 6px 12px;
       width: auto;
@@ -258,7 +258,7 @@ onMounted(load)
   &__btn-label {
     display: none;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: inline;
     }
   }
@@ -291,7 +291,7 @@ onMounted(load)
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: 1fr 1fr;
     }
   }

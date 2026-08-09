@@ -338,7 +338,7 @@ async function confirmDelete() {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: 1fr 1fr;
     }
   }
@@ -420,7 +420,7 @@ async function confirmDelete() {
     border: 1px solid rgb(239 68 68 / 20%);
     border-radius: $radius-lg;
     background: rgb(239 68 68 / 3%);
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;

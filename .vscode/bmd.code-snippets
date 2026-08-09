@@ -28,7 +28,7 @@
 
   "respond-to": {
     "prefix": "bmd",
-    "body": ["@include mixins.respond-to(${1|sm,md,lg,xl,2xl|}) {", "\t$0", "}"],
+    "body": ["@include mixins.respond-to(${1|mobile,tablet,notebook,laptop,desktop|}) {", "\t$0", "}"],
     "description": "respond-to breakpoint mixin",
   },
 }

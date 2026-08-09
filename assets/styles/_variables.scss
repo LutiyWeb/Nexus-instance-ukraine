@@ -110,11 +110,11 @@ $transition-base: 250ms ease;
 $transition-slow: 400ms ease;
 
 // Breakpoints
-$breakpoint-sm: 640px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 1024px;
-$breakpoint-xl: 1280px;
-$breakpoint-2xl: 1536px;
+$breakpoint-mobile: 640px;
+$breakpoint-tablet: 768px;
+$breakpoint-notebook: 1024px;
+$breakpoint-laptop: 1280px;
+$breakpoint-desktop: 1536px;
 
 // Container
 $container-max-width: 1920px;

@@ -132,7 +132,7 @@ function handleAddToCart() {
   gap: 6px;
   margin-bottom: 24px;
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     grid-template-columns: auto 1fr;
     grid-template-areas:
       'price price'
@@ -177,7 +177,7 @@ function handleAddToCart() {
     gap: 8px;
     justify-self: end;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       justify-self: start;
     }
   }
@@ -198,7 +198,7 @@ function handleAddToCart() {
       color $transition-fast,
       border-color $transition-fast;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       height: auto;
     }
 
@@ -260,7 +260,7 @@ function handleAddToCart() {
     justify-content: center;
     min-width: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       max-width: 250px;
       padding: 16px;
     }
@@ -297,7 +297,7 @@ function handleAddToCart() {
     grid-area: buy;
     justify-content: center;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       justify-self: start;
       width: auto;
     }

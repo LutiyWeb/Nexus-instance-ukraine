@@ -389,7 +389,7 @@ async function handleNotifyClick(e: Event, product: Product) {
       background: $color-gray-700;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: flex;
       font-size: $font-size-sm;
       transform: translateY(100%);
@@ -397,7 +397,7 @@ async function handleNotifyClick(e: Event, product: Product) {
   }
 
   &:hover &__cart-btn {
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       transform: translateY(0);
     }
   }
@@ -413,7 +413,7 @@ async function handleNotifyClick(e: Event, product: Product) {
   &__category {
     display: none;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: block;
       font-size: $font-size-xs;
       font-weight: $font-weight-medium;
@@ -435,7 +435,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     border-radius: $radius-sm;
     box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: none;
     }
   }
@@ -458,7 +458,7 @@ async function handleNotifyClick(e: Event, product: Product) {
       background: $color-primary-dark;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: none;
     }
   }
@@ -481,7 +481,7 @@ async function handleNotifyClick(e: Event, product: Product) {
       background: $color-primary-dark;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: none;
     }
   }
@@ -513,7 +513,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     flex-direction: column;
     align-items: baseline;
 
-    @include mixins.respond-to(xl) {
+    @include mixins.respond-to(laptop) {
       flex-direction: row-reverse;
       gap: 6px;
     }

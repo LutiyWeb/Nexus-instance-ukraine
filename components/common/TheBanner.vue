@@ -35,7 +35,7 @@ withDefaults(defineProps<Props>(), { variant: 'default' })
   align-items: center;
   gap: 24px;
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     padding: 48px 32px;
   }
 

@@ -678,15 +678,15 @@ onBeforeUnmount(() => {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: repeat(3, 1fr);
     }
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(4, 1fr);
     }
 
-    @include mixins.respond-to(2xl) {
+    @include mixins.respond-to(desktop) {
       grid-template-columns: repeat(5, 1fr);
     }
   }

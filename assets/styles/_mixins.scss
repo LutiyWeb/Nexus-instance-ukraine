@@ -1,28 +1,28 @@
 @use 'variables' as *;
 
 @mixin respond-to($bp) {
-  @if $bp == sm {
-    @media (min-width: $breakpoint-sm) {
+  @if $bp == mobile {
+    @media (min-width: $breakpoint-mobile) {
       @content;
     }
   }
-  @if $bp == md {
-    @media (min-width: $breakpoint-md) {
+  @if $bp == tablet {
+    @media (min-width: $breakpoint-tablet) {
       @content;
     }
   }
-  @if $bp == lg {
-    @media (min-width: $breakpoint-lg) {
+  @if $bp == notebook {
+    @media (min-width: $breakpoint-notebook) {
       @content;
     }
   }
-  @if $bp == xl {
-    @media (min-width: $breakpoint-xl) {
+  @if $bp == laptop {
+    @media (min-width: $breakpoint-laptop) {
       @content;
     }
   }
-  @if $bp == 2xl {
-    @media (min-width: $breakpoint-2xl) {
+  @if $bp == desktop {
+    @media (min-width: $breakpoint-desktop) {
       @content;
     }
   }

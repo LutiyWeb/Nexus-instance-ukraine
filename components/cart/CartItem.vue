@@ -92,7 +92,7 @@ function formatPrice(p: number) {
   border-bottom: 1px solid $color-gray-100;
   align-items: start;
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     grid-template-columns: auto 64px 1fr auto auto;
     grid-template-rows: auto;
     align-items: center;
@@ -106,7 +106,7 @@ function formatPrice(p: number) {
     height: 16px;
     cursor: pointer;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-row: 1;
     }
   }
@@ -118,7 +118,7 @@ function formatPrice(p: number) {
     border-radius: $radius-md;
     flex-shrink: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-row: 1;
     }
   }
@@ -134,7 +134,7 @@ function formatPrice(p: number) {
       background: $color-gray-100;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       width: 64px;
       height: 64px;
     }
@@ -148,7 +148,7 @@ function formatPrice(p: number) {
     flex-direction: column;
     gap: 4px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-column: 3;
     }
   }
@@ -179,7 +179,7 @@ function formatPrice(p: number) {
     align-items: center;
     gap: 8px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-column: 4;
       grid-row: 1;
     }
@@ -223,7 +223,7 @@ function formatPrice(p: number) {
     justify-content: center;
     transition: background $transition-fast;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-column: 5;
     }
 
