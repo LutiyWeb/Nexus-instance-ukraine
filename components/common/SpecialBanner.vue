@@ -70,6 +70,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
 
 .special-banner {
   position: relative;
+  z-index: 0;
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
@@ -79,22 +80,22 @@ withDefaults(defineProps<Props>(), { reverse: false })
   overflow: hidden;
 
   &::before {
+    position: absolute;
+    z-index: -1;
     left: 0;
     top: 0;
-    position: absolute;
-    z-index: 0;
-    opacity: 0.7;
     width: 100%;
     height: 100%;
-    transform: rotateZ(180deg);
-    background-image: url('/public/bg-image/tech-bg-3.svg');
+    background-image: url('/public/bg-image/tech-bg-hex.svg');
     background-size: cover;
+    background-position: left center;
     background-repeat: no-repeat;
     content: '';
 
     @include mixins.respond-to(tablet) {
-      width: 30%;
-      height: 100%;
+      width: 25%;
+      background-size: 100%;
+      transform: scaleX(-1);
     }
   }
 
@@ -108,7 +109,12 @@ withDefaults(defineProps<Props>(), { reverse: false })
     &::before {
       left: auto;
       right: 0;
-      transform: rotateZ(0);
+      transform: scaleX(-1);
+      background-position: right center;
+
+      @include mixins.respond-to(tablet) {
+        transform: scaleY(-1);
+      }
     }
     .special-banner__image {
       @include mixins.respond-to(tablet) {

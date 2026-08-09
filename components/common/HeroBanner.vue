@@ -83,7 +83,7 @@ withDefaults(defineProps<Props>(), {
     position: absolute;
     z-index: 0;
     top: 0;
-    background-image: url('/public/bg-image/tech-bg-3.svg');
+    background-image: url('/public/bg-image/tech-bg-hex.svg');
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: inherit;

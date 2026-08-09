@@ -1,8 +1,9 @@
 <script setup lang="ts">
 interface Props {
   variant?: 'scatter' | 'cluster' | 'sparse'
+  animated?: boolean
 }
-withDefaults(defineProps<Props>(), { variant: 'scatter' })
+withDefaults(defineProps<Props>(), { variant: 'scatter', animated: true })
 
 const SCATTER_HEXES = [
   {
@@ -63,7 +64,11 @@ const HEX_SETS = { scatter: SCATTER_HEXES, cluster: CLUSTER_HEXES, sparse: SPARS
 
 <template>
   <svg
-    :class="['app-hex-pattern', `app-hex-pattern--${variant}`]"
+    :class="[
+      'app-hex-pattern',
+      `app-hex-pattern--${variant}`,
+      { 'app-hex-pattern--static': !animated },
+    ]"
     aria-hidden="true"
     viewBox="0 0 807 880"
     fill="none"
@@ -106,6 +111,30 @@ const HEX_SETS = { scatter: SCATTER_HEXES, cluster: CLUSTER_HEXES, sparse: SPARS
     @media (prefers-reduced-motion: reduce) {
       animation: none;
     }
+  }
+
+  // Quiet, on-brand texture with no motion — for places that don't want
+  // another pulsing accent competing with the animated ones elsewhere.
+  // Fill alternates across the pulse-1/2/3 grouping (reused here purely as
+  // a "which hex is this" hook, not for timing) so the texture keeps some
+  // of the layered, mixed-tone depth the old flat gray asset had instead
+  // of reading as one uniform flat shape.
+  &--static &__shape {
+    animation: none;
+    opacity: 1;
+    stroke: $color-gray-300;
+  }
+
+  &--static &__shape--pulse-1 {
+    fill: $color-gray-200;
+  }
+
+  &--static &__shape--pulse-2 {
+    fill: $color-gray-100;
+  }
+
+  &--static &__shape--pulse-3 {
+    fill: none;
   }
 }
 
