@@ -59,6 +59,7 @@ const showImage = computed(() => mounted.value && isXl.value)
 
 .promo-tile {
   position: relative;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   border-radius: $radius-md;
@@ -70,9 +71,17 @@ const showImage = computed(() => mounted.value && isXl.value)
   cursor: pointer;
   box-shadow: $shadow-lg;
   transition: transform $transition-base;
-  background-image: url('/public/bg-image/tech-bg.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  padding: 8px 12px;
+
+  &::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background-image: url('/public/bg-image/tech-bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    content: '';
+  }
 
   &::after {
     position: absolute;
@@ -82,20 +91,39 @@ const showImage = computed(() => mounted.value && isXl.value)
     opacity: 0.1;
   }
 
+  @include mixins.respond-to(notebook) {
+    padding: 16px;
+    gap: 8px;
+  }
+
   &:hover {
     transform: translateY(-2px);
   }
 
   &--vertical {
     --promo-title-bg: #{$color-gray-700};
+
+    align-items: center;
+    justify-content: center;
     grid-row: span 2;
     height: 100%;
+
+    .app-image {
+      max-width: 250px;
+      display: block;
+    }
   }
 
   &--horizontal {
     --promo-title-bg: #{$color-gray-400};
     flex-direction: row-reverse;
+    justify-content: space-between;
     grid-column: span 2;
+
+    .app-image {
+      max-width: 200px;
+      display: block;
+    }
 
     .promo-tile__content {
       align-items: flex-start;
@@ -110,6 +138,14 @@ const showImage = computed(() => mounted.value && isXl.value)
 
   &--square {
     --promo-title-bg: #{$color-gray-100};
+
+    align-items: center;
+    justify-content: center;
+
+    .app-image {
+      max-width: 170px;
+      display: block;
+    }
   }
 
   &:hover {
@@ -119,9 +155,6 @@ const showImage = computed(() => mounted.value && isXl.value)
   }
 
   :deep(.promo-tile__img) {
-    flex: 1 1 50%;
-    min-width: 0;
-    min-height: 0;
     transition: transform 0.5s ease;
   }
 
@@ -134,7 +167,10 @@ const showImage = computed(() => mounted.value && isXl.value)
     align-items: center;
     flex: 1 1 50%;
     min-width: 0;
-    padding: 8px 12px;
+
+    @include mixins.respond-to(notebook) {
+      flex: 0 1 auto;
+    }
   }
 
   &__desc {
@@ -153,8 +189,8 @@ const showImage = computed(() => mounted.value && isXl.value)
     line-height: 1.2;
     text-shadow: 0 1px 12px rgb(255 255 255 / 60%);
 
-    @include mixins.respond-to(lg) {
-      font-size: $font-size-3xl;
+    @include mixins.respond-to(notebook) {
+      font-size: $font-size-xl;
     }
   }
 
@@ -165,6 +201,10 @@ const showImage = computed(() => mounted.value && isXl.value)
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #0072ff;
+
+    @include mixins.respond-to(notebook) {
+      font-size: 10px;
+    }
   }
 }
 </style>
