@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'Про нас — Nexus Commerce' })
+useHead({ title: 'Про нас — Honey Store' })
 </script>
 
 <template>
@@ -10,17 +10,33 @@ useHead({ title: 'Про нас — Nexus Commerce' })
       >Про нас</TheTitle
     >
     <p class="about-page__lead">
-      Nexus Commerce — сучасна платформа шаблонів для e-commerce проєктів на Nuxt 3.
+      Honey Store — сучасний інтернет-магазин електроніки, де кожен покупець знайде техніку для
+      роботи, навчання та відпочинку.
     </p>
+
     <div class="about-page__grid">
-      <TheBanner variant="primary">
-        <template #eyebrow>Наша місія</template>
-        <p>Допомагати розробникам швидко запускати якісні проєкти.</p>
-      </TheBanner>
-      <TheBanner variant="dark">
-        <template #eyebrow>Технології</template>
-        <p>Nuxt 3, Pinia, Swiper, PrimeVue, SCSS — найкращий стек для продакшену.</p>
-      </TheBanner>
+      <div class="about-page__card">
+        <span class="about-page__eyebrow">Наша місія</span>
+        <p>
+          Робимо купівлю техніки простою та чесною — перевірений товар, прозорі ціни та підтримка на
+          кожному кроці.
+        </p>
+      </div>
+      <div class="about-page__card">
+        <span class="about-page__eyebrow">Гарантія</span>
+        <p>На кожен товар — гарантійний талон виробника та сервісна підтримка.</p>
+      </div>
+      <div class="about-page__card">
+        <span class="about-page__eyebrow">Доставка</span>
+        <p>
+          Відправляємо замовлення протягом 24 годин після підтвердження. Доставка «Новою Поштою» або
+          «Укрпоштою» по всій Україні.
+        </p>
+      </div>
+      <div class="about-page__card">
+        <span class="about-page__eyebrow">Оплата</span>
+        <p>Картка Visa/Mastercard, готівка при отриманні або оплата частинами без переплати.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -43,10 +59,39 @@ useHead({ title: 'Про нас — Nexus Commerce' })
   &__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 24px;
-    @include mixins.respond-to(md) {
-      grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @include mixins.respond-to(tablet) {
+      grid-template-columns: repeat(2, 1fr);
     }
+
+    @include mixins.respond-to(laptop) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    background: $color-gray-50;
+    border-radius: $radius-xl;
+
+    p {
+      margin: 0;
+      font-size: $font-size-sm;
+      line-height: 1.5;
+      color: $color-gray-600;
+    }
+  }
+
+  &__eyebrow {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $color-heading;
   }
 }
 </style>
