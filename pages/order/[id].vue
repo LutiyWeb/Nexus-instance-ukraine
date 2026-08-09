@@ -137,7 +137,7 @@ function formatDate(iso: string) {
           <!-- Delivery address -->
           <section
             v-if="order.deliveryAddressSnapshot"
-            class="order-page__card"
+            class="order-page__card order-page__card--fill"
           >
             <h2 class="order-page__card-title"><MapPin :size="16" />Адреса доставки</h2>
             <div class="order-page__address">
@@ -329,7 +329,7 @@ function formatDate(iso: string) {
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
-    align-items: flex-start;
+    align-items: stretch;
 
     @include mixins.respond-to(notebook) {
       grid-template-columns: 1fr 320px;
@@ -349,6 +349,10 @@ function formatDate(iso: string) {
     border-radius: $radius-xl;
     box-shadow: $shadow-card;
     padding: 20px 24px;
+
+    &--fill {
+      flex: 1;
+    }
   }
 
   &__card-title {
