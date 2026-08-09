@@ -3,7 +3,7 @@ import { LayoutGrid, LayoutList, SearchX } from 'lucide-vue-next'
 import type { Filters, PricePreset } from '~/components/catalog/CatalogFilters.vue'
 import type { Chip } from '~/components/catalog/CatalogChips.vue'
 
-useHead({ title: 'Каталог — Nexus Commerce' })
+useHead({ title: 'Каталог — Honey Store' })
 
 const route = useRoute()
 const router = useRouter()
@@ -434,7 +434,7 @@ const breadcrumbs = computed(() => {
     gap: 8px;
     align-items: center;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       display: none;
     }
   }
@@ -531,16 +531,16 @@ const breadcrumbs = computed(() => {
       gap: 12px;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       gap: 16px;
       grid-template-columns: repeat(3, 1fr);
     }
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(4, 1fr);
     }
 
-    @include mixins.respond-to(xl) {
+    @include mixins.respond-to(laptop) {
       grid-template-columns: repeat(5, 1fr);
     }
   }
@@ -559,7 +559,7 @@ const breadcrumbs = computed(() => {
     flex-direction: column;
     gap: 20px;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       display: none;
     }
   }

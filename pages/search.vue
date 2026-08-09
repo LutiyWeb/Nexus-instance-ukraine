@@ -2,7 +2,7 @@
 import { SearchX } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-useHead({ title: 'Пошук — Nexus Commerce' })
+useHead({ title: 'Пошук — Honey Store' })
 
 const route = useRoute()
 const router = useRouter()
@@ -129,10 +129,10 @@ function onPageChange(p: number) {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-template-columns: repeat(3, 1fr);
     }
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(4, 1fr);
     }
   }

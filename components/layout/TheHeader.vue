@@ -107,7 +107,7 @@ function onBackToLogin() {
       >
         <img
           src="/logo.svg"
-          alt="Nexus"
+          alt="Honey Store"
           width="35"
           height="40"
           class="the-header__logo-img"
@@ -269,7 +269,7 @@ function onBackToLogin() {
   &__catalog-btn {
     display: none;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -296,7 +296,7 @@ function onBackToLogin() {
   &__search {
     display: none;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -318,7 +318,7 @@ function onBackToLogin() {
       }
     }
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       max-width: 280px;
     }
   }
@@ -354,13 +354,13 @@ function onBackToLogin() {
     }
 
     &--search-mobile {
-      @include mixins.respond-to(md) {
+      @include mixins.respond-to(tablet) {
         display: none;
       }
     }
 
     &--catalog-mobile {
-      @include mixins.respond-to(md) {
+      @include mixins.respond-to(tablet) {
         display: none;
       }
     }

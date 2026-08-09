@@ -2,7 +2,7 @@
 import { User, MapPin, ShoppingBag, Heart, LogOut } from 'lucide-vue-next'
 
 definePageMeta({ middleware: 'auth' })
-useSeoMeta({ title: 'Особистий кабінет — Nexus Commerce' })
+useSeoMeta({ title: 'Особистий кабінет — Honey Store' })
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -173,7 +173,7 @@ function logout() {
     grid-template-columns: 1fr;
     gap: 16px;
     align-items: flex-start;
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-template-columns: 240px 1fr;
     }
   }
@@ -212,7 +212,7 @@ function logout() {
       background: $color-gray-200;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: none;
     }
   }
@@ -256,7 +256,7 @@ function logout() {
     flex-direction: column;
     gap: 2px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: flex;
     }
   }
@@ -302,7 +302,7 @@ function logout() {
       background: rgb(239 68 68 / 5%);
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: flex;
     }
   }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingCart, Heart, Trash2 } from 'lucide-vue-next'
 
-useSeoMeta({ title: 'Кошик — Nexus Commerce' })
+useSeoMeta({ title: 'Кошик — Honey Store' })
 
 const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()
@@ -275,7 +275,7 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     gap: 24px;
     align-items: flex-start;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: 1fr 300px;
     }
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'Контакти — Nexus Commerce' })
+useHead({ title: 'Контакти — Honey Store' })
 </script>
 
 <template>
@@ -83,7 +83,7 @@ useHead({ title: 'Контакти — Nexus Commerce' })
     grid-template-columns: 1fr;
     gap: 48px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-template-columns: 1fr 1fr;
     }
   }

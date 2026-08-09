@@ -2,7 +2,7 @@
 import { Heart } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-useSeoMeta({ title: 'Обране — Nexus Commerce' })
+useSeoMeta({ title: 'Обране — Honey Store' })
 
 const wishlistsStore = useWishlistsStore()
 const config = useRuntimeConfig()
@@ -130,15 +130,15 @@ watch(() => wishlistsStore.guestIds.length, loadProducts)
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: repeat(3, 1fr);
     }
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(4, 1fr);
     }
 
-    @include mixins.respond-to(xl) {
+    @include mixins.respond-to(laptop) {
       grid-template-columns: repeat(5, 1fr);
     }
   }

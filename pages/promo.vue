@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ArrowDownRight } from 'lucide-vue-next'
 
-useHead({ title: 'Акції — Nexus Commerce' })
+useHead({ title: 'Акції — Honey Store' })
 
 const store = useProductsStore()
 const { isMd } = useBreakpoints()
@@ -291,14 +291,14 @@ const bentoSections = computed(() =>
   &__banners {
     margin-bottom: 12px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       margin-bottom: 24px;
     }
   }
 
   &__skeleton {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
   }
 
@@ -348,7 +348,7 @@ const bentoSections = computed(() =>
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(5, 1fr);
     }
   }
@@ -374,7 +374,7 @@ const bentoSections = computed(() =>
 
   &__cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: 220px;
     gap: 12px;
     background: $color-gray-100;
@@ -382,7 +382,7 @@ const bentoSections = computed(() =>
     padding: 24px $container-padding;
     margin-inline: -#{$container-padding};
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       padding: 32px calc(#{$container-padding} * 2) 32px;
       margin-top: 48px;
       margin-inline: -#{$container-padding};

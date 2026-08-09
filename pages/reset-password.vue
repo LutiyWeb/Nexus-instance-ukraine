@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'Створення нового пароля — Nexus Commerce' })
+useHead({ title: 'Створення нового пароля — Honey Store' })
 
 const route = useRoute()
 const router = useRouter()

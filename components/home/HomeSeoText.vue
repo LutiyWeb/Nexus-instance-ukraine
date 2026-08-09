@@ -4,18 +4,18 @@ const open = ref(false)
 
 <template>
   <section class="seo-block">
-    <h2 class="seo-block__title">Купити смартфон, гаджети та аксесуари онлайн — Nexus</h2>
+    <h2 class="seo-block__title">Купити смартфон, гаджети та аксесуари онлайн — Honey Store</h2>
     <p class="seo-block__intro">
-      <strong>Nexus</strong> — це сучасний інтернет-магазин електроніки, де кожен покупець знайде
-      техніку для роботи, навчання та відпочинку. Ми пропонуємо широкий вибір смартфонів, планшетів,
-      ноутбуків, навушників та аксесуарів від провідних світових брендів — Apple, Samsung, Sony,
-      Xiaomi та інших. Весь асортимент сертифікований, має офіційну гарантію та доставляється по
-      всій Україні.
+      <strong>Honey Store</strong> — це сучасний інтернет-магазин електроніки, де кожен покупець
+      знайде техніку для роботи, навчання та відпочинку. Ми пропонуємо широкий вибір смартфонів,
+      планшетів, ноутбуків, навушників та аксесуарів від провідних світових брендів — Apple,
+      Samsung, Sony, Xiaomi та інших. Весь асортимент сертифікований, має офіційну гарантію та
+      доставляється по всій Україні.
     </p>
 
     <div :class="['seo-block__body', { 'seo-block__body--open': open }]">
       <div class="seo-block__inner">
-        <h3 class="seo-block__subtitle">Чому обирають Nexus?</h3>
+        <h3 class="seo-block__subtitle">Чому обирають Honey Store?</h3>
         <ul class="seo-block__list">
           <li>
             <strong>Великий асортимент</strong> — понад 1&nbsp;000 товарів у наявності та під
@@ -62,8 +62,8 @@ const open = ref(false)
           Слідкуйте за розділом <strong>«Акції»</strong> — тут ми публікуємо знижки на популярні
           <strong>гаджети</strong>, сезонні розпродажі та спеціальні пропозиції для нових покупців.
           Підпишіться на розсилку, щоб першими дізнаватися про нові надходження й ексклюзивні
-          пропозиції. Разом з Nexus купити смартфон або будь-який інший гаджет вигідно та зручно —
-          незалежно від того, де ви знаходитеся.
+          пропозиції. Разом з Honey Store купити смартфон або будь-який інший гаджет вигідно та
+          зручно — незалежно від того, де ви знаходитеся.
         </p>
       </div>
     </div>
@@ -94,7 +94,7 @@ const open = ref(false)
     margin: 0 0 16px;
     line-height: 1.3;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-2xl;
     }
   }
@@ -106,7 +106,7 @@ const open = ref(false)
     margin: 0;
     max-width: 800px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-base;
     }
   }
@@ -140,7 +140,7 @@ const open = ref(false)
     color: $color-gray-800;
     margin: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-lg;
     }
   }
@@ -168,7 +168,7 @@ const open = ref(false)
         font-weight: $font-weight-bold;
       }
 
-      @include mixins.respond-to(md) {
+      @include mixins.respond-to(tablet) {
         font-size: $font-size-base;
       }
     }
@@ -181,7 +181,7 @@ const open = ref(false)
     margin: 0;
     max-width: 800px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-base;
     }
   }

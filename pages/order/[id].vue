@@ -15,8 +15,7 @@ const { data, pending, error } = useAsyncData(`order-${route.params.id}`, () =>
 const order = computed(() => data.value?.data ?? null)
 
 useSeoMeta({
-  title: () =>
-    order.value ? `Замовлення ${order.value.orderNumber} — Nexus Commerce` : 'Замовлення',
+  title: () => (order.value ? `Замовлення ${order.value.orderNumber} — Honey Store` : 'Замовлення'),
 })
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
@@ -259,7 +258,7 @@ function formatDate(iso: string) {
     box-shadow: $shadow-card;
     margin-bottom: 24px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       flex-direction: row;
       align-items: center;
       gap: 20px;
@@ -332,7 +331,7 @@ function formatDate(iso: string) {
     gap: 24px;
     align-items: flex-start;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: 1fr 320px;
     }
   }

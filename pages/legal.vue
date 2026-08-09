@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'Правова інформація — Nexus Commerce' })
+useHead({ title: 'Правова інформація — Honey Store' })
 </script>
 
 <template>

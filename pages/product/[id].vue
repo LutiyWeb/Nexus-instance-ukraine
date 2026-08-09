@@ -23,7 +23,7 @@ const product = computed(() => productData.value?.data ?? null)
 const loading = computed(() => pending.value)
 
 useSeoMeta({
-  title: () => (product.value ? `${product.value.title} — Nexus Commerce` : 'Товар'),
+  title: () => (product.value ? `${product.value.title} — Honey Store` : 'Товар'),
   description: () => product.value?.description ?? '',
   ogTitle: () => product.value?.title ?? '',
   ogDescription: () => product.value?.description ?? '',
@@ -340,7 +340,7 @@ function toggleFav() {
     gap: 16px;
     align-items: flex-start;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-template-columns: 1fr 1fr;
       gap: 32px;
     }
@@ -384,7 +384,7 @@ function toggleFav() {
     line-height: 1.2;
     overflow-wrap: break-word;
 
-    @include mixins.respond-to(2xl) {
+    @include mixins.respond-to(desktop) {
       font-size: $font-size-2xl;
     }
   }
@@ -491,7 +491,7 @@ function toggleFav() {
 
   //info
   &__content {
-    @include mixins.respond-to(xl) {
+    @include mixins.respond-to(laptop) {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;

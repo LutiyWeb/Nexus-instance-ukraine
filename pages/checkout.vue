@@ -3,7 +3,7 @@ import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
 import type { Address } from '~/contracts/addresses'
 import type { NpSettlement, NpWarehouse } from '~/contracts/delivery'
 
-useSeoMeta({ title: 'Оформлення замовлення — Nexus Commerce' })
+useSeoMeta({ title: 'Оформлення замовлення — Honey Store' })
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
@@ -430,7 +430,7 @@ async function submit() {
     gap: 24px;
     align-items: flex-start;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: 1fr 360px;
     }
   }
@@ -513,7 +513,7 @@ async function submit() {
     grid-template-columns: 1fr;
     gap: 16px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: 1fr 1fr;
     }
   }
@@ -529,7 +529,7 @@ async function submit() {
     grid-template-columns: 1fr;
     gap: 12px;
 
-    @include mixins.respond-to(sm) {
+    @include mixins.respond-to(mobile) {
       grid-template-columns: 1fr 80px 80px;
     }
   }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: ['dev-only'] })
-useSeoMeta({ title: 'UI Kit — Nexus Dev' })
+useSeoMeta({ title: 'UI Kit — Honey Store Dev' })
 
 const route = useRoute()
 
