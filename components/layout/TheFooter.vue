@@ -14,16 +14,8 @@ function toggle(i: number) {
         <NuxtLink
           to="/"
           class="the-footer__logo"
-          >Nexus</NuxtLink
+          >Honey Store</NuxtLink
         >
-        <p class="the-footer__desc">Найкращі шаблони для сучасних проєктів.</p>
-        <NuxtLink
-          v-if="$config.public.isDev"
-          to="/ui"
-          class="the-footer__dev-link"
-        >
-          Dev: UI Kit
-        </NuxtLink>
       </div>
 
       <div class="the-footer__cols">
@@ -88,7 +80,7 @@ function toggle(i: number) {
       </div>
     </div>
     <div class="the-footer__bottom container">
-      <span>© {{ new Date().getFullYear() }} Nexus Commerce. Усі права захищені.</span>
+      <span>© {{ new Date().getFullYear() }} Honey Store. Усі права захищені.</span>
     </div>
   </footer>
 </template>
@@ -97,8 +89,9 @@ function toggle(i: number) {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .the-footer {
-  background: $color-gray-900;
-  color: $color-white;
+  background: $color-gray-50;
+  color: $color-gray-900;
+  border-top: 1px solid $color-gray-200;
   margin-top: auto;
 
   &__inner {
@@ -107,7 +100,7 @@ function toggle(i: number) {
     gap: 12px;
     padding-block: 48px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       flex-direction: row;
       gap: 48px;
     }
@@ -123,32 +116,7 @@ function toggle(i: number) {
   &__logo {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-primary;
-  }
-
-  &__dev-link {
-    display: inline-block;
-    margin-top: 8px;
-    font-size: 11px;
-    font-weight: $font-weight-semibold;
-    color: $color-white;
-    background: $color-primary;
-    padding: 3px 10px;
-    border-radius: $radius-sm;
-    text-decoration: none;
-    opacity: 0.6;
-    transition: opacity $transition-fast;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  &__desc {
-    font-size: $font-size-sm;
-    color: $color-gray-400;
-    margin: 0;
-    max-width: 200px;
+    color: $color-primary-dark;
   }
 
   &__cols {
@@ -156,7 +124,7 @@ function toggle(i: number) {
     flex-direction: column;
     flex: 1;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       flex-direction: row;
       gap: 32px;
     }
@@ -166,7 +134,7 @@ function toggle(i: number) {
     display: flex;
     flex-direction: column;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       flex: 1;
     }
   }
@@ -180,27 +148,27 @@ function toggle(i: number) {
     padding: 12px 0;
     background: none;
     border: none;
-    border-bottom: 1px solid $color-gray-800;
+    border-bottom: 1px solid $color-gray-200;
     cursor: pointer;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-gray-300;
+    color: $color-gray-700;
     text-align: left;
     transition: color $transition-fast;
 
     &:hover {
-      color: $color-white;
+      color: $color-heading;
     }
 
     &--open {
-      color: $color-white;
+      color: $color-heading;
 
       .the-footer__col-icon {
         transform: rotate(180deg);
       }
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       cursor: default;
       pointer-events: none;
       border-bottom: none;
@@ -213,7 +181,7 @@ function toggle(i: number) {
     color: $color-gray-500;
     transition: transform $transition-base;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       display: none;
     }
   }
@@ -227,7 +195,7 @@ function toggle(i: number) {
       grid-template-rows: 1fr;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       grid-template-rows: 1fr;
       transition: none;
     }
@@ -245,7 +213,7 @@ function toggle(i: number) {
       padding-top: 8px;
     }
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       overflow: visible;
       padding-top: 0;
       transition: none;
@@ -254,17 +222,17 @@ function toggle(i: number) {
 
   &__link {
     font-size: $font-size-sm;
-    color: $color-gray-400;
+    color: $color-gray-500;
     padding: 5px 0;
     transition: color $transition-fast;
 
     &:hover {
-      color: $color-white;
+      color: $color-heading;
     }
   }
 
   &__bottom {
-    border-top: 1px solid $color-gray-800;
+    border-top: 1px solid $color-gray-200;
     padding-block: 16px;
     font-size: $font-size-sm;
     color: $color-gray-500;
