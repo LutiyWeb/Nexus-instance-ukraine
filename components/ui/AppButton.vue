@@ -106,10 +106,10 @@ withDefaults(defineProps<Props>(), {
   &--primary {
     background: $color-primary;
     color: $color-white;
-    box-shadow: 0 1px 3px rgb(79 70 229 / 30%);
+    box-shadow: 0 1px 3px rgba($color-primary, 30%);
     &:not(:disabled):hover {
       background: $color-primary-dark;
-      box-shadow: 0 4px 12px rgb(79 70 229 / 35%);
+      box-shadow: 0 4px 12px rgba($color-primary, 35%);
       transform: translateY(-1px);
     }
   }
@@ -134,7 +134,7 @@ withDefaults(defineProps<Props>(), {
     &:not(:disabled):hover {
       border-color: $color-primary;
       color: $color-primary;
-      background: rgb(79 70 229 / 6%);
+      background: rgba($color-primary, 6%);
       transform: translateY(-1px);
     }
   }
