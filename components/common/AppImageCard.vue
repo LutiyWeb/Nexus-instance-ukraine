@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, ShoppingCart } from 'lucide-vue-next'
+import { Heart, ShoppingCart, Mail } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 interface Props {
@@ -13,6 +13,10 @@ const NuxtLink = resolveComponent('NuxtLink')
 const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()
 const toastStore = useToastStore()
+const authStore = useAuthStore()
+const config = useRuntimeConfig()
+
+const notifyModalOpen = ref(false)
 
 const isOutOfStock = (product: Product) => product.stock === 0
 
@@ -28,6 +32,26 @@ function handleCartClick(product: Product) {
 
 function handleFavClick(product: Product) {
   wishlistsStore.toggle(product.id)
+}
+
+async function handleNotifyClick(e: Event, product: Product) {
+  e.preventDefault()
+
+  const userEmail = authStore.user?.email
+  if (!userEmail) {
+    notifyModalOpen.value = true
+    return
+  }
+
+  try {
+    await $fetch(`${config.public.apiBase}/api/products/${product.id}/notify-stock`, {
+      method: 'POST',
+      body: { email: userEmail },
+    })
+    toastStore.add("Ми повідомимо вас, коли товар з'явиться в наявності", 'success')
+  } catch {
+    toastStore.add('Не вдалося зберегти запит, спробуйте ще раз', 'error')
+  }
 }
 </script>
 
@@ -48,11 +72,17 @@ function handleFavClick(product: Product) {
     />
 
     <template v-else-if="product">
-      <!-- Background image -->
-      <div
-        class="image-card__bg"
-        :class="{ 'image-card__bg--oos': isOutOfStock(product) }"
-        :style="product.thumbnail ? { backgroundImage: `url(${product.thumbnail})` } : {}"
+      <!-- Product image -->
+      <AppImage
+        v-if="product.thumbnail"
+        :src="product.thumbnail"
+        :alt="product.title"
+        :img-class="
+          ['image-card__img', isOutOfStock(product) && 'image-card__img--oos']
+            .filter(Boolean)
+            .join(' ')
+        "
+        :sizes="{ desktop: { w: 300, h: 300 } }"
       />
 
       <!-- Hover image swap -->
@@ -61,6 +91,14 @@ function handleFavClick(product: Product) {
         class="image-card__hover-img"
         :style="{ backgroundImage: `url(${getHoverImage(product)})` }"
       />
+
+      <!-- Out of stock overlay -->
+      <div
+        v-if="isOutOfStock(product)"
+        class="image-card__oos-overlay"
+      >
+        <span class="image-card__oos-badge">Немає в наявності</span>
+      </div>
 
       <!-- Labels -->
       <div
@@ -121,13 +159,25 @@ function handleFavClick(product: Product) {
           <ShoppingCart :size="14" />
           Додати до кошика
         </button>
-        <span
+        <button
           v-else
-          class="image-card__oos"
-          >Немає в наявності</span
+          class="image-card__notify"
+          type="button"
+          title="Повідомити про наявність"
+          aria-label="Повідомити про наявність"
+          @click="handleNotifyClick($event, product)"
         >
+          <Mail :size="14" />
+          Повідомити про наявність
+        </button>
       </div>
     </template>
+
+    <NotifyStockModal
+      v-if="product"
+      v-model:open="notifyModalOpen"
+      :product-id="product.id"
+    />
   </component>
 </template>
 
@@ -162,11 +212,12 @@ function handleFavClick(product: Product) {
     @include mixins.shimmer;
   }
 
-  &__bg {
+  .image-card__img {
     position: absolute;
     inset: 0;
-    background-size: cover;
-    background-position: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     transition: transform $transition-slow;
 
     &--oos {
@@ -174,7 +225,7 @@ function handleFavClick(product: Product) {
     }
   }
 
-  &:hover &__bg {
+  &:hover .image-card__img {
     transform: scale(1.05);
   }
 
@@ -194,6 +245,26 @@ function handleFavClick(product: Product) {
   &:hover &__hover-img {
     opacity: 1;
     transform: scale(1);
+  }
+
+  &__oos-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(0 0 0 / 28%);
+    z-index: 1;
+  }
+
+  &__oos-badge {
+    padding: 6px 14px;
+    background: $color-white;
+    color: $color-gray-700;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-full;
+    letter-spacing: 0.03em;
   }
 
   &__labels {
@@ -344,10 +415,26 @@ function handleFavClick(product: Product) {
     }
   }
 
-  &__oos {
-    font-size: $font-size-xs;
-    color: $color-gray-400;
+  &__notify {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px;
     margin-top: 4px;
+    background: $color-gray-200;
+    color: $color-gray-700;
+    border: none;
+    border-radius: $radius-md;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-gray-300;
+    }
   }
 }
 </style>
