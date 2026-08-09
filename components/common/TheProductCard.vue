@@ -374,7 +374,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     justify-content: center;
     gap: 8px;
     padding: 12px;
-    background: $color-gray-900;
+    background: $color-primary;
     color: $color-white;
     border: none;
     font-size: $font-size-xs;
@@ -386,13 +386,13 @@ async function handleNotifyClick(e: Event, product: Product) {
     z-index: 2;
 
     &:hover {
-      background: $color-gray-700;
+      background: $color-primary-dark;
     }
 
     @include mixins.respond-to(tablet) {
       display: flex;
       font-size: $font-size-sm;
-      transform: translateY(100%);
+      transform: translateY(calc(100% + 2px));
     }
   }
 

@@ -49,8 +49,8 @@ defineEmits<{ click: [] }>()
     color $transition-fast;
 
   &:not(:disabled):hover {
-    background: $color-gray-900;
-    border-color: $color-gray-900;
+    background: $color-primary;
+    border-color: $color-primary;
     color: $color-white;
   }
 

@@ -343,7 +343,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    transform: translateY(100%);
+    transform: translateY(calc(100% + 2px));
     transition: transform $transition-base;
   }
 
@@ -401,7 +401,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     width: 100%;
     padding: 8px;
     margin-top: 4px;
-    background: $color-gray-900;
+    background: $color-primary;
     color: $color-white;
     border: none;
     border-radius: $radius-md;
@@ -411,7 +411,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     transition: background $transition-fast;
 
     &:hover {
-      background: $color-gray-700;
+      background: $color-primary-dark;
     }
   }
 
