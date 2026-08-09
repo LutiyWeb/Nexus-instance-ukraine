@@ -76,7 +76,6 @@ withDefaults(defineProps<Props>(), {
   text-decoration: none;
 
   &::before {
-    opacity: 0.7;
     width: 100%;
     height: 100%;
     right: 0;

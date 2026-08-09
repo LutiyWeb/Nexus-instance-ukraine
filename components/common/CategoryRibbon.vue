@@ -63,7 +63,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="category-ribbon">
+  <div
+    :class="[
+      'category-ribbon',
+      {
+        'category-ribbon--scroll-left': canScrollLeft,
+        'category-ribbon--scroll-right': canScrollRight,
+      },
+    ]"
+  >
     <AppArrow
       v-show="canScrollLeft"
       direction="left"
@@ -115,6 +123,38 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
 
+  &::before {
+    position: absolute;
+    height: 35px;
+    width: 40px;
+    top: 5px;
+    right: 0;
+    background: linear-gradient(-90deg, rgb(255 255 255) 25%, rgb(255 255 255 / 0) 100%);
+    content: '';
+    opacity: 0;
+    transition: opacity $transition-fast;
+  }
+
+  &::after {
+    position: absolute;
+    height: 35px;
+    width: 40px;
+    top: 5px;
+    left: 0;
+    background: linear-gradient(90deg, rgb(255 255 255) 25%, rgb(255 255 255 / 0) 100%);
+    content: '';
+    opacity: 0;
+    transition: opacity $transition-fast;
+  }
+
+  &--scroll-right::before {
+    opacity: 1;
+  }
+
+  &--scroll-left::after {
+    opacity: 1;
+  }
+
   &__track {
     display: flex;
     align-items: center;
@@ -165,7 +205,6 @@ onUnmounted(() => {
     top: 50%;
     transform: translateY(-50%);
     box-shadow: $shadow-sm;
-    // opacity: 0;
     transition: opacity $transition-fast;
 
     &--left {

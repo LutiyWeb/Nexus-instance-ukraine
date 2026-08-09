@@ -34,7 +34,7 @@ const showImage = computed(() => mounted.value && isXl.value)
       :src="image"
       :alt="label"
       img-class="promo-tile__img"
-      :sizes="{ desktop: { w: 480, h: 300 } }"
+      :sizes="{ desktop: { w: 300, h: 300 } }"
     />
     <div class="promo-tile__content">
       <p
@@ -94,6 +94,7 @@ const showImage = computed(() => mounted.value && isXl.value)
   @include mixins.respond-to(notebook) {
     padding: 16px;
     gap: 8px;
+    height: 230px;
   }
 
   &:hover {

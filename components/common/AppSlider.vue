@@ -217,6 +217,7 @@ onBeforeUnmount(() => {
     padding-block-end: var(--swiper-padding-bottom, 40px);
     --swiper-navigation-color: #{$color-gray-500};
     --swiper-navigation-size: 20px;
+    --swiper-theme-color: #{$color-primary};
 
     :deep(.swiper-button-prev),
     :deep(.swiper-button-next) {
