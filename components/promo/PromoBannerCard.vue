@@ -83,6 +83,17 @@ withDefaults(defineProps<Props>(), { tag: 'Акція', hexVariant: 'scatter' })
     }
   }
 
+  // scatter's pattern has one dominant hex that carries its visual weight —
+  // cluster/sparse don't, so they're scaled up to match it at the same
+  // container size instead of reading as smaller/airier.
+  .promo-card__hex.app-hex-pattern--cluster {
+    transform: translateY(-50%) scale(1.45);
+  }
+
+  .promo-card__hex.app-hex-pattern--sparse {
+    transform: translateY(-50%) scale(1.25);
+  }
+
   &:hover .promo-card__hex {
     opacity: 1;
   }
