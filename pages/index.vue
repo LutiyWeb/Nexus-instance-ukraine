@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CARD_GAP } from '~/constants/layout'
 
-useHead({ title: 'Nexus Commerce — Головна' })
+useHead({ title: 'Honey Store — Головна' })
 
 interface BannerDto {
   id: number
@@ -40,7 +40,7 @@ const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
   baseURL: config.public.apiBase,
 })
 
-const { isXl } = useBreakpoints()
+const { isXl, isDesktop } = useBreakpoints()
 const mounted = ref(false)
 
 onMounted(() => {
@@ -187,17 +187,15 @@ const FALLBACK_HOT_TILES = [
   {
     id: 5,
     label: 'Аксесуари',
-    description: null,
+    description: 'Знижки до 25%',
     buttonText: 'Детальніше',
     gradient: 'linear-gradient(135deg, rgb(5 150 105) 0%, rgb(4 120 87) 100%)',
     to: '/catalog',
   },
 ]
 
-// Bento layout for .home__tiles-grid: shape describes the tile's own
-// proportions (tall / wide / even), independent of what content lands in it.
-// Row 1 (right side): horizontal | square — Row 2: square | horizontal (mirrored)
 const TILE_SHAPES = ['vertical', 'horizontal', 'square', 'square', 'horizontal'] as const
+const TILE_SHAPES_DESKTOP = ['vertical', 'horizontal', 'square', 'square', 'vertical'] as const
 
 const promoTiles = computed(() => {
   const fromApi = bannersData.value?.data?.hotTiles ?? []
@@ -217,10 +215,11 @@ const promoTiles = computed(() => {
       }))
 
   const showShapes = mounted.value && isXl.value
+  const shapes = mounted.value && isDesktop.value ? TILE_SHAPES_DESKTOP : TILE_SHAPES
 
   return tiles.map((tile, i) => ({
     ...tile,
-    shape: showShapes ? (TILE_SHAPES[i] ?? 'square') : 'square',
+    shape: showShapes ? (shapes[i] ?? 'square') : 'square',
   }))
 })
 </script>
@@ -496,11 +495,11 @@ const promoTiles = computed(() => {
   &__promo-link {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    color: $color-primary;
+    color: $color-primary-dark;
     transition: color $transition-fast;
 
     &:hover {
-      color: $color-primary-dark;
+      color: $color-primary-light;
     }
   }
 
@@ -513,7 +512,7 @@ const promoTiles = computed(() => {
     font-weight: $font-weight-bold;
     color: $color-heading;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-2xl;
     }
   }
@@ -530,7 +529,7 @@ const promoTiles = computed(() => {
       display: none;
     }
 
-    @include mixins.respond-to(xl) {
+    @include mixins.respond-to(laptop) {
       display: grid;
       overflow: visible;
       grid-template-columns: 1.6fr 1fr 1fr 1fr;
@@ -567,6 +566,28 @@ const promoTiles = computed(() => {
         grid-row: 2;
       } */
     }
+
+    @include mixins.respond-to(desktop) {
+      > *:nth-child(2) {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
+
+      > *:nth-child(3) {
+        grid-column: 3;
+        grid-row: 2;
+      }
+
+      > *:nth-child(4) {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      > *:nth-child(5) {
+        grid-column: 4;
+        grid-row: 1 / 3;
+      }
+    }
   }
 
   &__skeleton-row {
@@ -574,13 +595,13 @@ const promoTiles = computed(() => {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(3, 1fr);
     }
-    @include mixins.respond-to(xl) {
+    @include mixins.respond-to(laptop) {
       grid-template-columns: repeat(4, 1fr);
     }
-    @include mixins.respond-to(2xl) {
+    @include mixins.respond-to(desktop) {
       grid-template-columns: repeat(5, 1fr);
     }
   }

@@ -16,5 +16,6 @@ export function useBreakpoints() {
     isMd: computed(() => width.value >= 768),
     isLg: computed(() => width.value >= 1024),
     isXl: computed(() => width.value >= 1280),
+    isDesktop: computed(() => width.value >= 1536),
   }
 }
