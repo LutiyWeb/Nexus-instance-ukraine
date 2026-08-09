@@ -86,9 +86,10 @@ withDefaults(defineProps<Props>(), {
     background-image: url('/public/bg-image/tech-bg-3.svg');
     background-size: cover;
     background-repeat: no-repeat;
+    border-radius: inherit;
     content: '';
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       width: 30%;
       height: 100%;
     }
@@ -105,14 +106,14 @@ withDefaults(defineProps<Props>(), {
   //   background-image: linear-gradient(to top, $color-gray-100 0%, rgb(244 248 252 / 0.6) 100%);
   //   content: '';
 
-  //   @include mixins.respond-to(md) {
+  //   @include mixins.respond-to(tablet) {
   //     background-image: linear-gradient(to right, $color-gray-100 0%, rgb(244 248 252 / 0.2) 100%);
   //     width: calc(30% + 10px);
   //     height: 100%;
   //   }
   // }
 
-  @include mixins.respond-to(md) {
+  @include mixins.respond-to(tablet) {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
@@ -131,7 +132,7 @@ withDefaults(defineProps<Props>(), {
     min-width: 0;
     text-align: center;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       align-items: flex-start;
       gap: 16px;
       text-align: left;
@@ -146,7 +147,7 @@ withDefaults(defineProps<Props>(), {
     line-height: 1.2;
     max-width: 520px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-4xl;
     }
   }
@@ -157,7 +158,7 @@ withDefaults(defineProps<Props>(), {
     margin: 0;
     max-width: 440px;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       font-size: $font-size-xl;
     }
   }
@@ -168,11 +169,11 @@ withDefaults(defineProps<Props>(), {
     padding: 12px;
     font-size: $font-size-base;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       align-self: flex-start;
     }
 
-    @include mixins.respond-to(lg) {
+    @include mixins.respond-to(notebook) {
       min-width: 240px;
       padding: 16px;
       font-size: $font-size-xl;
@@ -188,7 +189,7 @@ withDefaults(defineProps<Props>(), {
     justify-content: center;
     flex-shrink: 0;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       order: 0;
       flex: 0 0 38%;
       max-width: 38%;
@@ -201,7 +202,7 @@ withDefaults(defineProps<Props>(), {
     object-fit: contain;
     display: block;
 
-    @include mixins.respond-to(md) {
+    @include mixins.respond-to(tablet) {
       aspect-ratio: auto;
       max-height: 510px;
     }
