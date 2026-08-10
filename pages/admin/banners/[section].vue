@@ -17,6 +17,27 @@ interface AdminBanner {
   isActive: boolean
 }
 
+// Real backend shapes (see banner.serializer.ts) — only `hero` (-> MainBanner)
+// and `special_1`/`special_2` (-> SpecialBanner) exist server-side. `promo`
+// and `hot` have no backend model yet; those two keep calling the old
+// (nonexistent) /api/banners/admin endpoint until that's built.
+interface ApiMainBanner {
+  id: number
+  title: string
+  description: string | null
+  media_url: string
+  media_type: 'image' | 'video'
+  link_url: string | null
+  sort_order: number
+  is_active: boolean
+}
+interface ApiSpecialBanner {
+  slug: string
+  title: string
+  image_url: string
+  link_url: string | null
+}
+
 const SECTION_LABELS: Record<string, string> = {
   hero: 'Головний банер',
   special_1: 'Спец-банер 1',
@@ -27,7 +48,11 @@ const SECTION_LABELS: Record<string, string> = {
 
 const route = useRoute()
 const section = computed(() => String(route.params.section))
-const isSingle = computed(() => section.value === 'special_1' || section.value === 'special_2')
+const isMainSection = computed(() => section.value === 'hero')
+const isSpecialSection = computed(
+  () => section.value === 'special_1' || section.value === 'special_2',
+)
+const isSingle = computed(() => isSpecialSection.value)
 const showMedia = computed(() => section.value !== 'promo')
 const showGradient = computed(() => section.value === 'promo' || section.value === 'hot')
 const title = computed(() => SECTION_LABELS[section.value] ?? section.value)
@@ -64,13 +89,54 @@ const columns = [
   { title: '', key: 'actions', width: 160 },
 ]
 
+function fromApiMain(b: ApiMainBanner): AdminBanner {
+  return {
+    id: b.id,
+    section: 'hero',
+    title: b.title,
+    description: b.description,
+    mediaUrl: b.media_url,
+    mediaType: b.media_type,
+    linkUrl: b.link_url,
+    buttonText: null,
+    gradient: null,
+    sortOrder: b.sort_order,
+    isActive: b.is_active,
+  }
+}
+
+function fromApiSpecial(b: ApiSpecialBanner): AdminBanner {
+  return {
+    id: 0,
+    section: b.slug,
+    title: b.title,
+    description: null,
+    mediaUrl: b.image_url,
+    mediaType: 'image',
+    linkUrl: b.link_url,
+    buttonText: null,
+    gradient: null,
+    sortOrder: 0,
+    isActive: true,
+  }
+}
+
 async function load() {
   loading.value = true
   try {
-    const res = await authFetch<{ data: AdminBanner[] }>(
-      `/api/banners/admin?section=${section.value}`,
-    )
-    banners.value = res.data
+    if (isMainSection.value) {
+      const res = await authFetch<{ data: ApiMainBanner[] }>('/api/admin/banners/main')
+      banners.value = res.data.map(fromApiMain)
+    } else if (isSpecialSection.value) {
+      const res = await authFetch<{ data: ApiSpecialBanner[] }>('/api/admin/banners/special')
+      const row = res.data.find((b) => b.slug === section.value)
+      banners.value = row ? [fromApiSpecial(row)] : []
+    } else {
+      const res = await authFetch<{ data: AdminBanner[] }>(
+        `/api/banners/admin?section=${section.value}`,
+      )
+      banners.value = res.data
+    }
   } finally {
     loading.value = false
   }
@@ -107,23 +173,47 @@ function editSingle() {
 async function submit() {
   submitting.value = true
   try {
-    const body = {
-      section: section.value,
-      title: form.title,
-      description: form.description || undefined,
-      mediaUrl: form.mediaUrl || undefined,
-      mediaType: form.mediaType,
-      linkUrl: form.linkUrl || undefined,
-      buttonText: form.buttonText || undefined,
-      gradient: form.gradient || undefined,
-      sortOrder: form.sortOrder,
-      isActive: form.isActive,
-    }
-
-    if (editingId.value) {
-      await authFetch(`/api/banners/admin/${editingId.value}`, { method: 'PATCH', body })
+    if (isMainSection.value) {
+      const body = {
+        title: form.title,
+        description: form.description || undefined,
+        media_url: form.mediaUrl || undefined,
+        media_type: form.mediaType,
+        link_url: form.linkUrl || null,
+        sort_order: form.sortOrder,
+        is_active: form.isActive,
+      }
+      if (editingId.value) {
+        await authFetch(`/api/admin/banners/main/${editingId.value}`, { method: 'PATCH', body })
+      } else {
+        await authFetch('/api/admin/banners/main', { method: 'POST', body })
+      }
+    } else if (isSpecialSection.value) {
+      const body = {
+        title: form.title,
+        image_url: form.mediaUrl,
+        link_url: form.linkUrl || null,
+      }
+      await authFetch(`/api/admin/banners/special/${section.value}`, { method: 'PUT', body })
     } else {
-      await authFetch('/api/banners/admin', { method: 'POST', body })
+      // promo/hot — no backend model yet, unchanged legacy call.
+      const body = {
+        section: section.value,
+        title: form.title,
+        description: form.description || undefined,
+        mediaUrl: form.mediaUrl || undefined,
+        mediaType: form.mediaType,
+        linkUrl: form.linkUrl || undefined,
+        buttonText: form.buttonText || undefined,
+        gradient: form.gradient || undefined,
+        sortOrder: form.sortOrder,
+        isActive: form.isActive,
+      }
+      if (editingId.value) {
+        await authFetch(`/api/banners/admin/${editingId.value}`, { method: 'PATCH', body })
+      } else {
+        await authFetch('/api/banners/admin', { method: 'POST', body })
+      }
     }
 
     modalOpen.value = false
@@ -137,7 +227,13 @@ async function submit() {
 }
 
 async function remove(banner: AdminBanner) {
-  await authFetch(`/api/banners/admin/${banner.id}`, { method: 'DELETE' })
+  if (isMainSection.value) {
+    await authFetch(`/api/admin/banners/main/${banner.id}`, { method: 'DELETE' })
+  } else if (isSpecialSection.value) {
+    await authFetch(`/api/admin/banners/special/${section.value}`, { method: 'DELETE' })
+  } else {
+    await authFetch(`/api/banners/admin/${banner.id}`, { method: 'DELETE' })
+  }
   await load()
   message.success('Банер видалено')
 }
