@@ -92,8 +92,7 @@ const showImage = computed(() => mounted.value && isXl.value)
   }
 
   @include mixins.respond-to(notebook) {
-    padding: 16px;
-    gap: 8px;
+    padding: 0 16px 16px;
     height: 230px;
   }
 
@@ -144,8 +143,12 @@ const showImage = computed(() => mounted.value && isXl.value)
     justify-content: center;
 
     .app-image {
-      max-width: 170px;
+      --ai-width: 50%;
       display: block;
+    }
+
+    :deep(.promo-tile__img) {
+      margin: 0 auto;
     }
   }
 
@@ -156,6 +159,7 @@ const showImage = computed(() => mounted.value && isXl.value)
   }
 
   :deep(.promo-tile__img) {
+    mix-blend-mode: multiply;
     transition: transform 0.5s ease;
   }
 

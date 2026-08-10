@@ -45,15 +45,14 @@ withDefaults(defineProps<Props>(), {
         loop
         playsinline
       />
-      <img
+      <AppImage
         v-else
         :src="mediaUrl"
         :alt="title"
-        class="hero-banner__img"
-        width="340"
-        height="340"
-        loading="eager"
-        fetchpriority="high"
+        fit="inside"
+        :lazy="false"
+        img-class="hero-banner__img"
+        :sizes="{ mobile: { w: 400, h: 400 }, desktop: { w: 600, h: 600 } }"
       />
     </div>
   </NuxtLink>
@@ -187,11 +186,13 @@ withDefaults(defineProps<Props>(), {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    // Vendor photos are shot on white; blending multiply against this
+    // banner's flat background hides the seam around the product.
+    --ai-blend-mode: multiply;
 
     @include mixins.respond-to(tablet) {
       order: 0;
-      flex: 0 0 38%;
-      max-width: 38%;
+      flex: 0 0 26%;
     }
   }
 

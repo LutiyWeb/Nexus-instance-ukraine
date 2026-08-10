@@ -17,10 +17,12 @@ withDefaults(defineProps<Props>(), { reverse: false })
     :class="['special-banner', { 'special-banner--reverse': reverse }]"
   >
     <div class="special-banner__image">
-      <img
+      <AppImage
         :src="imageUrl"
         :alt="title"
-        class="special-banner__img"
+        fit="inside"
+        img-class="special-banner__img"
+        :sizes="{ mobile: { w: 500, h: 400 }, desktop: { w: 600, h: 480 } }"
       />
     </div>
     <div class="special-banner__content">
@@ -46,10 +48,12 @@ withDefaults(defineProps<Props>(), { reverse: false })
     :class="['special-banner', { 'special-banner--reverse': reverse }]"
   >
     <div class="special-banner__image">
-      <img
+      <AppImage
         :src="imageUrl"
         :alt="title"
-        class="special-banner__img"
+        fit="inside"
+        img-class="special-banner__img"
+        :sizes="{ mobile: { w: 500, h: 400 }, desktop: { w: 600, h: 480 } }"
       />
     </div>
     <div class="special-banner__content">
@@ -71,8 +75,8 @@ withDefaults(defineProps<Props>(), { reverse: false })
 .special-banner {
   position: relative;
   z-index: 0;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0;
   padding: 32px 24px;
   border-radius: $radius-2xl;
@@ -100,7 +104,8 @@ withDefaults(defineProps<Props>(), { reverse: false })
   }
 
   @include mixins.respond-to(tablet) {
-    grid-template-columns: 1fr 1fr;
+    flex-direction: row;
+    align-items: center;
     gap: 48px;
     padding: 48px;
   }
@@ -128,6 +133,11 @@ withDefaults(defineProps<Props>(), { reverse: false })
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+
+    @include mixins.respond-to(tablet) {
+      flex: 0 0 26%;
+    }
   }
 
   &__img {
@@ -148,6 +158,8 @@ withDefaults(defineProps<Props>(), { reverse: false })
     align-items: center;
     text-align: center;
     gap: 16px;
+    flex: 1 1 0;
+    min-width: 0;
 
     @include mixins.respond-to(tablet) {
       align-items: flex-end;
