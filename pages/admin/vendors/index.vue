@@ -51,26 +51,52 @@ interface ProductsMeta {
   new_to_us: number
 }
 
+interface ImportResult {
+  dry_run: boolean
+  requested: number
+  created: number
+  updated: number
+  restored: number
+  skipped: number
+  failed: number
+  truncated: boolean
+}
+
 const { authFetch } = useAuthFetch()
 
 const vendors = ref<Vendor[]>([])
 const selectedVendorId = ref<number | null>(null)
 
+/**
+ * 'my' is the vendor's hand-picked selection for our account and is empty for
+ * most categories on this account; 'all' is the whole marketplace. Defaulting
+ * to 'all' because that is where the real stock actually is.
+ */
+const catalogMode = ref<'my' | 'all'>('all')
+const importLimit = ref(100)
+
 const categories = ref<VendorCategory[]>([])
 const categoriesLoading = ref(false)
 const categorySearch = ref('')
+const importingCategoryId = ref<string | null>(null)
+
+/** source_category_id -> vendor's total product count (admitted for sale), under catalogMode. */
+const categoryCounts = ref<Record<string, number | null>>({})
+const categoryCountsLoading = ref<Record<string, boolean>>({})
 
 const selectedCategory = ref<VendorCategory | null>(null)
 const products = ref<VendorProduct[]>([])
 const productsLoading = ref(false)
 const productsMeta = ref<ProductsMeta | null>(null)
+const importingProductCode = ref<string | null>(null)
 
 const categoryColumns = [
   { title: 'Категорія постачальника', dataIndex: 'source_category_name', key: 'name' },
   { title: 'Статус', key: 'status', width: 220 },
-  { title: 'Комісія', dataIndex: 'commission', key: 'commission', width: 100 },
+  { title: 'У постачальника', key: 'vendor_count', width: 130 },
+  { title: 'Комісія', dataIndex: 'commission', key: 'commission', width: 90 },
   { title: 'Вже імпортовано', dataIndex: 'imported_count', key: 'imported_count', width: 140 },
-  { title: '', key: 'actions', width: 180 },
+  { title: '', key: 'actions', width: 260 },
 ]
 
 const config = useRuntimeConfig()
@@ -90,6 +116,7 @@ const productColumns = [
   { title: 'Залишок', dataIndex: 'stock', key: 'stock', width: 90 },
   { title: 'Фото', dataIndex: 'images_count', key: 'images_count', width: 70 },
   { title: 'У нас', key: 'in_our_catalog', width: 100 },
+  { title: '', key: 'actions', width: 140 },
 ]
 
 async function loadVendors() {
@@ -102,18 +129,61 @@ async function loadVendors() {
   }
 }
 
+/**
+ * Fetched with limit=1 purely to read `meta.vendor_total` from the response
+ * header the admin products route already forwards — cheap even though it
+ * goes through the vendor API, since we never pull the actual product page.
+ */
+async function loadCategoryCount(category: VendorCategory) {
+  if (!selectedVendorId.value) return
+  categoryCountsLoading.value[category.source_category_id] = true
+  try {
+    const res = await authFetch<{ meta: { vendor_total: number | null } }>(
+      `/api/admin/vendors/${selectedVendorId.value}/products`,
+      {
+        query: {
+          source_category_id: category.source_category_id,
+          catalog: catalogMode.value,
+          limit: 1,
+        },
+      },
+    )
+    categoryCounts.value[category.source_category_id] = res.meta.vendor_total
+  } catch {
+    categoryCounts.value[category.source_category_id] = null
+  } finally {
+    categoryCountsLoading.value[category.source_category_id] = false
+  }
+}
+
+/** Small concurrency cap so a 100-row category page does not fire 100 requests at once. */
+async function loadCategoryCounts(rows: VendorCategory[]) {
+  const concurrency = 5
+  let index = 0
+  async function worker() {
+    while (index < rows.length) {
+      const row = rows[index]
+      index += 1
+      await loadCategoryCount(row)
+    }
+  }
+  await Promise.all(Array.from({ length: concurrency }, worker))
+}
+
 async function loadCategories() {
   if (!selectedVendorId.value) return
   categoriesLoading.value = true
   selectedCategory.value = null
   products.value = []
   productsMeta.value = null
+  categoryCounts.value = {}
   try {
     const res = await authFetch<{ data: VendorCategory[] }>(
       `/api/admin/vendors/${selectedVendorId.value}/categories`,
       { query: { search: categorySearch.value || undefined, limit: 100 } },
     )
     categories.value = res.data
+    loadCategoryCounts(res.data).catch(() => {})
   } catch {
     message.error('Не вдалося завантажити категорії постачальника')
   } finally {
@@ -129,7 +199,13 @@ async function selectCategory(category: VendorCategory) {
   try {
     const res = await authFetch<{ data: VendorProduct[]; meta: ProductsMeta }>(
       `/api/admin/vendors/${selectedVendorId.value}/products`,
-      { query: { source_category_id: category.source_category_id, limit: 100 } },
+      {
+        query: {
+          source_category_id: category.source_category_id,
+          catalog: catalogMode.value,
+          limit: 100,
+        },
+      },
     )
     products.value = res.data
     productsMeta.value = res.meta
@@ -192,6 +268,72 @@ async function submitMapping() {
   }
 }
 
+function reportImportResult(result: ImportResult) {
+  const parts = [`створено: ${result.created}`, `оновлено: ${result.updated}`]
+  if (result.restored) parts.push(`відновлено: ${result.restored}`)
+  if (result.skipped) parts.push(`пропущено: ${result.skipped}`)
+  if (result.failed) parts.push(`помилок: ${result.failed}`)
+
+  const text = parts.join(', ')
+  if (result.failed) {
+    message.warning(`Імпорт завершено з помилками (${text})`)
+  } else if (result.truncated) {
+    message.warning(
+      `${text}. Категорія більша за ліміт — запустіть імпорт ще раз, щоб дотягнути решту`,
+    )
+  } else {
+    message.success(`Імпортовано: ${text}`)
+  }
+}
+
+async function importCategory(category: VendorCategory) {
+  if (!selectedVendorId.value) return
+  importingCategoryId.value = category.source_category_id
+  try {
+    const res = await authFetch<{ data: ImportResult }>(
+      `/api/admin/vendors/${selectedVendorId.value}/products/import`,
+      {
+        method: 'POST',
+        body: {
+          source_category_id: category.source_category_id,
+          catalog: catalogMode.value,
+          max_products: importLimit.value,
+        },
+      },
+    )
+    reportImportResult(res.data)
+    await loadCategories()
+    if (selectedCategory.value?.source_category_id === category.source_category_id) {
+      await selectCategory(category)
+    }
+  } catch (err: any) {
+    message.error(err?.data?.error?.message ?? 'Не вдалося імпортувати категорію')
+  } finally {
+    importingCategoryId.value = null
+  }
+}
+
+async function importProduct(product: VendorProduct) {
+  if (!selectedVendorId.value) return
+  importingProductCode.value = product.source_code
+  try {
+    const res = await authFetch<{ data: ImportResult }>(
+      `/api/admin/vendors/${selectedVendorId.value}/products/import`,
+      {
+        method: 'POST',
+        body: { source_codes: [product.source_code], catalog: catalogMode.value },
+      },
+    )
+    reportImportResult(res.data)
+    await loadCategories()
+    if (selectedCategory.value) await selectCategory(selectedCategory.value)
+  } catch (err: any) {
+    message.error(err?.data?.error?.message ?? 'Не вдалося імпортувати товар')
+  } finally {
+    importingProductCode.value = null
+  }
+}
+
 function categoryRowProps(category: VendorCategory) {
   return {
     class:
@@ -213,6 +355,11 @@ watch(selectedVendorId, () => {
   loadCategories()
 })
 
+watch(catalogMode, async () => {
+  await loadCategoryCounts(categories.value)
+  if (selectedCategory.value) await selectCategory(selectedCategory.value)
+})
+
 onMounted(() => {
   loadVendors()
   loadOurCategories()
@@ -232,6 +379,25 @@ onMounted(() => {
     </div>
 
     <template v-if="selectedVendorId">
+      <div class="admin-vendors__toolbar">
+        <a-radio-group
+          v-model:value="catalogMode"
+          button-style="solid"
+        >
+          <a-radio-button value="all">Весь маркетплейс</a-radio-button>
+          <a-radio-button value="my">Мій каталог</a-radio-button>
+        </a-radio-group>
+
+        <label class="admin-vendors__limit">
+          Ліміт на категорію:
+          <a-input-number
+            v-model:value="importLimit"
+            :min="1"
+            :max="2000"
+          />
+        </label>
+      </div>
+
       <div class="admin-vendors__section">
         <div class="admin-vendors__section-header">
           <h2 class="admin-vendors__section-title">Категорії постачальника</h2>
@@ -267,13 +433,31 @@ onMounted(() => {
                 Прив'язано: {{ record.mapping.category?.name ?? '—' }}
               </a-tag>
             </template>
-            <template v-else-if="column.key === 'actions'">
-              <a-button
+            <template v-else-if="column.key === 'vendor_count'">
+              <a-spin
+                v-if="categoryCountsLoading[record.source_category_id]"
                 size="small"
-                @click.stop="openMappingModal(record)"
-              >
-                Додати категорію
-              </a-button>
+              />
+              <span v-else>{{ categoryCounts[record.source_category_id] ?? '—' }}</span>
+            </template>
+            <template v-else-if="column.key === 'actions'">
+              <a-space>
+                <a-button
+                  size="small"
+                  @click.stop="openMappingModal(record)"
+                >
+                  Додати категорію
+                </a-button>
+                <a-button
+                  v-if="record.mapping?.import_action === 'map'"
+                  size="small"
+                  type="primary"
+                  :loading="importingCategoryId === record.source_category_id"
+                  @click.stop="importCategory(record)"
+                >
+                  Імпортувати
+                </a-button>
+              </a-space>
             </template>
           </template>
         </a-table>
@@ -315,6 +499,19 @@ onMounted(() => {
                 >Так</a-tag
               >
               <a-tag v-else>Ні</a-tag>
+            </template>
+            <template v-else-if="column.key === 'actions'">
+              <a-button
+                v-if="!record.in_our_catalog"
+                size="small"
+                type="primary"
+                :disabled="!record.target_category.id"
+                :title="!record.target_category.id ? 'Спочатку прив\'яжіть категорію' : undefined"
+                :loading="importingProductCode === record.source_code"
+                @click.stop="importProduct(record)"
+              >
+                Імпортувати
+              </a-button>
             </template>
           </template>
         </a-table>
@@ -380,6 +577,20 @@ onMounted(() => {
 
   &__vendor-select {
     width: 260px;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+
+  &__limit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
   }
 
   &__section {
