@@ -115,6 +115,7 @@ function toggle(i: number) {
 
   &__logo {
     font-size: $font-size-xl;
+    line-height: 0.7;
     font-weight: $font-weight-bold;
     color: $color-primary-dark;
   }
