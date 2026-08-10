@@ -16,6 +16,16 @@ interface Props {
     tablet?: Breakpoint
     desktop?: Breakpoint
   }
+  /**
+   * Resize mode sent to the image processor (IPX/sharp), not just the
+   * rendered `<img>`'s CSS. `cover` crops the source to exactly fill
+   * width×height — fine for uniform thumbnails, but for full product photos
+   * it destructively cuts off content before the browser ever sees it, so no
+   * amount of `--ai-fit` CSS can undo it. `inside` shrinks to fit within the
+   * box without cropping or padding, leaving `--ai-fit: contain` (CSS) to
+   * center the now correctly-proportioned image inside the fixed box.
+   */
+  fit?: 'cover' | 'contain' | 'inside' | 'outside' | 'fill'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -23,6 +33,11 @@ const props = withDefaults(defineProps<Props>(), {
   lazy: true,
   imgClass: '',
   sizes: () => ({}),
+  // Safe-by-default: every real call site so far has been a vendor product
+  // photo with an unpredictable aspect ratio, where cropping silently loses
+  // content. `cover` is now the deliberate exception (uniform thumbnails),
+  // not the default a new call site falls into by omission.
+  fit: 'inside',
 })
 
 const sizesAttr = computed(() => {
@@ -36,9 +51,16 @@ const sizesAttr = computed(() => {
 const width = computed(
   () => props.sizes.desktop?.w ?? props.sizes.tablet?.w ?? props.sizes.mobile?.w,
 )
-const height = computed(
-  () => props.sizes.desktop?.h ?? props.sizes.tablet?.h ?? props.sizes.mobile?.h,
-)
+// IPX's width+height "box" resize (fit=inside included) miscomputes the
+// output size whenever the box's aspect ratio doesn't match the source's —
+// it silently returns an image far smaller than requested instead of the
+// expected fit-inside result. Passing width alone sidesteps that path
+// entirely (sharp/IPX then just scales preserving the source's own ratio),
+// so drop height whenever the caller isn't asking for an exact-box crop.
+const height = computed(() => {
+  if (props.fit === 'inside') return undefined
+  return props.sizes.desktop?.h ?? props.sizes.tablet?.h ?? props.sizes.mobile?.h
+})
 
 // External vendor CDNs (e.g. image.hubber.pro) aren't ours to guarantee uptime for —
 // fall back to a placeholder instead of a broken-image icon.
@@ -69,6 +91,7 @@ const imgAttrs = computed(() => ({
     :sizes="sizesAttr || undefined"
     :width="width"
     :height="height"
+    :fit="fit"
     :img-attrs="imgAttrs"
     format="webp,jpg"
   />
@@ -92,8 +115,15 @@ const imgAttrs = computed(() => ({
     width: var(--ai-width, 100%);
     max-width: 100%;
     height: var(--ai-height, auto);
-    object-fit: var(--ai-fit, cover);
+    // Matches the `fit="inside"` default above: nothing is cropped unless a
+    // caller opts in with --ai-fit: cover.
+    object-fit: var(--ai-fit, contain);
     aspect-ratio: var(--ai-ratio, auto);
+    // Lets a white-background product photo blend into a matching-color
+    // container instead of showing a visible white box around it. Only
+    // works when the element sits directly on a flat, known background —
+    // set --ai-blend-mode: multiply on the container where that's true.
+    mix-blend-mode: var(--ai-blend-mode, normal);
   }
 
   // Overrides the `display: contents` above — this needs its own box to

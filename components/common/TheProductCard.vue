@@ -95,6 +95,7 @@ async function handleNotifyClick(e: Event, product: Product) {
         v-else-if="product?.thumbnail"
         :src="product.thumbnail"
         :alt="product.title"
+        fit="inside"
         :image-desktop-w="330"
         :image-desktop-h="250"
         :sizes="{
@@ -188,11 +189,6 @@ async function handleNotifyClick(e: Event, product: Product) {
               <span>₴</span>
             </span>
           </div>
-          <span
-            v-if="product.category"
-            class="product-card__category"
-            >{{ product.category }}</span
-          >
           <button
             v-if="!isOutOfStock(product)"
             class="product-card__cart-icon-btn"
@@ -250,12 +246,12 @@ async function handleNotifyClick(e: Event, product: Product) {
   &__media {
     position: relative;
     aspect-ratio: 33 / 25;
-    background: $color-gray-100;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     --ai-height: 100%;
+    --ai-fit: contain;
   }
 
   &__hover-img {
@@ -267,7 +263,7 @@ async function handleNotifyClick(e: Event, product: Product) {
       opacity 0.5s ease,
       transform 0.5s ease;
     z-index: 1;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
   }
 
@@ -408,21 +404,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     flex: 1;
     gap: 6px;
     padding: 12px 14px 14px;
-  }
-
-  &__category {
-    display: none;
-
-    @include mixins.respond-to(tablet) {
-      display: block;
-      font-size: $font-size-xs;
-      font-weight: $font-weight-medium;
-      color: $color-gray-400;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 45%;
-    }
+    background: $color-gray-50;
   }
 
   &__category-badge {
@@ -434,10 +416,6 @@ async function handleNotifyClick(e: Event, product: Product) {
     font-weight: $font-weight-medium;
     border-radius: $radius-sm;
     box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
-
-    @include mixins.respond-to(tablet) {
-      display: none;
-    }
   }
 
   &__notify-icon-btn {

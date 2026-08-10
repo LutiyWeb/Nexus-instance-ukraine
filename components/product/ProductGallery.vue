@@ -69,6 +69,7 @@ onBeforeUnmount(() => {
             :src="img"
             :alt="title"
             :lazy="i !== 0"
+            fit="inside"
             :sizes="{ mobile: { w: 600, h: 450 }, desktop: { w: 800, h: 600 } }"
           />
         </SwiperSlide>
@@ -91,6 +92,7 @@ onBeforeUnmount(() => {
           <AppImage
             :src="img"
             :alt="`thumb ${i}`"
+            fit="inside"
             img-class="product-gallery__thumb-img"
             :sizes="{ mobile: { w: 72, h: 72 }, desktop: { w: 72, h: 72 } }"
           />
@@ -188,6 +190,8 @@ onBeforeUnmount(() => {
     letter-spacing: 0.03em;
   }
 
+  // Vendor photos vary wildly in native ratio (square, portrait, landscape);
+  // contain keeps the whole product visible instead of cover cropping it.
   &__main-swiper {
     --swiper-theme-color: $color-primary;
     --swiper-navigation-size: 20px;
@@ -195,8 +199,12 @@ onBeforeUnmount(() => {
     width: 100%;
     border-radius: $radius-xl;
     overflow: hidden;
-    background: $color-gray-50;
     --ai-ratio: 4/3;
+    --ai-fit: contain;
+    // Vendor photos are shot on white; blending multiply against this
+    // container's flat background hides the seam instead of showing a
+    // visible white box around the product.
+    --ai-blend-mode: multiply;
   }
 
   &__main-slide {
@@ -212,7 +220,12 @@ onBeforeUnmount(() => {
   }
 
   &__thumb-img {
-    object-fit: cover;
+    // fit="inside" drops the img's height attribute (see AppImage.vue), so
+    // the 72x72 square shape now has to come from here instead.
+    --ai-ratio: 1/1;
+    --ai-height: 100%;
+    object-fit: contain;
+    background: $color-gray-50;
     border-radius: $radius-md;
     border: 2px solid $color-gray-200;
     cursor: pointer;

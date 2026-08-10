@@ -83,6 +83,7 @@ function handleBuyBundle() {
             v-if="product.thumbnail"
             :src="product.thumbnail"
             :alt="product.title"
+            fit="inside"
             img-class="bundle-widget__tile-img"
             :sizes="{ desktop: { w: 300, h: 300 } }"
           />
@@ -109,6 +110,7 @@ function handleBuyBundle() {
             v-if="selectedAccessory.thumbnail"
             :src="selectedAccessory.thumbnail"
             :alt="selectedAccessory.title"
+            fit="inside"
             img-class="bundle-widget__tile-img"
             :sizes="{ desktop: { w: 300, h: 300 } }"
           />
@@ -222,7 +224,7 @@ function handleBuyBundle() {
       color $transition-fast,
       border-color $transition-fast;
 
-    &:hover {
+    &:hover:not(&--active) {
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -231,6 +233,10 @@ function handleBuyBundle() {
       background: $color-primary;
       border-color: $color-primary;
       color: $color-white;
+
+      &:hover {
+        background: $color-primary-dark;
+      }
     }
   }
 
@@ -265,7 +271,6 @@ function handleBuyBundle() {
     height: 120px;
     border-radius: $radius-md;
     overflow: hidden;
-    background: $color-gray-50;
 
     @include mixins.respond-to(tablet) {
       width: 200px;

@@ -77,6 +77,7 @@ async function handleNotifyClick(e: Event, product: Product) {
         v-if="product.thumbnail"
         :src="product.thumbnail"
         :alt="product.title"
+        fit="inside"
         :img-class="
           ['image-card__img', isOutOfStock(product) && 'image-card__img--oos']
             .filter(Boolean)
