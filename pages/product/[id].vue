@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Star, Package, Shield, Truck } from 'lucide-vue-next'
+import DOMPurify from 'isomorphic-dompurify'
 import type { Product } from '~/types/product'
 
 const route = useRoute()
@@ -23,6 +24,34 @@ const {
 const product = computed(() => productData.value?.data ?? null)
 const loading = computed(() => pending.value)
 
+// Vendor descriptions arrive as HTML; sanitize before v-html to strip anything
+// that could execute (script tags, event handlers) while keeping formatting.
+const sanitizedDescription = computed(() => DOMPurify.sanitize(product.value?.description ?? ''))
+// Meta tags must be plain text — strip all markup rather than leaking raw HTML
+// into <meta description> / OG tags.
+const plainDescription = computed(() =>
+  DOMPurify.sanitize(product.value?.description ?? '', { ALLOWED_TAGS: [] }).trim(),
+)
+
+// Vendor descriptions can run to a couple thousand characters (spec dumps,
+// bullet lists) with no shorter variant available from the source — collapse
+// tall ones behind a toggle instead of always rendering the full block.
+const DESC_COLLAPSE_HEIGHT = 220
+const descRef = ref<HTMLElement | null>(null)
+const isDescExpanded = ref(false)
+const canCollapseDesc = ref(false)
+
+function measureDescOverflow() {
+  const el = descRef.value
+  canCollapseDesc.value = !!el && el.scrollHeight > DESC_COLLAPSE_HEIGHT + 1
+}
+
+watch(sanitizedDescription, () => {
+  isDescExpanded.value = false
+  nextTick(measureDescOverflow)
+})
+onMounted(() => nextTick(measureDescOverflow))
+
 onMounted(() => {
   if (!productsStore.products.length) productsStore.fetchProducts({ limit: 24 })
 })
@@ -36,9 +65,9 @@ const bundleAccessories = computed(() => relatedPool.value.slice(8, 14))
 
 useSeoMeta({
   title: () => (product.value ? `${product.value.title} — Honey Store` : 'Товар'),
-  description: () => product.value?.description ?? '',
+  description: () => plainDescription.value,
   ogTitle: () => product.value?.title ?? '',
-  ogDescription: () => product.value?.description ?? '',
+  ogDescription: () => plainDescription.value,
   ogImage: () => product.value?.thumbnail ?? '',
 })
 
@@ -261,7 +290,23 @@ function toggleFav() {
             </div>
           </div>
 
-          <p class="product-detail__desc">{{ product.description }}</p>
+          <div class="product-detail__desc-wrap">
+            <!-- sanitized via DOMPurify (sanitizedDescription above) — vendor HTML never renders unescaped -->
+            <div
+              ref="descRef"
+              class="product-detail__desc"
+              :class="{ 'product-detail__desc--collapsed': canCollapseDesc && !isDescExpanded }"
+              v-html="sanitizedDescription"
+            />
+            <button
+              v-if="canCollapseDesc"
+              type="button"
+              class="product-detail__desc-toggle"
+              @click="isDescExpanded = !isDescExpanded"
+            >
+              {{ isDescExpanded ? 'Згорнути' : 'Показати повністю' }}
+            </button>
+          </div>
 
           <!-- Purchase: price + availability + favorite/qty/buy -->
           <ProductPurchasePanel
@@ -484,11 +529,73 @@ function toggleFav() {
     white-space: nowrap;
   }
 
+  // Vendor descriptions are sanitized HTML (see [id].vue script), so this
+  // styles whatever block/inline tags they send: headings, paragraphs, lists.
+  &__desc-wrap {
+    margin-bottom: 20px;
+  }
+
   &__desc {
     color: $color-gray-600;
     line-height: $line-height-relaxed;
-    margin-bottom: 20px;
     font-size: $font-size-sm;
+
+    &--collapsed {
+      max-height: 220px;
+      overflow: hidden;
+      position: relative;
+      mask-image: linear-gradient(to bottom, $color-black 80%, transparent 100%);
+    }
+
+    p {
+      margin: 0 0 $spacing-3;
+    }
+
+    h2,
+    h3 {
+      margin: $spacing-5 0 $spacing-2;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      color: $color-gray-900;
+    }
+
+    strong {
+      font-weight: $font-weight-semibold;
+      color: $color-gray-900;
+    }
+
+    ul {
+      margin: 0 0 $spacing-3;
+      padding-left: $spacing-5;
+      list-style: disc;
+    }
+
+    li {
+      margin-bottom: $spacing-1;
+    }
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__desc-toggle {
+    display: inline-block;
+    padding: 0;
+    border: none;
+    background: none;
+    color: $color-primary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
   }
 
   // Perks
