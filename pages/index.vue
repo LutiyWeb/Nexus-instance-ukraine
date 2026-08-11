@@ -162,12 +162,7 @@ const special2 = computed(() =>
 // No backend model for promo banners yet — always the hardcoded set below.
 const promoBanners = computed(() => FALLBACK_PROMO)
 
-const featuredProducts = computed(() => {
-  const products = store.products.slice(0, 12)
-  // TODO: remove — test out-of-stock state
-  if (products.length) return [{ ...products[0], stock: 0 }, ...products.slice(1)]
-  return products
-})
+const featuredProducts = computed(() => store.products.slice(0, 12))
 const popularProducts = computed(() => store.products.slice(0, 10))
 const newProducts = computed(() => store.products.slice(12, 20))
 const skeletons = Array.from({ length: 5 })
