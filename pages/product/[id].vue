@@ -62,11 +62,33 @@ function measureDescOverflow() {
   canCollapseDesc.value = !!el && el.scrollHeight > DESC_COLLAPSE_HEIGHT + 1
 }
 
-watch(sanitizedDescription, () => {
-  isDescExpanded.value = false
-  nextTick(measureDescOverflow)
+// Navigating between two products reuses this page's component instance
+// (same route, different :id), so onMounted never runs again — and the
+// description block itself sits behind v-if="loading" / v-else-if="product",
+// so it unmounts and remounts around the loading skeleton on every product
+// switch. A plain nextTick-after-watch can fire before that remount's content
+// has actually settled, which is why this worked on a hard refresh (fresh
+// mount) but not on client-side navigation. A ResizeObserver reacts to the
+// element's real rendered size instead of guessing when that happens, so it's
+// correct on first mount, after every navigation, and if the content
+// reflows later (e.g. a slow-loading image inside the vendor HTML).
+let descResizeObserver: ResizeObserver | null = null
+watch(descRef, (el) => {
+  descResizeObserver?.disconnect()
+  descResizeObserver = null
+  if (!el) return
+  measureDescOverflow()
+  descResizeObserver = new ResizeObserver(() => measureDescOverflow())
+  descResizeObserver.observe(el)
 })
-onMounted(() => nextTick(measureDescOverflow))
+onUnmounted(() => descResizeObserver?.disconnect())
+
+watch(
+  () => product.value?.id,
+  () => {
+    isDescExpanded.value = false
+  },
+)
 
 onMounted(() => {
   if (!productsStore.products.length) productsStore.fetchProducts({ limit: 24 })
