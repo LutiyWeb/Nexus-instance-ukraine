@@ -2,6 +2,8 @@
 defineProps<{ open: boolean }>()
 defineEmits<{ close: [] }>()
 
+const NuxtLink = resolveComponent('NuxtLink')
+
 const categoriesStore = useCategoriesStore()
 const activeId = ref<number | null>(null)
 
@@ -27,17 +29,19 @@ function isNew(cat: { slug?: string; name?: string }) {
       >
         <!-- Лівий стовпець: список категорій -->
         <div class="catalog-menu__cats">
-          <NuxtLink
+          <component
+            :is="cat.subcategories?.length ? 'div' : NuxtLink"
             v-for="cat in categoriesStore.categories"
             :key="cat.id"
-            :to="`/catalog?categorySlug=${cat.slug}`"
+            v-bind="cat.subcategories?.length ? {} : { to: `/catalog?categorySlug=${cat.slug}` }"
             :class="[
               'catalog-menu__parent',
               { 'catalog-menu__parent--active': activeId === cat.id },
               { 'catalog-menu__parent--new': isNew(cat) },
+              { 'catalog-menu__parent--group': cat.subcategories?.length },
             ]"
             @mouseenter="activeId = cat.id"
-            @click="$emit('close')"
+            @click="!cat.subcategories?.length && $emit('close')"
           >
             {{ cat.name }}
             <span
@@ -45,7 +49,7 @@ function isNew(cat: { slug?: string; name?: string }) {
               class="catalog-menu__new-badge"
               >NEW</span
             >
-          </NuxtLink>
+          </component>
         </div>
 
         <!-- Правий стовпець: підкатегорії активної категорії -->
@@ -109,6 +113,7 @@ function isNew(cat: { slug?: string; name?: string }) {
     font-weight: $font-weight-semibold;
     color: $color-gray-800;
     border-radius: $radius-md;
+    cursor: pointer;
     transition:
       color $transition-fast,
       background $transition-fast;
@@ -117,6 +122,12 @@ function isNew(cat: { slug?: string; name?: string }) {
     &--active {
       color: $color-primary;
       background: $color-gray-50;
+    }
+
+    // Has real subcategories, so it's a hover trigger (no href of its own)
+    // rather than a link — its own product listing is empty by design.
+    &--group {
+      cursor: default;
     }
 
     &--new {

@@ -5,6 +5,8 @@ import type { Category } from '~/types/product'
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
+const NuxtLink = resolveComponent('NuxtLink')
+
 const categoriesStore = useCategoriesStore()
 const activeCategory = ref<Category | null>(null)
 const direction = ref<'forward' | 'back'>('forward')
@@ -67,12 +69,17 @@ function close() {
               </div>
 
               <nav class="header-sidebar__nav">
-                <button
+                <component
+                  :is="cat.subcategories?.length ? 'button' : NuxtLink"
                   v-for="cat in categoriesStore.categories"
                   :key="cat.id"
                   class="header-sidebar__cat-btn"
-                  type="button"
-                  @click="selectCategory(cat)"
+                  v-bind="
+                    cat.subcategories?.length
+                      ? { type: 'button' }
+                      : { to: `/catalog?categorySlug=${cat.slug}` }
+                  "
+                  @click="cat.subcategories?.length ? selectCategory(cat) : close()"
                 >
                   {{ cat.name }}
                   <ChevronRight
@@ -80,7 +87,7 @@ function close() {
                     :size="16"
                     class="header-sidebar__chevron"
                   />
-                </button>
+                </component>
               </nav>
 
               <NuxtLink

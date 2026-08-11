@@ -1,23 +1,25 @@
 import { defineStore } from 'pinia'
 import type { Category } from '~/types/product'
 
+interface CategoryApiDto extends Category {
+  parentId: number | null
+}
+
 export const useCategoriesStore = defineStore('categories', () => {
   const config = useRuntimeConfig()
   const categories = ref<Category[]>([])
   const loading = ref(false)
   let fetched = false
 
-  async function hasProducts(slug: string) {
+  async function productCount(slug: string) {
     try {
       const res = await $fetch<{ meta: { total: number } }>(
         `${config.public.apiBase}/api/products/`,
-        {
-          query: { categories: slug, limit: 1 },
-        },
+        { query: { categories: slug, limit: 1 } },
       )
-      return res.meta.total > 0
+      return res.meta.total
     } catch {
-      return false
+      return 0
     }
   }
 
@@ -25,25 +27,37 @@ export const useCategoriesStore = defineStore('categories', () => {
     if (fetched) return
     loading.value = true
     try {
-      const res = await $fetch<{ data: Category[] }>(`${config.public.apiBase}/api/categories/`)
-      const nonEmpty = await Promise.all(
-        res.data.map(async (cat) => ((await hasProducts(cat.slug)) ? cat : null)),
+      const res = await $fetch<{ data: CategoryApiDto[] }>(
+        `${config.public.apiBase}/api/categories/`,
       )
-      const mapped = nonEmpty
-        .filter((cat): cat is Category => cat !== null)
-        .map((cat) => ({
-          ...cat,
-          subcategories: [1, 2, 3].map((n) => ({
-            id: cat.id * 100 + n,
-            name: `${cat.name} — розділ ${n}`,
-            slug: `${cat.slug}-${n}`,
-          })),
-        }))
+
+      const countById = new Map(
+        await Promise.all(
+          res.data.map(async (cat) => [cat.id, await productCount(cat.slug)] as const),
+        ),
+      )
+
+      // Real subcategories only — a category with no products of its own but
+      // at least one non-empty child (e.g. "Аксесуари" split into Чохли/
+      // Зарядні пристрої/Повербанки) still belongs in the menu.
+      const childrenByParent = new Map<number, { id: number; name: string; slug: string }[]>()
+      for (const cat of res.data) {
+        if (cat.parentId == null) continue
+        if ((countById.get(cat.id) ?? 0) === 0) continue
+        const siblings = childrenByParent.get(cat.parentId) ?? []
+        siblings.push({ id: cat.id, name: cat.name, slug: cat.slug })
+        childrenByParent.set(cat.parentId, siblings)
+      }
+
+      const topLevel = res.data
+        .filter((cat) => cat.parentId == null)
+        .map((cat) => ({ ...cat, subcategories: childrenByParent.get(cat.id) ?? [] }))
+        .filter((cat) => (countById.get(cat.id) ?? 0) > 0 || cat.subcategories.length > 0)
 
       const isNew = (c: { slug?: string; name?: string }) =>
         c.slug?.includes('new') || c.name?.toLowerCase().includes('новин')
 
-      categories.value = mapped.sort((a, b) => {
+      categories.value = topLevel.sort((a, b) => {
         if (isNew(a) && !isNew(b)) return -1
         if (!isNew(a) && isNew(b)) return 1
         return 0
