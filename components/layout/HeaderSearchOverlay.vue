@@ -310,14 +310,14 @@ onBeforeUnmount(() => {
                 v-if="searchStore.history.length"
                 class="search-modal__section"
               >
-                <div class="search-modal__section-f">
+                <div class="search-modal__section-head">
                   <span class="search-modal__section-title"><Clock :size="13" />Недавні</span>
                   <button
                     class="search-modal__section-action"
                     type="button"
                     @click="searchStore.clear()"
                   >
-                    Очистити
+                    Очистити все
                   </button>
                 </div>
                 <div class="search-modal__history">
@@ -852,7 +852,12 @@ onBeforeUnmount(() => {
 
   // ─── Right: product mini-cards ───────────────────────────────────────────
   &__products {
-    padding: 16px 12px;
+    // Product cards carry a side+bottom shadow ($shadow-card) that needs room
+    // to render before `overflow: hidden` clips it — padding is widened here
+    // to fit the shadow, then pulled back with a matching negative margin so
+    // the column's visible size/position stays the same as before.
+    padding: 16px 20px 32px;
+    margin: 0 -8px -16px;
     display: flex;
     flex-direction: column;
     gap: 4px;

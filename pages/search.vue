@@ -12,25 +12,24 @@ const route = useRoute()
 const router = useRouter()
 const config = useRuntimeConfig()
 
-const LIMIT = 20
+// The backend /api/search endpoint has no pagination (no `page`, no `meta`) —
+// it just returns up to `limit` matches — so this page shows a single capped
+// batch of results rather than pretending to paginate them.
+const LIMIT = 60
 
 const q = computed(() => (route.query.q as string) || '')
-const page = computed(() => Number(route.query.page) || 1)
 
 const products = ref<Product[]>([])
-const meta = ref({ page: 1, limit: LIMIT, total: 0, totalPages: 1 })
 const loading = ref(false)
 
 async function fetchResults() {
   if (!q.value) return
   loading.value = true
   try {
-    const res = await $fetch<{ data: Product[]; meta: typeof meta.value }>(
-      `${config.public.apiBase}/api/search`,
-      { query: { q: q.value, page: page.value, limit: LIMIT } },
-    )
+    const res = await $fetch<{ data: Product[] }>(`${config.public.apiBase}/api/search`, {
+      query: { q: q.value, limit: LIMIT },
+    })
     products.value = res.data
-    meta.value = res.meta
   } catch {
     products.value = []
   } finally {
@@ -38,11 +37,7 @@ async function fetchResults() {
   }
 }
 
-watch([q, page], fetchResults, { immediate: true })
-
-function onPageChange(p: number) {
-  router.push({ query: { ...route.query, page: p } })
-}
+watch(q, fetchResults, { immediate: true })
 </script>
 
 <template>
@@ -58,7 +53,7 @@ function onPageChange(p: number) {
       v-if="q && !loading"
       class="search-page__count"
     >
-      Знайдено: {{ meta.total }} товарів
+      Знайдено: {{ products.length }} товарів
     </p>
 
     <div
@@ -80,13 +75,6 @@ function onPageChange(p: number) {
           :product="p"
         />
       </div>
-
-      <CatalogPagination
-        v-if="meta.totalPages > 1"
-        :page="meta.page"
-        :total-pages="meta.totalPages"
-        @update:page="onPageChange"
-      />
     </template>
 
     <AppEmpty
