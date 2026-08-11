@@ -16,7 +16,7 @@ async function customRequest(options: {
   try {
     const formData = new FormData()
     formData.append('file', options.file)
-    const res = await authFetch<{ data: { url: string } }>('/api/uploads', {
+    const res = await authFetch<{ data: { url: string } }>('/api/admin/banners/uploads', {
       method: 'POST',
       body: formData,
     })

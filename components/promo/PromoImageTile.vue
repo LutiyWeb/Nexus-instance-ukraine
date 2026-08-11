@@ -83,14 +83,6 @@ const showImage = computed(() => mounted.value && isXl.value)
     content: '';
   }
 
-  &::after {
-    position: absolute;
-    inset: 0;
-    content: '';
-    background-color: var(--promo-title-bg);
-    opacity: 0.1;
-  }
-
   @include mixins.respond-to(notebook) {
     padding: 0 16px 16px;
     height: 230px;
@@ -101,8 +93,6 @@ const showImage = computed(() => mounted.value && isXl.value)
   }
 
   &--vertical {
-    --promo-title-bg: #{$color-gray-700};
-
     align-items: center;
     justify-content: center;
     grid-row: span 2;
@@ -115,7 +105,6 @@ const showImage = computed(() => mounted.value && isXl.value)
   }
 
   &--horizontal {
-    --promo-title-bg: #{$color-gray-400};
     flex-direction: row-reverse;
     justify-content: space-between;
     grid-column: span 2;
@@ -144,6 +133,10 @@ const showImage = computed(() => mounted.value && isXl.value)
 
     .app-image {
       --ai-width: 50%;
+      // Real photos size themselves from their own intrinsic width/height,
+      // but the no-image fallback is an empty box with nothing to size
+      // itself by — pin it to a square so it doesn't collapse to icon height.
+      --ai-ratio: 1;
       display: block;
     }
 

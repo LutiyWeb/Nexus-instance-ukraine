@@ -5,22 +5,20 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 interface AdminBanner {
   id: number
-  section: string
+  slug: string | null
   title: string
+  subtitle: string | null
   description: string | null
   mediaUrl: string | null
   mediaType: string
   linkUrl: string | null
-  buttonText: string | null
-  gradient: string | null
   sortOrder: number
   isActive: boolean
 }
 
-// Real backend shapes (see banner.serializer.ts) — only `hero` (-> MainBanner)
-// and `special_1`/`special_2` (-> SpecialBanner) exist server-side. `promo`
-// and `hot` have no backend model yet; those two keep calling the old
-// (nonexistent) /api/banners/admin endpoint until that's built.
+// Real backend shapes (see banner.serializer.ts) — hero -> MainBanner,
+// special_1/special_2 -> SpecialBanner, promo -> PromoTile (3 fixed slots),
+// hot -> HotTile (5 fixed slots).
 interface ApiMainBanner {
   id: number
   title: string
@@ -37,6 +35,20 @@ interface ApiSpecialBanner {
   image_url: string
   link_url: string | null
 }
+interface ApiPromoTile {
+  slug: string
+  title: string
+  subtitle: string
+  link_url: string | null
+  is_configured: boolean
+}
+interface ApiHotTile {
+  slug: string
+  label: string
+  image_url: string
+  link_url: string | null
+  is_configured: boolean
+}
 
 const SECTION_LABELS: Record<string, string> = {
   hero: 'Головний банер',
@@ -52,9 +64,11 @@ const isMainSection = computed(() => section.value === 'hero')
 const isSpecialSection = computed(
   () => section.value === 'special_1' || section.value === 'special_2',
 )
+const isPromoSection = computed(() => section.value === 'promo')
+const isHotSection = computed(() => section.value === 'hot')
+const isFixedSlotSection = computed(() => isPromoSection.value || isHotSection.value)
 const isSingle = computed(() => isSpecialSection.value)
 const showMedia = computed(() => section.value !== 'promo')
-const showGradient = computed(() => section.value === 'promo' || section.value === 'hot')
 const title = computed(() => SECTION_LABELS[section.value] ?? section.value)
 
 useHead(() => ({ title: `Адмінка — ${title.value}` }))
@@ -67,39 +81,32 @@ const loading = ref(false)
 const modalOpen = ref(false)
 const submitting = ref(false)
 const editingId = ref<number | null>(null)
+// promo/hot rows have no numeric id (fixed slug-keyed slots) — PUT targets
+// this instead of editingId.
+const editingSlug = ref<string | null>(null)
 
 const emptyForm = () => ({
   title: '',
+  subtitle: '',
   description: '',
   mediaUrl: '',
   mediaType: 'image' as 'image' | 'video',
   linkUrl: '',
-  buttonText: '',
-  gradient: '',
   sortOrder: 0,
   isActive: true,
 })
 const form = reactive(emptyForm())
 
-const columns = [
-  { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-  { title: 'Назва', dataIndex: 'title', key: 'title' },
-  { title: 'Порядок', dataIndex: 'sortOrder', key: 'sortOrder', width: 100 },
-  { title: 'Активний', dataIndex: 'isActive', key: 'isActive', width: 100 },
-  { title: '', key: 'actions', width: 160 },
-]
-
 function fromApiMain(b: ApiMainBanner): AdminBanner {
   return {
     id: b.id,
-    section: 'hero',
+    slug: null,
     title: b.title,
+    subtitle: null,
     description: b.description,
     mediaUrl: b.media_url,
     mediaType: b.media_type,
     linkUrl: b.link_url,
-    buttonText: null,
-    gradient: null,
     sortOrder: b.sort_order,
     isActive: b.is_active,
   }
@@ -108,16 +115,45 @@ function fromApiMain(b: ApiMainBanner): AdminBanner {
 function fromApiSpecial(b: ApiSpecialBanner): AdminBanner {
   return {
     id: 0,
-    section: b.slug,
+    slug: b.slug,
     title: b.title,
+    subtitle: null,
     description: null,
     mediaUrl: b.image_url,
     mediaType: 'image',
     linkUrl: b.link_url,
-    buttonText: null,
-    gradient: null,
     sortOrder: 0,
     isActive: true,
+  }
+}
+
+function fromApiPromo(t: ApiPromoTile): AdminBanner {
+  return {
+    id: 0,
+    slug: t.slug,
+    title: t.title,
+    subtitle: t.subtitle,
+    description: null,
+    mediaUrl: null,
+    mediaType: 'image',
+    linkUrl: t.link_url,
+    sortOrder: 0,
+    isActive: t.is_configured,
+  }
+}
+
+function fromApiHot(t: ApiHotTile): AdminBanner {
+  return {
+    id: 0,
+    slug: t.slug,
+    title: t.label,
+    subtitle: null,
+    description: null,
+    mediaUrl: t.image_url,
+    mediaType: 'image',
+    linkUrl: t.link_url,
+    sortOrder: 0,
+    isActive: t.is_configured,
   }
 }
 
@@ -131,11 +167,12 @@ async function load() {
       const res = await authFetch<{ data: ApiSpecialBanner[] }>('/api/admin/banners/special')
       const row = res.data.find((b) => b.slug === section.value)
       banners.value = row ? [fromApiSpecial(row)] : []
+    } else if (isPromoSection.value) {
+      const res = await authFetch<{ data: ApiPromoTile[] }>('/api/admin/banners/promo')
+      banners.value = res.data.map(fromApiPromo)
     } else {
-      const res = await authFetch<{ data: AdminBanner[] }>(
-        `/api/banners/admin?section=${section.value}`,
-      )
-      banners.value = res.data
+      const res = await authFetch<{ data: ApiHotTile[] }>('/api/admin/banners/hot')
+      banners.value = res.data.map(fromApiHot)
     }
   } finally {
     loading.value = false
@@ -144,20 +181,21 @@ async function load() {
 
 function openCreate() {
   editingId.value = null
+  editingSlug.value = null
   Object.assign(form, emptyForm())
   modalOpen.value = true
 }
 
 function openEdit(banner: AdminBanner) {
   editingId.value = banner.id
+  editingSlug.value = banner.slug
   Object.assign(form, {
     title: banner.title,
+    subtitle: banner.subtitle ?? '',
     description: banner.description ?? '',
     mediaUrl: banner.mediaUrl ?? '',
     mediaType: (banner.mediaType as 'image' | 'video') ?? 'image',
     linkUrl: banner.linkUrl ?? '',
-    buttonText: banner.buttonText ?? '',
-    gradient: banner.gradient ?? '',
     sortOrder: banner.sortOrder,
     isActive: banner.isActive,
   })
@@ -195,25 +233,20 @@ async function submit() {
         link_url: form.linkUrl || null,
       }
       await authFetch(`/api/admin/banners/special/${section.value}`, { method: 'PUT', body })
-    } else {
-      // promo/hot — no backend model yet, unchanged legacy call.
+    } else if (isPromoSection.value) {
       const body = {
-        section: section.value,
         title: form.title,
-        description: form.description || undefined,
-        mediaUrl: form.mediaUrl || undefined,
-        mediaType: form.mediaType,
-        linkUrl: form.linkUrl || undefined,
-        buttonText: form.buttonText || undefined,
-        gradient: form.gradient || undefined,
-        sortOrder: form.sortOrder,
-        isActive: form.isActive,
+        subtitle: form.subtitle,
+        link_url: form.linkUrl || null,
       }
-      if (editingId.value) {
-        await authFetch(`/api/banners/admin/${editingId.value}`, { method: 'PATCH', body })
-      } else {
-        await authFetch('/api/banners/admin', { method: 'POST', body })
+      await authFetch(`/api/admin/banners/promo/${editingSlug.value}`, { method: 'PUT', body })
+    } else {
+      const body = {
+        label: form.title,
+        image_url: form.mediaUrl,
+        link_url: form.linkUrl || null,
       }
+      await authFetch(`/api/admin/banners/hot/${editingSlug.value}`, { method: 'PUT', body })
     }
 
     modalOpen.value = false
@@ -229,13 +262,19 @@ async function submit() {
 async function remove(banner: AdminBanner) {
   if (isMainSection.value) {
     await authFetch(`/api/admin/banners/main/${banner.id}`, { method: 'DELETE' })
+    await load()
+    message.success('Банер видалено')
   } else if (isSpecialSection.value) {
     await authFetch(`/api/admin/banners/special/${section.value}`, { method: 'DELETE' })
+    await load()
+    message.success('Банер видалено')
   } else {
-    await authFetch(`/api/banners/admin/${banner.id}`, { method: 'DELETE' })
+    // promo/hot slots are fixed — DELETE clears the row instead of removing it.
+    const kind = isPromoSection.value ? 'promo' : 'hot'
+    await authFetch(`/api/admin/banners/${kind}/${banner.slug}`, { method: 'DELETE' })
+    await load()
+    message.success('Слот очищено')
   }
-  await load()
-  message.success('Банер видалено')
 }
 
 watch(section, load, { immediate: true })
@@ -253,7 +292,7 @@ watch(section, load, { immediate: true })
         {{ banners[0] ? 'Редагувати' : 'Створити' }}
       </a-button>
       <a-button
-        v-else
+        v-else-if="isMainSection"
         type="primary"
         @click="openCreate"
         >Додати слайд</a-button
@@ -314,39 +353,63 @@ watch(section, load, { immediate: true })
       </div>
     </div>
 
-    <a-table
-      v-else-if="!isSingle"
-      :columns="columns"
-      :data-source="banners"
-      :loading="loading"
-      row-key="id"
-      :pagination="false"
+    <div
+      v-else-if="isFixedSlotSection"
+      class="admin-banners__list"
     >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'isActive'">
-          {{ record.isActive ? 'Так' : 'Ні' }}
-        </template>
-        <template v-if="column.key === 'actions'">
-          <a-space>
+      <div
+        v-for="banner in banners"
+        :key="banner.slug"
+        class="admin-banners__item"
+      >
+        <div
+          v-if="isHotSection"
+          class="admin-banners__item-media"
+        >
+          <img
+            v-if="banner.mediaUrl"
+            :src="banner.mediaUrl"
+            :alt="banner.title"
+            class="admin-banners__item-img"
+          />
+        </div>
+        <div class="admin-banners__item-body">
+          <p class="admin-banners__item-title">{{ banner.title || '(порожньо)' }}</p>
+          <p
+            v-if="banner.subtitle"
+            class="admin-banners__item-subtitle"
+          >
+            {{ banner.subtitle }}
+          </p>
+          <p
+            v-if="banner.linkUrl"
+            class="admin-banners__item-link"
+          >
+            {{ banner.linkUrl }}
+          </p>
+          <p class="admin-banners__item-meta">
+            {{ banner.isActive ? 'Заповнено' : 'Порожній слот' }}
+          </p>
+        </div>
+        <div class="admin-banners__item-actions">
+          <a-button
+            size="small"
+            @click="openEdit(banner)"
+            >Редагувати</a-button
+          >
+          <a-popconfirm
+            title="Очистити слот?"
+            @confirm="remove(banner)"
+          >
             <a-button
               size="small"
-              @click="openEdit(record)"
-              >Редагувати</a-button
+              danger
+              >Очистити</a-button
             >
-            <a-popconfirm
-              title="Видалити банер?"
-              @confirm="remove(record)"
-            >
-              <a-button
-                size="small"
-                danger
-                >Видалити</a-button
-              >
-            </a-popconfirm>
-          </a-space>
-        </template>
-      </template>
-    </a-table>
+          </a-popconfirm>
+        </div>
+      </div>
+    </div>
 
     <div
       v-else-if="banners.length"
@@ -373,7 +436,13 @@ watch(section, load, { immediate: true })
 
     <a-modal
       v-model:open="modalOpen"
-      :title="editingId ? 'Редагувати банер' : 'Новий банер'"
+      :title="
+        isFixedSlotSection
+          ? 'Редагувати слот'
+          : editingId !== null
+            ? 'Редагувати банер'
+            : 'Новий банер'
+      "
       :confirm-loading="submitting"
       @ok="submit"
     >
@@ -381,14 +450,26 @@ watch(section, load, { immediate: true })
         <a-form-item label="Заголовок">
           <a-input v-model:value="form.title" />
         </a-form-item>
-        <a-form-item label="Опис">
+        <a-form-item
+          v-if="isPromoSection"
+          label="Підзаголовок"
+        >
+          <a-input v-model:value="form.subtitle" />
+        </a-form-item>
+        <a-form-item
+          v-if="isMainSection"
+          label="Опис"
+        >
           <a-textarea
             v-model:value="form.description"
             :rows="3"
           />
         </a-form-item>
         <template v-if="showMedia">
-          <a-form-item label="Тип медіа">
+          <a-form-item
+            v-if="isMainSection"
+            label="Тип медіа"
+          >
             <a-select v-model:value="form.mediaType">
               <a-select-option value="image">Зображення</a-select-option>
               <a-select-option value="video">Відео</a-select-option>
@@ -407,23 +488,11 @@ watch(section, load, { immediate: true })
             <a-input v-model:value="form.mediaUrl" />
           </a-form-item>
         </template>
-        <a-form-item
-          v-if="showGradient"
-          label="Градієнт (CSS)"
-        >
-          <a-input
-            v-model:value="form.gradient"
-            placeholder="linear-gradient(...)"
-          />
-        </a-form-item>
         <a-form-item label="Посилання при кліку">
           <a-input v-model:value="form.linkUrl" />
         </a-form-item>
-        <a-form-item label="Текст кнопки">
-          <a-input v-model:value="form.buttonText" />
-        </a-form-item>
         <a-form-item
-          v-if="!isSingle"
+          v-if="isMainSection"
           label="Порядок сортування"
         >
           <a-input-number
@@ -432,7 +501,10 @@ watch(section, load, { immediate: true })
             class="admin-banners__number"
           />
         </a-form-item>
-        <a-form-item label="Активний">
+        <a-form-item
+          v-if="isMainSection"
+          label="Активний"
+        >
           <a-switch v-model:checked="form.isActive" />
         </a-form-item>
       </a-form>
@@ -508,6 +580,12 @@ watch(section, load, { immediate: true })
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     color: $color-gray-900;
+  }
+
+  &__item-subtitle {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: $color-gray-600;
   }
 
   &__item-link {

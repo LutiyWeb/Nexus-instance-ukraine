@@ -29,8 +29,6 @@ type SliderItem = {
 }
 
 // Real API shape (snake_case) — see banner.serializer.ts on the backend.
-// `promoBanners`/`hotTiles` aren't backend concepts yet, so those sections
-// stay on their hardcoded FALLBACK_* data below regardless of this response.
 interface MainBannerApiDto {
   id: number
   title: string
@@ -45,6 +43,18 @@ interface SpecialBannerApiDto {
   image_url: string
   link_url: string | null
 }
+interface PromoTileApiDto {
+  slug: string
+  title: string
+  subtitle: string
+  link_url: string | null
+}
+interface HotTileApiDto {
+  slug: string
+  label: string
+  image_url: string
+  link_url: string | null
+}
 interface BannersResponse {
   data: {
     main_banner: MainBannerApiDto[]
@@ -52,6 +62,8 @@ interface BannersResponse {
       special_1: SpecialBannerApiDto | null
       special_2: SpecialBannerApiDto | null
     }
+    promo_tiles: PromoTileApiDto[]
+    hot_tiles: HotTileApiDto[]
   }
 }
 
@@ -167,8 +179,20 @@ const special1 = computed(() =>
 const special2 = computed(() =>
   mapSpecialBanner(bannersData.value?.data?.special_banners?.special_2, FALLBACK_SPECIAL_2),
 )
-// No backend model for promo banners yet — always the hardcoded set below.
-const promoBanners = computed(() => FALLBACK_PROMO)
+const promoBanners = computed(() => {
+  const fromApi = bannersData.value?.data?.promo_tiles ?? []
+  if (!fromApi.length) return FALLBACK_PROMO
+
+  return fromApi.map((t, i) => ({
+    id: i + 1,
+    // Unused by PromoBannerCard (tag/colour come from position, not data) —
+    // kept only because the prop type still requires a string.
+    gradient: '',
+    title: t.title,
+    subtitle: t.subtitle,
+    linkUrl: t.link_url,
+  }))
+})
 
 const featuredProducts = computed(() => store.products.slice(0, 12))
 const popularProducts = computed(() => store.products.slice(0, 10))
@@ -183,64 +207,21 @@ const productBreakpoints = {
   1280: { slidesPerView: 6 },
 }
 
-// No backend model for hot tiles yet — the set of categories/gradients is
-// still hardcoded here, but the label and image for each tile are always
-// read from a real product in that category (by slug), never a hardcoded
-// guess or an arbitrary product plucked from an unrelated list.
-const HOT_TILE_CATEGORIES = [
-  { slug: 'laptops', gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)' },
-  {
-    slug: 'naushnyky',
-    gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
-  },
-  {
-    slug: 'smartphones',
-    gradient: 'linear-gradient(135deg, rgb(124 58 237) 0%, rgb(91 33 182) 100%)',
-  },
-  {
-    slug: 'accessories',
-    gradient: 'linear-gradient(135deg, rgb(5 150 105) 0%, rgb(4 120 87) 100%)',
-  },
-  { slug: 'chasy', gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)' },
-] as const
-
-const hotTileData = ref<Record<string, { label: string; image: string }>>({})
-
-async function loadHotTiles() {
-  const entries = await Promise.all(
-    HOT_TILE_CATEGORIES.map(async (cfg) => {
-      try {
-        const res = await $fetch<{
-          data: Array<{ thumbnail: string | null; category: string | null }>
-        }>(`${config.public.apiBase}/api/products/`, { query: { categories: cfg.slug, limit: 1 } })
-        const p = res.data[0]
-        return [cfg.slug, { label: p?.category ?? cfg.slug, image: p?.thumbnail ?? '' }] as const
-      } catch {
-        return [cfg.slug, { label: cfg.slug, image: '' }] as const
-      }
-    }),
-  )
-  hotTileData.value = Object.fromEntries(entries)
-}
-
-onMounted(loadHotTiles)
-
 const TILE_SHAPES = ['vertical', 'horizontal', 'square', 'square', 'horizontal'] as const
 const TILE_SHAPES_DESKTOP = ['vertical', 'horizontal', 'square', 'square', 'vertical'] as const
 
 const promoTiles = computed(() => {
-  const tiles = HOT_TILE_CATEGORIES.map((cfg, i) => {
-    const data = hotTileData.value[cfg.slug]
-    return {
-      id: i + 1,
-      label: data?.label ?? cfg.slug,
-      description: null as string | null,
-      buttonText: 'Детальніше',
-      gradient: cfg.gradient,
-      to: `/catalog?categories=${cfg.slug}`,
-      image: data?.image ?? '',
-    }
-  })
+  const tiles = (bannersData.value?.data?.hot_tiles ?? []).map((t, i) => ({
+    id: i + 1,
+    label: t.label,
+    description: null as string | null,
+    buttonText: 'Детальніше',
+    // Unused by PromoImageTile visually — kept only because the prop type
+    // still requires a string.
+    gradient: '',
+    to: t.link_url || '/catalog',
+    image: t.image_url,
+  }))
 
   const showShapes = mounted.value && isXl.value
   const shapes = mounted.value && isDesktop.value ? TILE_SHAPES_DESKTOP : TILE_SHAPES

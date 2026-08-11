@@ -83,7 +83,7 @@ const imgAttrs = computed(() => ({
 
 <template>
   <NuxtPicture
-    v-if="!hasError"
+    v-if="!hasError && src"
     class="app-image"
     :src="src"
     :alt="alt"
