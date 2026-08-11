@@ -260,8 +260,62 @@ watch(section, load, { immediate: true })
       >
     </div>
 
+    <a-empty
+      v-if="!loading && !banners.length"
+      description="Банер ще не створено"
+    />
+
+    <div
+      v-else-if="isMainSection"
+      class="admin-banners__list"
+    >
+      <div
+        v-for="banner in banners"
+        :key="banner.id"
+        class="admin-banners__item"
+      >
+        <div class="admin-banners__item-media">
+          <img
+            v-if="banner.mediaUrl"
+            :src="banner.mediaUrl"
+            :alt="banner.title"
+            class="admin-banners__item-img"
+          />
+        </div>
+        <div class="admin-banners__item-body">
+          <p class="admin-banners__item-title">{{ banner.title }}</p>
+          <p
+            v-if="banner.linkUrl"
+            class="admin-banners__item-link"
+          >
+            {{ banner.linkUrl }}
+          </p>
+          <p class="admin-banners__item-meta">
+            Порядок: {{ banner.sortOrder }} · Активний: {{ banner.isActive ? 'Так' : 'Ні' }}
+          </p>
+        </div>
+        <div class="admin-banners__item-actions">
+          <a-button
+            size="small"
+            @click="openEdit(banner)"
+            >Редагувати</a-button
+          >
+          <a-popconfirm
+            title="Видалити банер?"
+            @confirm="remove(banner)"
+          >
+            <a-button
+              size="small"
+              danger
+              >Видалити</a-button
+            >
+          </a-popconfirm>
+        </div>
+      </div>
+    </div>
+
     <a-table
-      v-if="!isSingle"
+      v-else-if="!isSingle"
       :columns="columns"
       :data-source="banners"
       :loading="loading"
@@ -294,10 +348,28 @@ watch(section, load, { immediate: true })
       </template>
     </a-table>
 
-    <a-empty
-      v-else-if="!loading && !banners.length"
-      description="Банер ще не створено"
-    />
+    <div
+      v-else-if="banners.length"
+      class="admin-banners__item"
+    >
+      <div class="admin-banners__item-media">
+        <img
+          v-if="banners[0].mediaUrl"
+          :src="banners[0].mediaUrl"
+          :alt="banners[0].title"
+          class="admin-banners__item-img"
+        />
+      </div>
+      <div class="admin-banners__item-body">
+        <p class="admin-banners__item-title">{{ banners[0].title }}</p>
+        <p
+          v-if="banners[0].linkUrl"
+          class="admin-banners__item-link"
+        >
+          {{ banners[0].linkUrl }}
+        </p>
+      </div>
+    </div>
 
     <a-modal
       v-model:open="modalOpen"
@@ -369,6 +441,8 @@ watch(section, load, { immediate: true })
 </template>
 
 <style lang="scss" scoped>
+@use '~/assets/styles/variables' as *;
+
 .admin-banners {
   &__header {
     display: flex;
@@ -384,6 +458,76 @@ watch(section, load, { immediate: true })
 
   &__number {
     width: 100%;
+  }
+
+  // Multiple hero slides stack as a list of __item cards; a special-slot
+  // banner (single record) reuses the same __item card standalone.
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  // Read-only snapshot of a banner so an admin can see what's live —
+  // thumbnail, title, link — without opening the edit modal.
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+    background: $color-gray-50;
+  }
+
+  &__item-media {
+    flex: 0 0 96px;
+    width: 96px;
+    height: 96px;
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: $color-gray-100;
+  }
+
+  &__item-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  &__item-title {
+    margin: 0;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+  }
+
+  &__item-link {
+    margin: 0;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $color-gray-500;
+    word-break: break-all;
+  }
+
+  &__item-meta {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
+
+  &__item-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 8px;
   }
 }
 </style>
