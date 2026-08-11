@@ -174,16 +174,16 @@ async function submit() {
 
 <template>
   <div class="checkout container">
-    <AppBreadcrumbs
-      :crumbs="[
-        { label: 'Головна', to: '/' },
-        { label: 'Кошик', to: '/cart' },
-        { label: 'Оформлення замовлення' },
-      ]"
-      class="checkout__breadcrumbs"
-    />
-
-    <h1 class="checkout__heading">Оформлення замовлення</h1>
+    <div class="checkout__title-row">
+      <h1 class="checkout__heading">Оформлення замовлення</h1>
+      <AppBreadcrumbs
+        :crumbs="[
+          { label: 'Головна', to: '/' },
+          { label: 'Кошик', to: '/cart' },
+          { label: 'Оформлення замовлення' },
+        ]"
+      />
+    </div>
 
     <div class="checkout__layout">
       <!-- Left: form -->
@@ -415,8 +415,10 @@ async function submit() {
   flex-direction: column;
   gap: 24px;
 
-  &__breadcrumbs {
-    margin-bottom: 8px;
+  &__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   &__heading {

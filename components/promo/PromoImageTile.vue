@@ -106,6 +106,7 @@ const showImage = computed(() => mounted.value && isXl.value)
 
   &--horizontal {
     flex-direction: row-reverse;
+    align-items: center;
     justify-content: space-between;
     grid-column: span 2;
 

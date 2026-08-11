@@ -245,11 +245,27 @@ const originalPrice = computed(() => {
 })
 
 // TODO: replace with real dynamic spec set once backend defines per-category fields
-const quickSpecs = computed(() => [
-  { label: 'Бренд', value: product.value?.brand ?? '—' },
-  { label: 'Артикул', value: product.value?.sku ?? '—' },
-  { label: 'Рейтинг', value: product.value?.rating ? String(product.value.rating) : '—' },
-])
+//
+// Vendor imports frequently leave sku/rating empty, so each box falls back to
+// something that's actually always available rather than a bare dash:
+// artikul falls back to the product id, rating falls back to the live
+// reviews summary (real aggregate) and finally to "no reviews yet".
+const quickSpecs = computed(() => {
+  const p = product.value
+  const reviews = reviewsSummary.value
+
+  return [
+    { label: 'Бренд', value: p?.brand ?? 'Не вказано' },
+    { label: 'Артикул', value: p?.sku ?? (p ? `#${p.id}` : '—') },
+    {
+      label: 'Рейтинг',
+      value:
+        reviews && reviews.total > 0 && reviews.avg
+          ? `${reviews.avg.toFixed(1)} (${reviews.total})`
+          : 'Немає відгуків',
+    },
+  ]
+})
 
 // Only used when the product has no real vendor specs at all (older imports
 // that predate the specs field) — generic info in place of an empty tab.
