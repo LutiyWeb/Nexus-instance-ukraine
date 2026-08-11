@@ -11,39 +11,41 @@ const ICONS = {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div class="toast-container">
-      <TransitionGroup name="toast">
-        <div
-          v-for="toast in toastStore.toasts"
-          :key="toast.id"
-          :class="['toast', `toast--${toast.type}`]"
-        >
-          <component
-            :is="ICONS[toast.type]"
-            :size="18"
-            class="toast__icon"
-          />
-          <span class="toast__msg">{{ toast.message }}</span>
-          <NuxtLink
-            v-if="toast.action"
-            :to="toast.action.to"
-            class="toast__action"
-            @click="toastStore.remove(toast.id)"
+  <ClientOnly>
+    <Teleport to="body">
+      <div class="toast-container">
+        <TransitionGroup name="toast">
+          <div
+            v-for="toast in toastStore.toasts"
+            :key="toast.id"
+            :class="['toast', `toast--${toast.type}`]"
           >
-            {{ toast.action.label }}
-          </NuxtLink>
-          <button
-            class="toast__close"
-            type="button"
-            @click="toastStore.remove(toast.id)"
-          >
-            <X :size="14" />
-          </button>
-        </div>
-      </TransitionGroup>
-    </div>
-  </Teleport>
+            <component
+              :is="ICONS[toast.type]"
+              :size="18"
+              class="toast__icon"
+            />
+            <span class="toast__msg">{{ toast.message }}</span>
+            <NuxtLink
+              v-if="toast.action"
+              :to="toast.action.to"
+              class="toast__action"
+              @click="toastStore.remove(toast.id)"
+            >
+              {{ toast.action.label }}
+            </NuxtLink>
+            <button
+              class="toast__close"
+              type="button"
+              @click="toastStore.remove(toast.id)"
+            >
+              <X :size="14" />
+            </button>
+          </div>
+        </TransitionGroup>
+      </div>
+    </Teleport>
+  </ClientOnly>
 </template>
 
 <style lang="scss">

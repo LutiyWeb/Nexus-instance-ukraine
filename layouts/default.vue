@@ -8,6 +8,7 @@
     <AppBackdrop />
     <TheToast />
     <CookieWidget />
+    <FloatingActions />
   </div>
 </template>
 
