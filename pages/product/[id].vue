@@ -9,6 +9,7 @@ const wishlistsStore = useWishlistsStore()
 const authStore = useAuthStore()
 const uiStore = useUiStore()
 const productsStore = useProductsStore()
+const categoriesStore = useCategoriesStore()
 
 const config = useRuntimeConfig()
 
@@ -54,14 +55,102 @@ onMounted(() => nextTick(measureDescOverflow))
 
 onMounted(() => {
   if (!productsStore.products.length) productsStore.fetchProducts({ limit: 24 })
+  if (!categoriesStore.categories.length) categoriesStore.fetchCategories()
 })
 
 // PROTOTYPE DATA — "related to this product" is currently just other items
 // from the catalog, not a real relation. Swap for real data once the backend
-// exposes it (see ProductRecommendations / ProductBundleWidget for context).
+// exposes it (see ProductRecommendations for context).
 const relatedPool = computed(() => productsStore.products.filter((p) => p.id !== product.value?.id))
 const recommendedProducts = computed(() => relatedPool.value.slice(0, 8))
-const bundleAccessories = computed(() => relatedPool.value.slice(8, 14))
+
+// Cross-sell rules for the "Вигідний комплект" widget: which accessory
+// subcategories make sense to pair with a given product category. Only
+// pairings with a real, defensible relationship are listed — Годинники and
+// Laptops have no accessory subcategory that actually fits them yet.
+const BUNDLE_ACCESSORY_CATEGORIES: Record<string, string[]> = {
+  smartphones: ['chohly-dlya-telefoniv', 'zaryadni-prystroi', 'powerbanky'],
+  naushnyky: ['zaryadni-prystroi', 'powerbanky'],
+}
+
+const accessoryCategorySlugs = computed(
+  () => BUNDLE_ACCESSORY_CATEGORIES[product.value?.categorySlug ?? ''] ?? [],
+)
+
+// Phone cases are model/brand-specific — unlike chargers and powerbanks,
+// which fit anything with a USB port, a case only makes sense as a bundle
+// item if it actually fits the phone. Vendor data has no structured "fits
+// phone X" field, but case specs do carry a free-text compatibility value
+// (key spelled either "Сумісність" or "Совместимость...") we can match
+// against the phone's brand — e.g. "AGM H6" matches brand "AGM". This is
+// brand-level, not exact-model, matching: that's the ceiling of what the
+// vendor data supports.
+const CASE_CATEGORY_SLUG = 'chohly-dlya-telefoniv'
+
+function findCompatibilityText(specs: Record<string, string> | null | undefined) {
+  if (!specs) return null
+  const key = Object.keys(specs).find((k) => /сумісність|совместимост/i.test(k))
+  return key ? specs[key] : null
+}
+
+function isCompatibleCase(caseProduct: Product, phoneBrand: string | null) {
+  const compat = findCompatibilityText(caseProduct.specs)
+  if (!compat) return false
+  if (/універсальн|универсальн/i.test(compat)) return true
+  if (!phoneBrand) return false
+  const brandAliases =
+    phoneBrand.toLowerCase() === 'apple' ? ['iphone', 'apple'] : [phoneBrand.toLowerCase()]
+  return brandAliases.some((alias) => compat.toLowerCase().includes(alias))
+}
+
+// Fetched per category (not one combined query) so a category with fewer
+// in-stock items can't get crowded out of a shared result window and silently
+// disappear from the tab list. Cases are fetched from a larger pool since
+// most of it gets filtered out by brand compatibility.
+const bundleAccessoryProductsBySlug = ref<Record<string, Product[]>>({})
+
+watch(
+  () => [product.value?.id, accessoryCategorySlugs.value.join(',')] as const,
+  async ([, slugsKey]) => {
+    if (!slugsKey) {
+      bundleAccessoryProductsBySlug.value = {}
+      return
+    }
+    const phoneBrand = product.value?.brand ?? null
+    const results = await Promise.all(
+      accessoryCategorySlugs.value.map((slug) =>
+        $fetch<{ data: Product[] }>(`${config.public.apiBase}/api/products/`, {
+          query: { categories: slug, limit: slug === CASE_CATEGORY_SLUG ? 100 : 8 },
+        }),
+      ),
+    )
+    bundleAccessoryProductsBySlug.value = Object.fromEntries(
+      accessoryCategorySlugs.value.map((slug, i) => {
+        let items = results[i].data.filter((p) => p.id !== product.value?.id)
+        if (slug === CASE_CATEGORY_SLUG) {
+          items = items.filter((p) => isCompatibleCase(p, phoneBrand)).slice(0, 8)
+        }
+        return [slug, items]
+      }),
+    )
+  },
+  { immediate: true },
+)
+
+const accessoriesParentCategory = computed(() =>
+  categoriesStore.categories.find((c) => c.slug === 'accessories'),
+)
+
+const bundleAccessoryGroups = computed(() =>
+  accessoryCategorySlugs.value
+    .map((slug) => ({
+      slug,
+      name:
+        accessoriesParentCategory.value?.subcategories?.find((s) => s.slug === slug)?.name ?? slug,
+      products: bundleAccessoryProductsBySlug.value[slug] ?? [],
+    }))
+    .filter((group) => group.products.length > 0),
+)
 
 useSeoMeta({
   title: () => (product.value ? `${product.value.title} — Honey Store` : 'Товар'),
@@ -92,7 +181,9 @@ const quickSpecs = computed(() => [
   { label: 'Рейтинг', value: product.value?.rating ? String(product.value.rating) : '—' },
 ])
 
-const mockSpecs = computed(() => [
+// Only used when the product has no real vendor specs at all (older imports
+// that predate the specs field) — generic info in place of an empty tab.
+const fallbackSpecs = computed(() => [
   { label: 'Бренд', value: product.value?.brand ?? 'Не вказано' },
   { label: 'Категорія', value: product.value?.category ?? '—' },
   { label: 'Рейтинг', value: String(product.value?.rating ?? '—') },
@@ -106,6 +197,57 @@ const mockSpecs = computed(() => [
   { label: 'Артикул', value: product.value?.sku ?? '—' },
   { label: 'Гарантія', value: '12 місяців' },
 ])
+
+// Vendor spec labels arrive in whatever language that product happened to be
+// imported in (mostly Russian so far) — match both spellings rather than
+// assume one. Order here is display priority, not matched order.
+const PRIORITY_SPEC_KEYWORDS = [
+  ['процесор', 'процессор'],
+  ["оперативна пам'ять", 'оперативная память'],
+  ["вбудована пам'ять", 'встроенная память'],
+  ['діагональ екрана', 'диагональ экрана'],
+  ['основна камера', 'основная камера'],
+  ['ємність акумулятора', 'емкость аккумулятора'],
+]
+const MAX_TOP_SPECS = 6
+
+function toSpec([label, value]: [string, string]) {
+  return { label, value }
+}
+
+const specEntries = computed(() => Object.entries(product.value?.specs ?? {}))
+const hasRealSpecs = computed(() => specEntries.value.length > 0)
+
+// Splits real specs into "shown up-front" (known-important fields first,
+// padded with whatever's left) and "rest" (behind the toggle below) — rather
+// than guessing where a 'technical specs' section starts in free text, this
+// works off the actual key/value pairs the vendor already gives us.
+const prioritizedSpecs = computed(() => {
+  const entries = [...specEntries.value]
+  const top: Array<{ label: string; value: string }> = []
+
+  for (const keywords of PRIORITY_SPEC_KEYWORDS) {
+    if (top.length >= MAX_TOP_SPECS) break
+    const idx = entries.findIndex(([label]) =>
+      keywords.some((kw) => label.toLowerCase().includes(kw)),
+    )
+    if (idx !== -1) top.push(toSpec(entries.splice(idx, 1)[0]))
+  }
+  while (top.length < MAX_TOP_SPECS && entries.length > 0) {
+    top.push(toSpec(entries.shift()!))
+  }
+
+  return { top, rest: entries.map(toSpec) }
+})
+
+const topSpecs = computed(() =>
+  hasRealSpecs.value ? prioritizedSpecs.value.top : fallbackSpecs.value,
+)
+const restSpecs = computed(() => (hasRealSpecs.value ? prioritizedSpecs.value.rest : []))
+const specsExpanded = ref(false)
+watch(specEntries, () => {
+  specsExpanded.value = false
+})
 
 const tabs = [
   { key: 'specs', label: 'Характеристики' },
@@ -337,11 +479,11 @@ function toggleFav() {
         </div>
       </div>
 
-      <!-- Bundle widget (prototype) -->
+      <!-- Bundle widget: real cross-sell accessories, prototype-only "Купити комплект" pricing -->
       <ProductBundleWidget
-        v-if="product && bundleAccessories.length"
+        v-if="product && bundleAccessoryGroups.length"
         :product="product"
-        :accessories="bundleAccessories"
+        :groups="bundleAccessoryGroups"
         class="product-detail__bundle"
       />
 
@@ -367,10 +509,23 @@ function toggleFav() {
           </div>
 
           <div class="product-detail__tab-content">
-            <ProductSpecsTable
-              v-if="activeTab === 'specs'"
-              :specs="mockSpecs"
-            />
+            <template v-if="activeTab === 'specs'">
+              <ProductSpecsTable :specs="topSpecs" />
+              <div
+                v-if="specsExpanded && restSpecs.length"
+                class="product-detail__specs-more"
+              >
+                <ProductSpecsTable :specs="restSpecs" />
+              </div>
+              <button
+                v-if="restSpecs.length"
+                type="button"
+                class="product-detail__specs-toggle"
+                @click="specsExpanded = !specsExpanded"
+              >
+                {{ specsExpanded ? 'Сховати' : 'Дивитись всі характеристики' }}
+              </button>
+            </template>
 
             <div v-else-if="activeTab === 'reviews'">
               <ProductReviews :product-id="product.id" />
@@ -585,6 +740,26 @@ function toggleFav() {
 
   &__desc-toggle {
     display: inline-block;
+    padding: 0;
+    border: none;
+    background: none;
+    color: $color-primary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
+
+  &__specs-more {
+    margin-top: $spacing-2;
+  }
+
+  &__specs-toggle {
+    display: inline-block;
+    margin-top: $spacing-3;
     padding: 0;
     border: none;
     background: none;

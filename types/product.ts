@@ -18,6 +18,7 @@ export interface Product {
   thumbnail: string | null
   images: string[]
   labels?: string[]
+  specs?: Record<string, string> | null
   createdAt: string | null
   updatedAt: string | null
 }

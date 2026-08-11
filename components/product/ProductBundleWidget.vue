@@ -2,40 +2,43 @@
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-// PURE UI PROTOTYPE — no backend support yet. The category tabs are static
-// labels (not real accessory categories) and the bundle discount is a
-// hardcoded 10%, applied only visually. "Купити комплект" does not add a
-// discounted pair to the cart — see handleBuyBundle(). Tiles are a
-// standalone implementation, not the Акції promo card component.
+// The accessory-per-category grouping is real (see BUNDLE_ACCESSORY_CATEGORIES
+// in pages/product/[id].vue). The bundle discount is still a hardcoded 10%,
+// applied only visually — "Купити комплект" does not add a discounted pair to
+// the cart, see handleBuyBundle(). Tiles are a standalone implementation, not
+// the Акції promo card component.
+interface AccessoryGroup {
+  slug: string
+  name: string
+  products: Product[]
+}
 interface Props {
   product: Product
-  accessories: Product[]
+  groups: AccessoryGroup[]
 }
 const props = defineProps<Props>()
 
 const toastStore = useToastStore()
 
-const TABS = [
-  'Захисні скла',
-  'Чохли',
-  'Зарядні пристрої',
-  'Кабелі та перехідники',
-  'Повербанки',
-  'Портативні колонки',
-]
 const BUNDLE_DISCOUNT_PERCENT = 10
 
 const activeTabIndex = ref(0)
 const accessoryIndex = ref(0)
 
-const selectedAccessory = computed(() => props.accessories[accessoryIndex.value] ?? null)
+const activeGroup = computed(() => props.groups[activeTabIndex.value] ?? props.groups[0] ?? null)
+const accessories = computed(() => activeGroup.value?.products ?? [])
+const selectedAccessory = computed(() => accessories.value[accessoryIndex.value] ?? null)
+
+watch(activeGroup, () => {
+  accessoryIndex.value = 0
+})
 
 function prevAccessory() {
-  const len = props.accessories.length
+  const len = accessories.value.length
   accessoryIndex.value = (accessoryIndex.value - 1 + len) % len
 }
 function nextAccessory() {
-  accessoryIndex.value = (accessoryIndex.value + 1) % props.accessories.length
+  accessoryIndex.value = (accessoryIndex.value + 1) % accessories.value.length
 }
 
 const accessoryDiscountedPrice = computed(() => {
@@ -63,15 +66,18 @@ function handleBuyBundle() {
   >
     <h2 class="bundle-widget__title">Вигідний комплект</h2>
 
-    <div class="bundle-widget__tabs">
+    <div
+      v-if="groups.length > 1"
+      class="bundle-widget__tabs"
+    >
       <button
-        v-for="(tab, i) in TABS"
-        :key="tab"
+        v-for="(group, i) in groups"
+        :key="group.slug"
         :class="['bundle-widget__tab', { 'bundle-widget__tab--active': i === activeTabIndex }]"
         type="button"
         @click="activeTabIndex = i"
       >
-        {{ tab }}
+        {{ group.name }}
       </button>
     </div>
 
