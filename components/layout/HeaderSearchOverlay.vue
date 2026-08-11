@@ -689,6 +689,8 @@ onBeforeUnmount(() => {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    padding-inline: 12px;
+    margin-top: 8px;
     margin-bottom: 4px;
   }
 

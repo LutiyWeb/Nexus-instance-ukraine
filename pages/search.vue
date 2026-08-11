@@ -124,8 +124,13 @@ watch(q, fetchResults, { immediate: true })
     @include mixins.respond-to(tablet) {
       grid-template-columns: repeat(3, 1fr);
     }
+
     @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    @include mixins.respond-to(laptop) {
+      grid-template-columns: repeat(5, 1fr);
     }
   }
 }
