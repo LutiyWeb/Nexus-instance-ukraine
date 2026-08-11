@@ -245,7 +245,7 @@ async function handleNotifyClick(e: Event, product: Product) {
 
   &__media {
     position: relative;
-    aspect-ratio: 33 / 25;
+    aspect-ratio: 1 / 1.2;
     display: flex;
     align-items: center;
     justify-content: center;

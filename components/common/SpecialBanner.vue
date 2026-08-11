@@ -107,7 +107,7 @@ withDefaults(defineProps<Props>(), { reverse: false })
     flex-direction: row;
     align-items: center;
     gap: 48px;
-    padding: 48px;
+    padding: 40px 64px 40px 128px;
   }
 
   &--reverse {
@@ -121,10 +121,16 @@ withDefaults(defineProps<Props>(), { reverse: false })
         transform: scaleY(-1);
       }
     }
+
     .special-banner__image {
       @include mixins.respond-to(tablet) {
         order: 1;
       }
+    }
+
+    @include mixins.respond-to(tablet) {
+      padding-left: 64px;
+      padding-right: 128px;
     }
   }
 

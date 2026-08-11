@@ -148,7 +148,7 @@ const showImage = computed(() => mounted.value && isXl.value)
     }
 
     :deep(.promo-tile__img) {
-      margin: 0 auto;
+      margin: 0 auto 8px;
     }
   }
 

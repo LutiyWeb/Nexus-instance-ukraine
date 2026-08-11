@@ -93,29 +93,11 @@ withDefaults(defineProps<Props>(), {
     }
   }
 
-  &::before {
-  }
-
-  // &::after {
-  //   position: absolute;
-  //   z-index: 0;
-  //   bottom: 0;
-  //   border-radius: 0 24px 24px 0;
-  //   background-image: linear-gradient(to top, $color-gray-100 0%, rgb(244 248 252 / 0.6) 100%);
-  //   content: '';
-
-  //   @include mixins.respond-to(tablet) {
-  //     background-image: linear-gradient(to right, $color-gray-100 0%, rgb(244 248 252 / 0.2) 100%);
-  //     width: calc(30% + 10px);
-  //     height: 100%;
-  //   }
-  // }
-
   @include mixins.respond-to(tablet) {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    padding: 40px 64px;
+    padding: 40px 128px 40px 64px;
     gap: 48px;
   }
 
