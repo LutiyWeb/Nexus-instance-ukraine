@@ -25,6 +25,21 @@ const {
 const product = computed(() => productData.value?.data ?? null)
 const loading = computed(() => pending.value)
 
+interface ReviewsSummary {
+  total: number
+  avg: number | null
+}
+
+const { data: reviewsData } = useAsyncData(
+  () => `product-reviews-summary-${route.params.id}`,
+  () =>
+    $fetch<{ summary: ReviewsSummary }>(
+      `${config.public.apiBase}/api/products/${route.params.id}/reviews`,
+      { query: { limit: 1 } },
+    ),
+)
+const reviewsSummary = computed(() => reviewsData.value?.summary ?? null)
+
 // Vendor descriptions arrive as HTML; sanitize before v-html to strip anything
 // that could execute (script tags, event handlers) while keeping formatting.
 const sanitizedDescription = computed(() => DOMPurify.sanitize(product.value?.description ?? ''))
@@ -158,6 +173,39 @@ useSeoMeta({
   ogTitle: () => product.value?.title ?? '',
   ogDescription: () => plainDescription.value,
   ogImage: () => product.value?.thumbnail ?? '',
+  ogUrl: () => `${config.public.siteUrl}${route.path}`,
+  twitterCard: 'summary_large_image',
+})
+useCanonical()
+
+useJsonLd(() => {
+  const p = product.value
+  if (!p) return null
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: p.title,
+    description: plainDescription.value,
+    sku: p.sku ?? undefined,
+    image: p.images.length ? p.images : p.thumbnail ? [p.thumbnail] : undefined,
+    brand: p.brand ? { '@type': 'Brand', name: p.brand } : undefined,
+    aggregateRating:
+      reviewsSummary.value && reviewsSummary.value.total > 0
+        ? {
+            '@type': 'AggregateRating',
+            ratingValue: reviewsSummary.value.avg ?? p.rating,
+            reviewCount: reviewsSummary.value.total,
+          }
+        : undefined,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'UAH',
+      price: p.price,
+      availability: p.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: `${config.public.siteUrl}${route.path}`,
+    },
+  }
 })
 
 const allImages = computed(() => {
@@ -286,9 +334,7 @@ function toggleFav() {
           { label: 'Каталог', to: '/catalog' },
           {
             label: product?.category ?? '...',
-            to: product?.categorySlug
-              ? `/catalog?categorySlug=${product.categorySlug}`
-              : '/catalog',
+            to: product?.categorySlug ? `/catalog/${product.categorySlug}` : '/catalog',
           },
           { label: product?.title ?? '...' },
         ]"
@@ -385,7 +431,7 @@ function toggleFav() {
         <div class="product-detail__info">
           <NuxtLink
             v-if="product.categorySlug"
-            :to="`/catalog?categorySlug=${product.categorySlug}`"
+            :to="`/catalog/${product.categorySlug}`"
             class="product-detail__category"
             >{{ product.category }}</NuxtLink
           >

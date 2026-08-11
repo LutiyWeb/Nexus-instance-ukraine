@@ -33,7 +33,7 @@ function isNew(cat: { slug?: string; name?: string }) {
             :is="cat.subcategories?.length ? 'div' : NuxtLink"
             v-for="cat in categoriesStore.categories"
             :key="cat.id"
-            v-bind="cat.subcategories?.length ? {} : { to: `/catalog?categorySlug=${cat.slug}` }"
+            v-bind="cat.subcategories?.length ? {} : { to: `/catalog/${cat.slug}` }"
             :class="[
               'catalog-menu__parent',
               { 'catalog-menu__parent--active': activeId === cat.id },
@@ -61,7 +61,7 @@ function isNew(cat: { slug?: string; name?: string }) {
             <NuxtLink
               v-for="sub in activeCat.subcategories"
               :key="sub.id"
-              :to="`/catalog?categorySlug=${sub.slug}`"
+              :to="`/catalog/${sub.slug}`"
               class="catalog-menu__sub"
               @click="$emit('close')"
               >{{ sub.name }}</NuxtLink

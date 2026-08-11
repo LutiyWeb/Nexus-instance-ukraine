@@ -188,7 +188,7 @@ function onKeydown(e: KeyboardEvent) {
     }
     if (item.type === 'submit' || item.type === 'history') submitSearch(item.value)
     else if (item.type === 'category') {
-      router.push(`/catalog?categorySlug=${item.value}`)
+      router.push(`/catalog/${item.value}`)
       closeModal()
     } else if (item.type === 'product') {
       router.push(`/product/${item.value}`)
@@ -472,7 +472,7 @@ onBeforeUnmount(() => {
                           }),
                         },
                       ]"
-                      :to="`/catalog?categorySlug=${cat.slug}`"
+                      :to="`/catalog/${cat.slug}`"
                       @click="closeModal"
                     >
                       <component

@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ArrowDownRight } from 'lucide-vue-next'
 
-useHead({ title: 'Акції — Honey Store' })
+useSeoMeta({
+  title: 'Акції та знижки — Honey Store',
+  description: 'Актуальні акції та знижки на смартфони, навушники та аксесуари в Honey Store.',
+  ogTitle: 'Акції та знижки — Honey Store',
+  ogDescription: 'Актуальні акції та знижки на смартфони, навушники та аксесуари в Honey Store.',
+})
+useCanonical()
 
 const store = useProductsStore()
 const { isMd } = useBreakpoints()

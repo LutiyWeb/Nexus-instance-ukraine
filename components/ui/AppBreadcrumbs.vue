@@ -6,7 +6,21 @@ interface Crumb {
   to?: string
 }
 
-defineProps<{ crumbs: Crumb[] }>()
+const props = defineProps<{ crumbs: Crumb[] }>()
+
+const config = useRuntimeConfig()
+const route = useRoute()
+
+useJsonLd(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: props.crumbs.map((crumb, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: crumb.label,
+    item: `${config.public.siteUrl}${crumb.to ?? route.path}`,
+  })),
+}))
 </script>
 
 <template>

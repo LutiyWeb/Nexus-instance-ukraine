@@ -5,10 +5,12 @@ interface Props {
   mediaUrl: string
   mediaType?: 'image' | 'video'
   linkUrl?: string | null
+  titleTag?: 'h1' | 'h2'
 }
 
 withDefaults(defineProps<Props>(), {
   mediaType: 'image',
+  titleTag: 'h2',
 })
 </script>
 
@@ -18,7 +20,12 @@ withDefaults(defineProps<Props>(), {
     class="hero-banner"
   >
     <div class="hero-banner__content">
-      <h2 class="hero-banner__title">{{ title }}</h2>
+      <component
+        :is="titleTag"
+        class="hero-banner__title"
+      >
+        {{ title }}
+      </component>
       <p
         v-if="description"
         class="hero-banner__sub"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: 'Публічна оферта — Honey Store' })
+useCanonical()
 </script>
 
 <template>

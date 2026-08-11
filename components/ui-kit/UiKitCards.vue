@@ -17,6 +17,7 @@ const MOCK_PRODUCT: Product = {
   discountPercentage: 23,
   rating: 4.5,
   stock: 10,
+  inStock: true,
   status: 'active',
   thumbnail: 'https://picsum.photos/seed/kit-product/400/400',
   images: [],

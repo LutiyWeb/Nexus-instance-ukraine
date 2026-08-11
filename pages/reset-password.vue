@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'Створення нового пароля — Honey Store' })
+useSeoMeta({ title: 'Створення нового пароля — Honey Store', robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const router = useRouter()

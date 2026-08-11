@@ -91,7 +91,7 @@ onBeforeUnmount(() => {
         >
           <AppImage
             :src="img"
-            :alt="`thumb ${i}`"
+            :alt="`${title} — фото ${i + 1}`"
             fit="inside"
             img-class="product-gallery__thumb-img"
             :sizes="{ mobile: { w: 72, h: 72 }, desktop: { w: 72, h: 72 } }"

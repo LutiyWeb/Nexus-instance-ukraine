@@ -112,12 +112,13 @@ onBeforeUnmount(() => {
       @slide-change="onSlideChange"
     >
       <SwiperSlide
-        v-for="slide in slides"
+        v-for="(slide, i) in slides"
         :key="slide.id"
       >
         <slot
           v-if="slide"
           :slide="slide"
+          :index="i"
         />
       </SwiperSlide>
     </Swiper>
@@ -127,9 +128,10 @@ onBeforeUnmount(() => {
       class="app-slider__static"
     >
       <slot
-        v-for="slide in slides"
+        v-for="(slide, i) in slides"
         :key="slide.id"
         :slide="slide"
+        :index="i"
       />
     </div>
   </div>

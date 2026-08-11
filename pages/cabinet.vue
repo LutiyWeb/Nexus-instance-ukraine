@@ -2,7 +2,8 @@
 import { User, MapPin, ShoppingBag, Heart, LogOut } from 'lucide-vue-next'
 
 definePageMeta({ middleware: 'auth' })
-useSeoMeta({ title: 'Особистий кабінет — Honey Store' })
+useSeoMeta({ title: 'Особистий кабінет — Honey Store', robots: 'noindex, follow' })
+useCanonical()
 
 const authStore = useAuthStore()
 const route = useRoute()

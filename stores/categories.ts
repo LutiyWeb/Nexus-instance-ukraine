@@ -40,12 +40,15 @@ export const useCategoriesStore = defineStore('categories', () => {
       // Real subcategories only — a category with no products of its own but
       // at least one non-empty child (e.g. "Аксесуари" split into Чохли/
       // Зарядні пристрої/Повербанки) still belongs in the menu.
-      const childrenByParent = new Map<number, { id: number; name: string; slug: string }[]>()
+      const childrenByParent = new Map<
+        number,
+        { id: number; name: string; slug: string; description?: string | null }[]
+      >()
       for (const cat of res.data) {
         if (cat.parentId == null) continue
         if ((countById.get(cat.id) ?? 0) === 0) continue
         const siblings = childrenByParent.get(cat.parentId) ?? []
-        siblings.push({ id: cat.id, name: cat.name, slug: cat.slug })
+        siblings.push({ id: cat.id, name: cat.name, slug: cat.slug, description: cat.description })
         childrenByParent.set(cat.parentId, siblings)
       }
 
@@ -68,5 +71,14 @@ export const useCategoriesStore = defineStore('categories', () => {
     }
   }
 
-  return { categories, loading, fetchCategories }
+  function findBySlug(slug: string) {
+    for (const cat of categories.value) {
+      if (cat.slug === slug) return cat
+      const sub = cat.subcategories?.find((s) => s.slug === slug)
+      if (sub) return sub
+    }
+    return null
+  }
+
+  return { categories, loading, fetchCategories, findBySlug }
 })

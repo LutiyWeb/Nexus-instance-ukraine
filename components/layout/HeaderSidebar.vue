@@ -75,9 +75,7 @@ function close() {
                   :key="cat.id"
                   class="header-sidebar__cat-btn"
                   v-bind="
-                    cat.subcategories?.length
-                      ? { type: 'button' }
-                      : { to: `/catalog?categorySlug=${cat.slug}` }
+                    cat.subcategories?.length ? { type: 'button' } : { to: `/catalog/${cat.slug}` }
                   "
                   @click="cat.subcategories?.length ? selectCategory(cat) : close()"
                 >
@@ -125,7 +123,7 @@ function close() {
 
               <nav class="header-sidebar__nav">
                 <NuxtLink
-                  :to="`/catalog?categorySlug=${activeCategory.slug}`"
+                  :to="`/catalog/${activeCategory.slug}`"
                   class="header-sidebar__all-link"
                   @click="close"
                 >
@@ -135,7 +133,7 @@ function close() {
                 <NuxtLink
                   v-for="sub in activeCategory.subcategories"
                   :key="sub.id"
-                  :to="`/catalog?categorySlug=${sub.slug}`"
+                  :to="`/catalog/${sub.slug}`"
                   class="header-sidebar__cat-btn header-sidebar__cat-btn--sub"
                   @click="close"
                 >

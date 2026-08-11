@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: 'Політика конфіденційності — Honey Store' })
+useCanonical()
 </script>
 
 <template>

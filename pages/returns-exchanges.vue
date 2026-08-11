@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: 'Повернення та обмін — Honey Store' })
+useCanonical()
 </script>
 
 <template>

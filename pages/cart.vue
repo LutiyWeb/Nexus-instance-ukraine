@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ShoppingCart, Heart, Trash2 } from 'lucide-vue-next'
 
-useSeoMeta({ title: 'Кошик — Honey Store' })
+useSeoMeta({ title: 'Кошик — Honey Store', robots: 'noindex, follow' })
+useCanonical()
 
 const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()

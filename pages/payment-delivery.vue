@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: 'Оплата та доставка — Honey Store' })
+useCanonical()
 </script>
 
 <template>

@@ -14,6 +14,7 @@ export interface Product {
   discountPercentage: number | null
   rating: number | null
   stock: number
+  inStock: boolean
   status: string
   thumbnail: string | null
   images: string[]
@@ -32,5 +33,6 @@ export interface Category {
   id: number
   name: string
   slug: string
-  subcategories?: { id: number; name: string; slug: string }[]
+  description?: string | null
+  subcategories?: { id: number; name: string; slug: string; description?: string | null }[]
 }

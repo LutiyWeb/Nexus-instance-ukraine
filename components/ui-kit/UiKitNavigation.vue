@@ -17,6 +17,7 @@ const MOCK_PRODUCTS: Product[] = Array.from({ length: 6 }, (_, i) => ({
   discountPercentage: i % 2 === 0 ? 20 : null,
   rating: 4 + (i % 2) * 0.5,
   stock: 5,
+  inStock: true,
   status: 'active',
   thumbnail: `https://picsum.photos/seed/nav${i}/400/400`,
   images: [],

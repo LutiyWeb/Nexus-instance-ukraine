@@ -93,7 +93,7 @@ onUnmounted(() => {
       <NuxtLink
         v-for="cat in categoriesStore.categories"
         :key="cat.id"
-        :to="`/catalog?categorySlug=${cat.slug}`"
+        :to="`/catalog/${cat.slug}`"
         class="category-ribbon__item"
       >
         <component

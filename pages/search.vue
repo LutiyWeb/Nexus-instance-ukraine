@@ -2,7 +2,11 @@
 import { SearchX } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-useHead({ title: 'Пошук — Honey Store' })
+useSeoMeta({
+  title: 'Пошук — Honey Store',
+  robots: 'noindex, follow',
+})
+useCanonical()
 
 const route = useRoute()
 const router = useRouter()

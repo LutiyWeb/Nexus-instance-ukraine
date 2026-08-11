@@ -2,7 +2,8 @@
 import { Heart } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
-useSeoMeta({ title: 'Обране — Honey Store' })
+useSeoMeta({ title: 'Обране — Honey Store', robots: 'noindex, follow' })
+useCanonical()
 
 const wishlistsStore = useWishlistsStore()
 const config = useRuntimeConfig()

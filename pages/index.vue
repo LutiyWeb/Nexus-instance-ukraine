@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { CARD_GAP } from '~/constants/layout'
 
-useHead({ title: 'Honey Store — Головна' })
+useSeoMeta({
+  title: 'Honey Store — інтернет-магазин техніки та аксесуарів',
+  description:
+    'Смартфони, навушники, аксесуари та техніка з гарантією і швидкою доставкою по Україні.',
+  ogTitle: 'Honey Store — інтернет-магазин техніки та аксесуарів',
+  ogDescription:
+    'Смартфони, навушники, аксесуари та техніка з гарантією і швидкою доставкою по Україні.',
+})
+useCanonical()
 
 interface BannerDto {
   id: number
@@ -262,6 +270,7 @@ const promoTiles = computed(() => {
               :media-url="(slotProps.slide?.mediaUrl as string | null) ?? ''"
               :media-type="(slotProps.slide?.mediaType as 'image' | 'video' | null) ?? 'image'"
               :link-url="(slotProps.slide?.linkUrl as string | null) ?? null"
+              :title-tag="slotProps.index === 0 ? 'h1' : 'h2'"
             />
           </template>
         </AppSlider>

@@ -16,7 +16,9 @@ const order = computed(() => data.value?.data ?? null)
 
 useSeoMeta({
   title: () => (order.value ? `Замовлення ${order.value.orderNumber} — Honey Store` : 'Замовлення'),
+  robots: 'noindex, follow',
 })
+useCanonical()
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
   pending: 'warning',

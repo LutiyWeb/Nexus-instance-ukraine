@@ -3,7 +3,8 @@ import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
 import type { Address } from '~/contracts/addresses'
 import type { NpSettlement, NpWarehouse } from '~/contracts/delivery'
 
-useSeoMeta({ title: 'Оформлення замовлення — Honey Store' })
+useSeoMeta({ title: 'Оформлення замовлення — Honey Store', robots: 'noindex, follow' })
+useCanonical()
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
