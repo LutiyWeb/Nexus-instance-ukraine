@@ -37,8 +37,6 @@ const PROMO_BANNERS = [
   },
 ]
 
-const viewMode = ref<'bento' | 'grid'>('bento')
-
 // ─── Sections ────────────────────────────────────────────────────────────────
 // Each section: 1 banner (2×2) + 2 tall cards + 7 sm cards + 1 CTA card
 // bannerSide: 'left' → [banner][tall][tall], 'right' → [tall][tall][banner]
@@ -129,147 +127,138 @@ const bentoSections = computed(() =>
         class="promo-page__banners"
       />
 
+      <!-- Mobile -->
       <div
-        v-if="store.loading"
-        class="promo-page__skeleton"
+        v-if="!isMd"
+        class="promo-page__flat"
       >
-        <TheProductCard
-          v-for="n in 10"
-          :key="n"
-          :loading="true"
-        />
-      </div>
-
-      <template v-else>
-        <!-- Mobile -->
-        <div
-          v-if="!isMd"
-          class="promo-page__flat"
-        >
+        <template v-if="store.loading">
+          <TheProductCard
+            v-for="n in 10"
+            :key="n"
+            :loading="true"
+          />
+        </template>
+        <template v-else>
           <TheProductCard
             v-for="p in store.products"
             :key="p.id"
             :product="p"
           />
-        </div>
+        </template>
+      </div>
 
-        <!-- Desktop -->
-        <div v-else>
-          <div class="promo-page__toolbar">
-            <button
-              :class="[
-                'promo-page__view-btn',
-                { 'promo-page__view-btn--active': viewMode === 'bento' },
-              ]"
-              type="button"
-              @click="viewMode = 'bento'"
-            >
-              Bento
-            </button>
-            <button
-              :class="[
-                'promo-page__view-btn',
-                { 'promo-page__view-btn--active': viewMode === 'grid' },
-              ]"
-              type="button"
-              @click="viewMode = 'grid'"
-            >
-              Сітка
-            </button>
-          </div>
-
-          <!-- Bento: sections -->
+      <!-- Desktop: bento sections -->
+      <div
+        v-else
+        class="promo-page__sections"
+      >
+        <template v-if="store.loading">
           <div
-            v-if="viewMode === 'bento'"
-            class="promo-page__sections"
+            v-for="n in SECTIONS.length"
+            :key="n"
+            class="promo-section"
           >
-            <div
-              v-for="(section, i) in bentoSections"
-              :key="i"
-              class="promo-section"
-            >
-              <!-- Banner row: [banner][tall][tall] or [tall][tall][banner] -->
-              <div class="promo-section__banner-row">
-                <template v-if="section.bannerSide === 'left'">
-                  <AppCategoryBanner
-                    :bg="section.banner.bg"
-                    :title="section.banner.title"
-                    :subtitle="section.banner.subtitle"
-                    :to="section.banner.to"
-                    :video="section.banner.video"
-                    :image="section.banner.image"
-                    class="promo-section__banner"
-                  />
-                  <TheProductCard
-                    v-for="p in section.tall"
-                    :key="p.id"
-                    :product="p"
-                    class="promo-section__tall"
-                  />
-                </template>
-                <template v-else>
-                  <TheProductCard
-                    v-for="p in section.tall"
-                    :key="p.id"
-                    :product="p"
-                    class="promo-section__tall"
-                  />
-                  <AppCategoryBanner
-                    :bg="section.banner.bg"
-                    :title="section.banner.title"
-                    :subtitle="section.banner.subtitle"
-                    :to="section.banner.to"
-                    :video="section.banner.video"
-                    :image="section.banner.image"
-                    class="promo-section__banner"
-                  />
-                </template>
-              </div>
-
-              <!-- SM cards row: gray bg, 7 products + 1 CTA -->
-              <div class="promo-section__cards">
-                <AppImageCard
-                  v-for="p in section.sm"
-                  :key="p.id"
-                  :product="p"
-                />
-
-                <!-- CTA card -->
-                <NuxtLink
-                  :to="section.ctaTo"
-                  class="promo-section__cta"
-                >
-                  <div
-                    v-if="section.ctaImage"
-                    class="promo-section__cta-bg"
-                    :style="{ backgroundImage: `url(${section.ctaImage})` }"
-                  />
-                  <div class="promo-section__cta-overlay" />
-                  <span class="promo-section__cta-label">
-                    Дивитись усі
-                    <ArrowDownRight
-                      :size="20"
-                      class="promo-section__cta-arrow"
-                    />
-                  </span>
-                </NuxtLink>
-              </div>
+            <div class="promo-section__banner-row">
+              <AppSkeleton
+                class="promo-section__banner"
+                height="100%"
+                border-radius="16px"
+              />
+              <AppSkeleton
+                v-for="t in 2"
+                :key="t"
+                class="promo-section__tall"
+                height="100%"
+                border-radius="12px"
+              />
+            </div>
+            <div class="promo-section__cards">
+              <AppSkeleton
+                v-for="c in 8"
+                :key="c"
+                height="100%"
+                border-radius="12px"
+              />
             </div>
           </div>
+        </template>
 
-          <!-- Regular grid -->
+        <template v-else>
           <div
-            v-else
-            class="promo-page__grid"
+            v-for="(section, i) in bentoSections"
+            :key="i"
+            class="promo-section"
           >
-            <TheProductCard
-              v-for="p in store.products"
-              :key="p.id"
-              :product="p"
-            />
+            <!-- Banner row: [banner][tall][tall] or [tall][tall][banner] -->
+            <div class="promo-section__banner-row">
+              <template v-if="section.bannerSide === 'left'">
+                <AppCategoryBanner
+                  :bg="section.banner.bg"
+                  :title="section.banner.title"
+                  :subtitle="section.banner.subtitle"
+                  :to="section.banner.to"
+                  :video="section.banner.video"
+                  :image="section.banner.image"
+                  class="promo-section__banner"
+                />
+                <TheProductCard
+                  v-for="p in section.tall"
+                  :key="p.id"
+                  :product="p"
+                  class="promo-section__tall"
+                />
+              </template>
+              <template v-else>
+                <TheProductCard
+                  v-for="p in section.tall"
+                  :key="p.id"
+                  :product="p"
+                  class="promo-section__tall"
+                />
+                <AppCategoryBanner
+                  :bg="section.banner.bg"
+                  :title="section.banner.title"
+                  :subtitle="section.banner.subtitle"
+                  :to="section.banner.to"
+                  :video="section.banner.video"
+                  :image="section.banner.image"
+                  class="promo-section__banner"
+                />
+              </template>
+            </div>
+
+            <!-- SM cards row: gray bg, 7 products + 1 CTA -->
+            <div class="promo-section__cards">
+              <AppImageCard
+                v-for="p in section.sm"
+                :key="p.id"
+                :product="p"
+              />
+
+              <!-- CTA card -->
+              <NuxtLink
+                :to="section.ctaTo"
+                class="promo-section__cta"
+              >
+                <div
+                  v-if="section.ctaImage"
+                  class="promo-section__cta-bg"
+                  :style="{ backgroundImage: `url(${section.ctaImage})` }"
+                />
+                <div class="promo-section__cta-overlay" />
+                <span class="promo-section__cta-label">
+                  Дивитись усі
+                  <ArrowDownRight
+                    :size="20"
+                    class="promo-section__cta-arrow"
+                  />
+                </span>
+              </NuxtLink>
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -302,12 +291,6 @@ const bentoSections = computed(() =>
     }
   }
 
-  &__skeleton {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-  }
-
   &__flat {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -318,45 +301,6 @@ const bentoSections = computed(() =>
     display: flex;
     flex-direction: column;
     gap: 48px;
-  }
-
-  &__toolbar {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    margin-bottom: 16px;
-  }
-
-  &__view-btn {
-    padding: 6px 16px;
-    border-radius: $radius-md;
-    border: 1px solid $color-gray-200;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $color-gray-500;
-    background: $color-white;
-    cursor: pointer;
-    transition: all $transition-fast;
-
-    &:hover {
-      border-color: $color-gray-300;
-      color: $color-gray-700;
-    }
-    &--active {
-      background: $color-primary;
-      border-color: $color-primary;
-      color: $color-white;
-    }
-  }
-
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-
-    @include mixins.respond-to(notebook) {
-      grid-template-columns: repeat(5, 1fr);
-    }
   }
 }
 
@@ -389,9 +333,8 @@ const bentoSections = computed(() =>
     margin-inline: -#{$container-padding};
 
     @include mixins.respond-to(notebook) {
-      padding: 32px calc(#{$container-padding} * 2) 32px;
+      padding: 32px 16px;
       margin-top: 48px;
-      margin-inline: -#{$container-padding};
     }
   }
 
