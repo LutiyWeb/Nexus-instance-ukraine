@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { key: '/admin/banners/special_2', label: 'Спец-банер 2' },
   { key: '/admin/banners/promo', label: 'Промо-плитки' },
   { key: '/admin/banners/hot', label: 'Гарячі позиції' },
+  { key: '/admin/bug-reports', label: 'Баг-репорти' },
 ]
 
 const selectedKeys = computed(() => [route.path])

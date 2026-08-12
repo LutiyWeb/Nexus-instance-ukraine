@@ -92,6 +92,11 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only (never exposed to the client bundle) — used by server/api/bug-reports.*
+    supabaseUrl: process.env.SUPABASE_URL || '',
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET || 'banners',
+    jwtAccessSecret: process.env.JWT_ACCESS_SECRET || '',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://honey-store.ua',

@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { Paperclip, Video, X } from 'lucide-vue-next'
+import { Paperclip, X } from 'lucide-vue-next'
 
-// PURE UI PROTOTYPE — "Надіслати" does not send anything anywhere yet. There
-// is no backend endpoint for bug reports; submit only validates the
-// description, shows a success toast, and resets the form. Wire this up once
-// a real endpoint exists (see the backend spec this pairs with).
+// Temporary storage: posts straight to this app's own /api/bug-reports (Nuxt
+// server route → Supabase table), not to shopmarker-backend — see TODOS.md
+// for the plan to move this to a real backend endpoint later.
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ 'update:open': [boolean] }>()
 
 const toastStore = useToastStore()
 
+const title = ref('')
 const description = ref('')
 const screenshot = ref<File | null>(null)
-const video = ref<File | null>(null)
 const error = ref('')
 const submitting = ref(false)
 
@@ -20,9 +19,9 @@ watch(
   () => props.open,
   (isOpen) => {
     if (isOpen) return
+    title.value = ''
     description.value = ''
     screenshot.value = null
-    video.value = null
     error.value = ''
   },
 )
@@ -34,23 +33,26 @@ function close() {
 function onScreenshotChange(e: Event) {
   screenshot.value = (e.target as HTMLInputElement).files?.[0] ?? null
 }
-function onVideoChange(e: Event) {
-  video.value = (e.target as HTMLInputElement).files?.[0] ?? null
-}
 
 async function submit() {
-  if (!description.value.trim()) {
-    error.value = 'Опишіть проблему'
+  if (!title.value.trim() || !description.value.trim()) {
+    error.value = 'Заповніть заголовок і опис проблеми'
     return
   }
   error.value = ''
 
+  const body = new FormData()
+  body.append('title', title.value.trim())
+  body.append('description', description.value.trim())
+  if (screenshot.value) body.append('screenshot', screenshot.value)
+
   submitting.value = true
   try {
-    // No backend yet — see the PROTOTYPE note above.
-    await new Promise((resolve) => setTimeout(resolve, 400))
+    await $fetch('/api/bug-reports', { method: 'POST', body })
     toastStore.add('Дякуємо! Звіт про проблему надіслано', 'success')
     close()
+  } catch {
+    toastStore.add('Не вдалося надіслати звіт. Спробуйте ще раз.', 'error')
   } finally {
     submitting.value = false
   }
@@ -63,14 +65,22 @@ async function submit() {
     @update:open="emit('update:open', $event)"
   >
     <h3 class="report-bug-form__title">Повідомити про проблему</h3>
-    <p class="report-bug-form__sub">
-      Опишіть, що пішло не так — за потреби додайте скрін або відео.
-    </p>
+    <p class="report-bug-form__sub">Опишіть, що пішло не так — за потреби додайте скрін.</p>
 
     <form
       class="app-modal__form"
       @submit.prevent="submit"
     >
+      <div class="report-bug-form__field">
+        <label class="report-bug-form__field-label">Заголовок</label>
+        <input
+          v-model="title"
+          type="text"
+          class="report-bug-form__input"
+          placeholder="Наприклад: не працює кнопка «Купити»"
+        />
+      </div>
+
       <div class="report-bug-form__field">
         <label class="report-bug-form__field-label">Опис проблеми</label>
         <textarea
@@ -103,30 +113,6 @@ async function submit() {
           type="button"
           class="report-bug-form__file-clear"
           @click.prevent="screenshot = null"
-        >
-          <X :size="12" />
-        </button>
-      </label>
-
-      <label class="report-bug-form__file">
-        <input
-          type="file"
-          accept="video/*"
-          class="report-bug-form__file-input"
-          @change="onVideoChange"
-        />
-        <Video
-          :size="16"
-          class="report-bug-form__file-icon"
-        />
-        <span class="report-bug-form__file-name">{{
-          video?.name ?? 'Прикріпити відео (необов’язково)'
-        }}</span>
-        <button
-          v-if="video"
-          type="button"
-          class="report-bug-form__file-clear"
-          @click.prevent="video = null"
         >
           <X :size="12" />
         </button>
@@ -184,7 +170,8 @@ async function submit() {
     color: $color-gray-700;
   }
 
-  &__textarea {
+  &__textarea,
+  &__input {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid $color-gray-300;
@@ -194,7 +181,6 @@ async function submit() {
     color: $color-gray-900;
     background: $color-white;
     outline: none;
-    resize: vertical;
     transition: border-color $transition-base;
 
     &::placeholder {
@@ -204,6 +190,10 @@ async function submit() {
     &:focus {
       border-color: $color-primary;
     }
+  }
+
+  &__textarea {
+    resize: vertical;
   }
 
   &__file {
@@ -268,6 +258,7 @@ async function submit() {
     gap: 8px;
 
     .app-btn {
+      --btn-min-width: 0;
       flex: 1;
     }
   }
