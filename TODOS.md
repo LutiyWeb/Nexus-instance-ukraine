@@ -63,6 +63,18 @@ have yet (no cron, no worker process).
 - ~~**Rename two local categories to Ukrainian**: `Часы` → `Годинники`,
   `Наушники` → `Навушники`.~~ Done 2026-08-10 via one-off DB update.
 
+## Search page — skeleton grid doesn't match real product-card grid (deferred 2026-08-11)
+
+- **At 1440px, `search-page__grid` shows only 4 cards per row (5th wraps to a
+  new row)**, both for the `:loading="true"` skeleton state and for real
+  results — they share the same `.search-page__grid` class in
+  `pages/search.vue`, so whatever column count applies affects both equally.
+  Elsewhere in the app (e.g. the homepage "Всі товари" product carousel),
+  cards line up 6-per-row at the same viewport width. Bring
+  `search-page__grid`'s column breakpoints in line with that reference so
+  search results (and their loading skeletons) match the product-card grid
+  used everywhere else instead of looking sparser/different.
+
 ## Homepage banners — stale/mismatched content (deferred 2026-08-11)
 
 - **special_1 banner text doesn't match its linked product.** Headline reads

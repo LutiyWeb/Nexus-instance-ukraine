@@ -197,8 +197,9 @@ const promoBanners = computed(() => {
 const featuredProducts = computed(() => store.products.slice(0, 12))
 const popularProducts = computed(() => store.products.slice(0, 10))
 const newProducts = computed(() => store.products.slice(12, 20))
-const skeletons = Array.from({ length: 5 })
-const skeletonsSmall = Array.from({ length: 8 })
+// Matches productBreakpoints' max slidesPerView (6) below, so the loading
+// grid never shows fewer cards than the real slider settles into.
+const skeletons = Array.from({ length: 6 })
 
 const productBreakpoints = {
   0: { slidesPerView: 1.5 },
@@ -417,7 +418,7 @@ const promoTiles = computed(() => {
           class="home__skeleton-row"
         >
           <TheProductCard
-            v-for="(_, i) in skeletonsSmall"
+            v-for="(_, i) in skeletons"
             :key="i"
             :loading="true"
           />
@@ -600,19 +601,21 @@ const promoTiles = computed(() => {
     }
   }
 
+  // Column counts mirror productBreakpoints' slidesPerView above (0/768/1024/1280)
+  // so the loading grid lines up with what the real slider settles into.
   &__skeleton-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 
-    @include mixins.respond-to(notebook) {
+    @include mixins.respond-to(tablet) {
       grid-template-columns: repeat(3, 1fr);
     }
-    @include mixins.respond-to(laptop) {
+    @include mixins.respond-to(notebook) {
       grid-template-columns: repeat(4, 1fr);
     }
-    @include mixins.respond-to(desktop) {
-      grid-template-columns: repeat(5, 1fr);
+    @include mixins.respond-to(laptop) {
+      grid-template-columns: repeat(6, 1fr);
     }
   }
 }
