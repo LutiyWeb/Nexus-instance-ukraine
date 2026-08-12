@@ -150,16 +150,6 @@ async function handleNotifyClick(e: Event, product: Product) {
           :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'"
         />
       </button>
-
-      <button
-        v-if="!loading && product && !isOutOfStock(product)"
-        class="product-card__cart-btn"
-        type="button"
-        @click.prevent="handleCartClick(product)"
-      >
-        <ShoppingCart :size="15" />
-        Додати до кошика
-      </button>
     </div>
 
     <div class="product-card__body">
@@ -195,7 +185,11 @@ async function handleNotifyClick(e: Event, product: Product) {
             type="button"
             @click.prevent="handleCartClick(product)"
           >
-            <ShoppingCart :size="16" />
+            <ShoppingCart
+              :size="16"
+              class="product-card__cart-icon-btn-icon"
+            />
+            <span class="product-card__cart-icon-btn-label">У кошик</span>
           </button>
           <button
             v-else
@@ -360,44 +354,6 @@ async function handleNotifyClick(e: Event, product: Product) {
     }
   }
 
-  &__cart-btn {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background: $color-primary;
-    color: $color-white;
-    border: none;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition:
-      transform $transition-base,
-      background $transition-fast;
-    z-index: 2;
-
-    &:hover {
-      background: $color-primary-dark;
-    }
-
-    @include mixins.respond-to(tablet) {
-      display: flex;
-      font-size: $font-size-sm;
-      transform: translateY(calc(100% + 2px));
-    }
-  }
-
-  &:hover &__cart-btn {
-    @include mixins.respond-to(tablet) {
-      transform: translateY(0);
-    }
-  }
-
   &__body {
     display: flex;
     flex-direction: column;
@@ -445,8 +401,10 @@ async function handleNotifyClick(e: Event, product: Product) {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     width: 40px;
     height: 40px;
+    padding: 0;
     border-radius: $radius-md;
     background: $color-primary;
     color: $color-white;
@@ -459,8 +417,28 @@ async function handleNotifyClick(e: Event, product: Product) {
       background: $color-primary-dark;
     }
 
-    @include mixins.respond-to(tablet) {
+    @include mixins.respond-to(laptop) {
+      width: auto;
+      padding: 0 14px;
+    }
+  }
+
+  &__cart-icon-btn-icon {
+    flex-shrink: 0;
+
+    @include mixins.respond-to(laptop) {
       display: none;
+    }
+  }
+
+  &__cart-icon-btn-label {
+    display: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+
+    @include mixins.respond-to(laptop) {
+      display: inline;
     }
   }
 
@@ -491,7 +469,7 @@ async function handleNotifyClick(e: Event, product: Product) {
     flex-direction: column;
     align-items: baseline;
 
-    @include mixins.respond-to(laptop) {
+    @include mixins.respond-to(desktop) {
       flex-direction: row-reverse;
       gap: 6px;
     }
@@ -500,6 +478,7 @@ async function handleNotifyClick(e: Event, product: Product) {
   &__price {
     font-size: $font-size-lg;
     font-weight: $font-weight-bold;
+    line-height: 1;
     color: $color-gray-900;
 
     &--discounted {
