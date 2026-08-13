@@ -31,6 +31,7 @@
     "maska": "^3.2.0",
     "modern-normalize": "^3.0.1",
     "nuxt": "^3.16.2",
+    "nuxt-gtag": "^5.0.0",
     "pinia": "^3.0.4",
     "sass": "^1.99.0",
     "swiper": "^12.1.4",

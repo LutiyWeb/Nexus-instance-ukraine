@@ -5,10 +5,17 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
-  modules: ['@pinia/nuxt', '@nuxt/image', '@nuxtjs/sitemap', '@nuxtjs/robots'],
+  modules: ['@pinia/nuxt', '@nuxt/image', '@nuxtjs/sitemap', '@nuxtjs/robots', 'nuxt-gtag'],
 
   site: {
     url: process.env.NUXT_PUBLIC_SITE_URL || 'https://honey-store.ua',
+  },
+
+  // Google Analytics 4. No-op until NUXT_PUBLIC_GTAG_ID is set — see .env.
+  // Disabled outside production so local/dev browsing doesn't pollute real GA data.
+  gtag: {
+    id: process.env.NUXT_PUBLIC_GTAG_ID || '',
+    enabled: process.env.NODE_ENV === 'production',
   },
 
   sitemap: {
