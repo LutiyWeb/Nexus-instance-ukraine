@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { ChevronRight, Tag } from 'lucide-vue-next'
+
 defineProps<{ open: boolean }>()
 defineEmits<{ close: [] }>()
-
-const NuxtLink = resolveComponent('NuxtLink')
 
 const categoriesStore = useCategoriesStore()
 const activeId = ref<number | null>(null)
@@ -14,6 +14,56 @@ const activeCat = computed(
 function isNew(cat: { slug?: string; name?: string }) {
   return cat.slug?.includes('new') || cat.name?.toLowerCase().includes('новин')
 }
+
+// Neither open nor close applies the instant the mouse enters/leaves — each is
+// scheduled a short beat later, and the other event cancels whichever timer is
+// still pending. That's what survives the cursor briefly leaving the shared
+// hover area while crossing from a category to its subcategory column.
+let openTimer: ReturnType<typeof setTimeout> | null = null
+let closeTimer: ReturnType<typeof setTimeout> | null = null
+
+function scheduleOpen(id: number) {
+  if (closeTimer) {
+    clearTimeout(closeTimer)
+    closeTimer = null
+  }
+  if (openTimer) clearTimeout(openTimer)
+  openTimer = setTimeout(() => {
+    activeId.value = id
+    openTimer = null
+  }, 300)
+}
+
+function scheduleClose() {
+  if (openTimer) {
+    clearTimeout(openTimer)
+    openTimer = null
+  }
+  if (closeTimer) clearTimeout(closeTimer)
+  closeTimer = setTimeout(() => {
+    activeId.value = null
+    closeTimer = null
+  }, 300)
+}
+
+// The cursor crossing over an earlier item on its way to the subcategory
+// panel can leave that item's openTimer ticking even after arrival — this
+// cancels it (and any pending close) the moment the panel is actually reached.
+function keepOpen() {
+  if (openTimer) {
+    clearTimeout(openTimer)
+    openTimer = null
+  }
+  if (closeTimer) {
+    clearTimeout(closeTimer)
+    closeTimer = null
+  }
+}
+
+onBeforeUnmount(() => {
+  if (openTimer) clearTimeout(openTimer)
+  if (closeTimer) clearTimeout(closeTimer)
+})
 </script>
 
 <template>
@@ -25,23 +75,21 @@ function isNew(cat: { slug?: string; name?: string }) {
     >
       <div
         class="catalog-menu__inner"
-        @mouseleave="activeId = null"
+        @mouseleave="scheduleClose"
       >
         <!-- Лівий стовпець: список категорій -->
         <div class="catalog-menu__cats">
-          <component
-            :is="cat.subcategories?.length ? 'div' : NuxtLink"
+          <NuxtLink
             v-for="cat in categoriesStore.categories"
             :key="cat.id"
-            v-bind="cat.subcategories?.length ? {} : { to: `/catalog/${cat.slug}` }"
+            :to="`/catalog/${cat.slug}`"
             :class="[
               'catalog-menu__parent',
               { 'catalog-menu__parent--active': activeId === cat.id },
               { 'catalog-menu__parent--new': isNew(cat) },
-              { 'catalog-menu__parent--group': cat.subcategories?.length },
             ]"
-            @mouseenter="activeId = cat.id"
-            @click="!cat.subcategories?.length && $emit('close')"
+            @mouseenter="scheduleOpen(cat.id)"
+            @click="$emit('close')"
           >
             {{ cat.name }}
             <span
@@ -49,7 +97,24 @@ function isNew(cat: { slug?: string; name?: string }) {
               class="catalog-menu__new-badge"
               >NEW</span
             >
-          </component>
+            <ChevronRight
+              v-if="cat.subcategories?.length"
+              :size="14"
+              class="catalog-menu__group-icon"
+            />
+          </NuxtLink>
+
+          <div class="catalog-menu__divider" />
+
+          <NuxtLink
+            to="/promo"
+            class="catalog-menu__parent"
+            @mouseenter="scheduleClose"
+            @click="$emit('close')"
+          >
+            <Tag :size="14" />
+            Акції
+          </NuxtLink>
         </div>
 
         <!-- Правий стовпець: підкатегорії активної категорії -->
@@ -57,6 +122,7 @@ function isNew(cat: { slug?: string; name?: string }) {
           <div
             v-if="activeCat?.subcategories?.length"
             class="catalog-menu__subs"
+            @mouseenter="keepOpen"
           >
             <NuxtLink
               v-for="sub in activeCat.subcategories"
@@ -104,6 +170,12 @@ function isNew(cat: { slug?: string; name?: string }) {
     }
   }
 
+  &__divider {
+    height: 1px;
+    background: $color-gray-100;
+    margin: 6px 16px;
+  }
+
   &__parent {
     display: flex;
     align-items: center;
@@ -124,12 +196,6 @@ function isNew(cat: { slug?: string; name?: string }) {
       background: $color-gray-50;
     }
 
-    // Has real subcategories, so it's a hover trigger (no href of its own)
-    // rather than a link — its own product listing is empty by design.
-    &--group {
-      cursor: default;
-    }
-
     &--new {
       color: $color-primary;
     }
@@ -147,6 +213,20 @@ function isNew(cat: { slug?: string; name?: string }) {
     font-weight: $font-weight-bold;
     letter-spacing: 0.04em;
     line-height: 1.6;
+  }
+
+  // Hints that hovering opens a nested subcategory panel — otherwise nothing
+  // on the item itself signals it behaves differently from a plain link.
+  &__group-icon {
+    margin-left: auto;
+    flex-shrink: 0;
+    color: $color-gray-400;
+    transition: color $transition-fast;
+  }
+
+  &__parent:hover &__group-icon,
+  &__parent--active &__group-icon {
+    color: $color-primary;
   }
 
   &__subs {
