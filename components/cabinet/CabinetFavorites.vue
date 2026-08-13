@@ -96,11 +96,6 @@ function toggleSelectAll() {
   }
 }
 
-function removeAndCloseMenu(wishlistId: number, productId: number) {
-  removeItem(wishlistId, productId)
-  menuProductId.value = null
-}
-
 async function load() {
   loading.value = true
   error.value = false
@@ -433,7 +428,7 @@ onBeforeUnmount(() => {
           </div>
           <div class="cab-fav__card">
             <button
-              v-if="!selectionMode"
+              v-if="!selectionMode && otherLists.length"
               class="cab-fav__card-menu-btn"
               type="button"
               @click.stop="toggleMenu(item.productId)"
@@ -447,19 +442,11 @@ onBeforeUnmount(() => {
               @click.stop
             >
               <button
-                v-if="otherLists.length"
                 class="cab-fav__card-dropdown-item"
                 type="button"
                 @click="openMoveModal(item.productId)"
               >
                 Перемістити в інший список
-              </button>
-              <button
-                class="cab-fav__card-dropdown-item cab-fav__card-dropdown-item--danger"
-                type="button"
-                @click="removeAndCloseMenu(activeList.id, item.productId)"
-              >
-                Видалити зі списку
               </button>
             </div>
             <NuxtLink
