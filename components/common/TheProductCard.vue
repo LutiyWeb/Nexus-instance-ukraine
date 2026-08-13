@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShoppingCart, Heart, Mail } from 'lucide-vue-next'
+import { ShoppingCart, Check, Heart, Mail } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 interface Props {
@@ -143,7 +143,7 @@ async function handleNotifyClick(e: Event, product: Product) {
           { 'product-card__fav-btn--active': wishlistsStore.has(product.id) },
         ]"
         type="button"
-        @click.prevent="handleFavClick(product)"
+        @click.stop.prevent="handleFavClick(product)"
       >
         <Heart
           :size="14"
@@ -181,15 +181,21 @@ async function handleNotifyClick(e: Event, product: Product) {
           </div>
           <button
             v-if="!isOutOfStock(product)"
-            class="product-card__cart-icon-btn"
+            :class="[
+              'product-card__cart-icon-btn',
+              { 'product-card__cart-icon-btn--active': cartStore.has(product.id) },
+            ]"
             type="button"
-            @click.prevent="handleCartClick(product)"
+            @click.stop.prevent="handleCartClick(product)"
           >
-            <ShoppingCart
+            <component
+              :is="cartStore.has(product.id) ? Check : ShoppingCart"
               :size="16"
               class="product-card__cart-icon-btn-icon"
             />
-            <span class="product-card__cart-icon-btn-label">У кошик</span>
+            <span class="product-card__cart-icon-btn-label">{{
+              cartStore.has(product.id) ? 'У кошику' : 'У кошик'
+            }}</span>
           </button>
           <button
             v-else
@@ -415,6 +421,14 @@ async function handleNotifyClick(e: Event, product: Product) {
 
     &:hover {
       background: $color-primary-dark;
+    }
+
+    &--active {
+      background: $color-success;
+
+      &:hover {
+        filter: brightness(0.92);
+      }
     }
 
     @include mixins.respond-to(laptop) {
