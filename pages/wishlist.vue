@@ -14,7 +14,10 @@ const loading = ref(false)
 
 async function loadProducts() {
   const ids = wishlistsStore.guestIds
-  if (!ids.length) return
+  if (!ids.length) {
+    products.value = []
+    return
+  }
   loading.value = true
   try {
     const results = await Promise.all(
