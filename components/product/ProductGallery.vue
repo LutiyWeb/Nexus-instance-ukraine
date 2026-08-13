@@ -14,10 +14,12 @@ withDefaults(defineProps<Props>(), { outOfStock: false })
 
 const { isMd } = useBreakpoints()
 const thumbsSwiper = ref<SwiperType | null>(null)
+const mainSwiper = ref<SwiperType | null>(null)
 
 const lightboxOpen = ref(false)
 const lightboxActiveIndex = ref(0)
 const lightboxThumbsSwiper = ref<SwiperType | null>(null)
+const lightboxSwiper = ref<SwiperType | null>(null)
 
 function openLightbox(index: number) {
   lightboxActiveIndex.value = index
@@ -25,8 +27,14 @@ function openLightbox(index: number) {
 }
 
 function closeLightbox() {
+  // Whatever slide the lightbox settled on (swiped or picked via its own
+  // thumbnails) becomes the page's active slide — no animation, since this is
+  // restoring state, not a navigation the user should watch happen.
+  const activeIndex = lightboxSwiper.value?.activeIndex ?? lightboxActiveIndex.value
   lightboxOpen.value = false
   lightboxThumbsSwiper.value = null
+  lightboxSwiper.value = null
+  mainSwiper.value?.slideTo(activeIndex, 0)
 }
 
 function handleLightboxKey(e: KeyboardEvent) {
@@ -58,6 +66,7 @@ onBeforeUnmount(() => {
         :thumbs="isMd ? { swiper: thumbsSwiper } : undefined"
         navigation
         class="product-gallery__main-swiper swiper-nav-bg swiper-nav-image"
+        @swiper="mainSwiper = $event"
       >
         <SwiperSlide
           v-for="(img, i) in images"
@@ -120,6 +129,7 @@ onBeforeUnmount(() => {
             :thumbs="{ swiper: lightboxThumbsSwiper }"
             navigation
             class="product-lightbox__swiper swiper-nav-image"
+            @swiper="lightboxSwiper = $event"
           >
             <SwiperSlide
               v-for="(img, i) in images"
