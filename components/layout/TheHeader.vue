@@ -7,6 +7,7 @@ const wishlistsStore = useWishlistsStore()
 const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
+const { isMd } = useBreakpoints()
 
 // authStore.isLoggedIn is unknown during SSR (localStorage-only) but already true on client
 // mount, so gating on `mounted` avoids a hydration class mismatch that Vue never patches
@@ -172,11 +173,17 @@ function onBackToLogin() {
     </div>
 
     <HeaderCatalogMenu
+      v-if="mounted && isMd"
       :open="uiStore.catalogOpen"
       @close="uiStore.catalogOpen = false"
     />
   </header>
 
+  <HeaderCatalogSidebar
+    v-if="mounted && !isMd"
+    :open="uiStore.catalogOpen"
+    @close="uiStore.catalogOpen = false"
+  />
   <HeaderSearchOverlay
     :open="uiStore.searchOpen"
     @close="uiStore.searchOpen = false"
@@ -307,7 +314,7 @@ function onBackToLogin() {
       border: 1px solid $color-gray-200;
       border-radius: $radius-md;
       background: $color-gray-50;
-      cursor: text;
+      cursor: pointer;
       transition:
         border-color $transition-fast,
         background $transition-fast;
