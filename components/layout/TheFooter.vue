@@ -230,6 +230,11 @@ function toggle(i: number) {
     &:hover {
       color: $color-heading;
     }
+
+    &.router-link-active {
+      color: $color-primary-dark;
+      font-weight: $font-weight-medium;
+    }
   }
 
   &__bottom {
