@@ -22,6 +22,7 @@ const uiStore = useUiStore()
 const router = useRouter()
 
 function handleFeedback() {
+  uiStore.menuOpen = false
   router.push('/contacts')
 }
 
