@@ -223,6 +223,10 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
   display: flex;
   flex-direction: column;
   gap: 40px;
+  // AppSlider's shadow-safety trick (margin-inline: -24px on its swiper) needs
+  // an ancestor this far up to absorb the bleed — clipping any closer (e.g.
+  // directly around the slider) would just cut the shadow off again.
+  overflow-x: hidden;
 
   &__title-row {
     display: flex;

@@ -217,6 +217,11 @@ onBeforeUnmount(() => {
     margin-block-start: -24px;
     padding-block-start: 24px;
     padding-block-end: var(--swiper-padding-bottom, 40px);
+    // $shadow-card/-hover's side shadows reach up to 24px horizontally —
+    // same room, same cancel-it-with-a-negative-margin trick as the block
+    // padding above, just on the inline axis.
+    margin-inline: -24px;
+    padding-inline: 24px;
     --swiper-navigation-color: #{$color-gray-500};
     --swiper-navigation-size: 20px;
     --swiper-theme-color: #{$color-primary};
