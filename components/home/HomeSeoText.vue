@@ -1,17 +1,50 @@
 <script setup lang="ts">
+import { Boxes, ShieldCheck, Truck, BadgePercent, CreditCard } from 'lucide-vue-next'
+
 const open = ref(false)
+
+const HIGHLIGHTS = [
+  { icon: Boxes, title: 'Великий асортимент', text: 'Понад 1 000 товарів у наявності' },
+  { icon: ShieldCheck, title: 'Офіційна гарантія', text: 'На кожен товар від виробника' },
+  { icon: Truck, title: 'Швидка доставка', text: 'Відправка протягом 24 годин' },
+  { icon: BadgePercent, title: 'Вигідні ціни', text: 'Акції та сезонні розпродажі' },
+  { icon: CreditCard, title: 'Зручна оплата', text: 'Картка, готівка, частинами' },
+]
 </script>
 
 <template>
   <section class="seo-block">
-    <h2 class="seo-block__title">Купити смартфон, гаджети та аксесуари онлайн — Honey Store</h2>
-    <p class="seo-block__intro">
-      <strong>Honey Store</strong> — це сучасний інтернет-магазин електроніки, де кожен покупець
-      знайде техніку для роботи, навчання та відпочинку. Ми пропонуємо широкий вибір смартфонів,
-      планшетів, ноутбуків, навушників та аксесуарів від провідних світових брендів — Apple,
-      Samsung, Sony, Xiaomi та інших. Весь асортимент сертифікований, має офіційну гарантію та
-      доставляється по всій Україні.
-    </p>
+    <div class="seo-block__top">
+      <div class="seo-block__main">
+        <h2 class="seo-block__title">Купити смартфон, гаджети та аксесуари онлайн — Honey Store</h2>
+        <p class="seo-block__intro">
+          <strong>Honey Store</strong> — це сучасний інтернет-магазин електроніки, де кожен покупець
+          знайде техніку для роботи, навчання та відпочинку. Ми пропонуємо широкий вибір смартфонів,
+          планшетів, ноутбуків, навушників та аксесуарів від провідних світових брендів — Apple,
+          Samsung, Sony, Xiaomi та інших. Весь асортимент сертифікований, має офіційну гарантію та
+          доставляється по всій Україні.
+        </p>
+      </div>
+
+      <ul class="seo-block__highlights">
+        <li
+          v-for="item in HIGHLIGHTS"
+          :key="item.title"
+          class="seo-block__highlight"
+        >
+          <span class="seo-block__highlight-icon">
+            <component
+              :is="item.icon"
+              :size="18"
+            />
+          </span>
+          <span class="seo-block__highlight-text">
+            <strong>{{ item.title }}</strong>
+            {{ item.text }}
+          </span>
+        </li>
+      </ul>
+    </div>
 
     <div :class="['seo-block__body', { 'seo-block__body--open': open }]">
       <div class="seo-block__inner">
@@ -87,6 +120,20 @@ const open = ref(false)
   padding: 24px 0 0;
   border-top: 1px solid $color-gray-200;
 
+  &__top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+
+    @include mixins.respond-to(laptop) {
+      grid-template-columns: minmax(0, 800px) 1fr;
+    }
+  }
+
+  &__main {
+    min-width: 0;
+  }
+
   &__title {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
@@ -104,10 +151,64 @@ const open = ref(false)
     color: $color-gray-600;
     line-height: 1.7;
     margin: 0;
-    max-width: 800px;
 
     @include mixins.respond-to(tablet) {
       font-size: $font-size-base;
+    }
+  }
+
+  &__highlights {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    @include mixins.respond-to(laptop) {
+      display: flex;
+    }
+  }
+
+  &__highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: $color-gray-50;
+    border: 1px solid $color-gray-100;
+    border-radius: $radius-lg;
+    transition: border-color $transition-fast;
+
+    &:hover {
+      border-color: $color-primary-light;
+    }
+  }
+
+  &__highlight-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: $radius-md;
+    background: rgba($color-primary, 12%);
+    color: $color-primary;
+  }
+
+  &__highlight-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: $font-size-sm;
+    color: $color-gray-600;
+    line-height: 1.4;
+
+    strong {
+      color: $color-gray-900;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
     }
   }
 
