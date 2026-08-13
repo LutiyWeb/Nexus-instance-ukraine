@@ -63,6 +63,7 @@ function pick(n: number) {
     background: none;
     border: none;
     line-height: 0;
+    cursor: default;
   }
 
   &__icon {
