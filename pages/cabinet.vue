@@ -48,7 +48,7 @@ function logout() {
 </script>
 
 <template>
-  <div class="cabinet container">
+  <div class="cabinet container--narrow">
     <div class="cabinet__layout">
       <!-- Sidebar -->
       <aside class="cabinet__sidebar">

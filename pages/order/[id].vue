@@ -41,7 +41,7 @@ function formatDate(iso: string) {
 </script>
 
 <template>
-  <div class="order-page container">
+  <div class="order-page container--narrow">
     <AppBreadcrumbs
       :crumbs="[
         { label: 'Головна', to: '/' },

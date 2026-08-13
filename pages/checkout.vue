@@ -173,7 +173,7 @@ async function submit() {
 </script>
 
 <template>
-  <div class="checkout container">
+  <div class="checkout container--narrow">
     <div class="checkout__title-row">
       <h1 class="checkout__heading">Оформлення замовлення</h1>
       <AppBreadcrumbs

@@ -38,7 +38,7 @@ async function submit() {
 </script>
 
 <template>
-  <div class="reset-page container">
+  <div class="reset-page container--narrow">
     <!-- No token in URL -->
     <template v-if="!token">
       <div class="reset-page__card reset-page__card--error">

@@ -4,7 +4,7 @@ useCanonical()
 </script>
 
 <template>
-  <div class="contacts-page container">
+  <div class="contacts-page container--narrow">
     <TheTitle
       tag="h1"
       size="m"
