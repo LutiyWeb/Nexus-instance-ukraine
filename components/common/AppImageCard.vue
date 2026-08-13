@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, ShoppingCart, Mail } from 'lucide-vue-next'
+import { Heart, ShoppingCart, Check, Mail } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 interface Props {
@@ -153,12 +153,15 @@ async function handleNotifyClick(e: Event, product: Product) {
         </div>
         <button
           v-if="!isOutOfStock(product)"
-          class="image-card__cart"
+          :class="['image-card__cart', { 'image-card__cart--active': cartStore.has(product.id) }]"
           type="button"
           @click.prevent="handleCartClick(product)"
         >
-          <ShoppingCart :size="14" />
-          Додати до кошика
+          <component
+            :is="cartStore.has(product.id) ? Check : ShoppingCart"
+            :size="14"
+          />
+          {{ cartStore.has(product.id) ? 'У кошику' : 'Додати до кошика' }}
         </button>
         <button
           v-else
@@ -413,6 +416,14 @@ async function handleNotifyClick(e: Event, product: Product) {
 
     &:hover {
       background: $color-primary-dark;
+    }
+
+    &--active {
+      background: $color-success;
+
+      &:hover {
+        filter: brightness(0.92);
+      }
     }
   }
 

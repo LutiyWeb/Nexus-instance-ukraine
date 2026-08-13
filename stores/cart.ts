@@ -17,6 +17,10 @@ export const useCartStore = defineStore('cart', () => {
   const count = computed(() => items.value.reduce((s, e) => s + e.qty, 0))
   const total = computed(() => items.value.reduce((s, e) => s + e.product.price * e.qty, 0))
 
+  function has(productId: number): boolean {
+    return items.value.some((e) => e.product.id === productId)
+  }
+
   // ── localStorage (гість) ─────────────────────────────────────────────────
   function _loadLocal() {
     if (!process.client) return
@@ -190,5 +194,5 @@ export const useCartStore = defineStore('cart', () => {
     },
   )
 
-  return { items, loading, count, total, add, remove, updateQty, clear, fetchCart }
+  return { items, loading, count, total, has, add, remove, updateQty, clear, fetchCart }
 })

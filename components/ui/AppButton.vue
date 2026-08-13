@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'gradient'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   tag?: 'button' | 'a' | 'span'
   to?: string
@@ -155,6 +155,17 @@ withDefaults(defineProps<Props>(), {
     &:not(:disabled):hover {
       background: rgb(220 38 38);
       box-shadow: 0 4px 12px rgb(239 68 68 / 35%);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--success {
+    background: $color-success;
+    color: $color-white;
+    box-shadow: 0 1px 3px rgba($color-success, 30%);
+    &:not(:disabled):hover {
+      filter: brightness(0.92);
+      box-shadow: 0 4px 12px rgba($color-success, 35%);
       transform: translateY(-1px);
     }
   }
