@@ -1,4 +1,4 @@
-import type { NpSettlement, NpWarehouse } from '~/contracts/delivery'
+import type { NpSettlement, NpStreet, NpWarehouse } from '~/contracts/delivery'
 
 export function useNovaPoshta() {
   const config = useRuntimeConfig()
@@ -11,6 +11,13 @@ export function useNovaPoshta() {
     return res.data
   }
 
+  async function searchStreets(cityRef: string, q: string, limit = 20) {
+    const res = await $fetch<{ data: NpStreet[] }>(`${base}/streets`, {
+      query: { cityRef, q, limit },
+    })
+    return res.data
+  }
+
   async function getWarehouses(cityRef: string, type: 'all' | 'branch' | 'postomat' = 'branch') {
     const res = await $fetch<{ data: NpWarehouse[] }>(`${base}/warehouses`, {
       query: { cityRef, type },
@@ -18,5 +25,5 @@ export function useNovaPoshta() {
     return res.data
   }
 
-  return { searchSettlements, getWarehouses }
+  return { searchSettlements, searchStreets, getWarehouses }
 }

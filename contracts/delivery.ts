@@ -8,6 +8,12 @@ export interface NpSettlement {
   warehouseCount: number
 }
 
+export interface NpStreet {
+  ref: string
+  name: string
+  type: string
+}
+
 export interface NpWarehouse {
   ref: string
   number: string

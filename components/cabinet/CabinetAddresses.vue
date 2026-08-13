@@ -2,8 +2,10 @@
 import { MapPin, Star, Trash2, Plus, X } from 'lucide-vue-next'
 import { addressSchema } from '~/contracts/addresses'
 import type { Address } from '~/contracts/addresses'
+import type { NpSettlement, NpStreet } from '~/contracts/delivery'
 
 const { authFetch } = useAuthFetch()
+const { searchSettlements, searchStreets } = useNovaPoshta()
 
 const addresses = ref<Address[]>([])
 const loading = ref(true)
@@ -12,6 +14,95 @@ const submitting = ref(false)
 
 const form = reactive({ city: '', street: '', house: '', apartment: '', isDefault: false })
 const errors = ref<Record<string, string>>({})
+
+// City autocomplete (Nova Poshta settlements) — form.city stays a plain
+// string to match the address contract; the dropdown just fills it in.
+// The street search needs the settlement's `deliveryCityRef` though, so that
+// part of the selection is kept on the side rather than in the form.
+const citySuggestions = ref<NpSettlement[]>([])
+const cityDropdownOpen = ref(false)
+const cityLoading = ref(false)
+const selectedCityRef = ref<string | null>(null)
+let cityDebounceTimer: ReturnType<typeof setTimeout>
+
+function onCityInput() {
+  selectedCityRef.value = null
+  clearTimeout(cityDebounceTimer)
+  const q = form.city.trim()
+  if (q.length < 2) {
+    citySuggestions.value = []
+    cityDropdownOpen.value = false
+    return
+  }
+  cityDebounceTimer = setTimeout(async () => {
+    cityLoading.value = true
+    try {
+      citySuggestions.value = await searchSettlements(q)
+      cityDropdownOpen.value = true
+    } finally {
+      cityLoading.value = false
+    }
+  }, 300)
+}
+
+function selectCity(settlement: NpSettlement) {
+  form.city = settlement.present
+  selectedCityRef.value = settlement.deliveryCityRef
+  citySuggestions.value = []
+  cityDropdownOpen.value = false
+  // The previously picked street belongs to the old city — it no longer
+  // applies once the city changes.
+  form.street = ''
+}
+
+function onCityFocus() {
+  if (citySuggestions.value.length) cityDropdownOpen.value = true
+}
+
+function onCityBlur() {
+  cityDropdownOpen.value = false
+}
+
+// Street autocomplete — same shape as city, scoped to the selected city's ref
+// and disabled until one is actually picked (NP's street search requires it).
+const streetSuggestions = ref<NpStreet[]>([])
+const streetDropdownOpen = ref(false)
+const streetLoading = ref(false)
+let streetDebounceTimer: ReturnType<typeof setTimeout>
+
+function onStreetInput() {
+  clearTimeout(streetDebounceTimer)
+  const cityRef = selectedCityRef.value
+  const q = form.street.trim()
+  if (!cityRef || q.length < 2) {
+    streetSuggestions.value = []
+    streetDropdownOpen.value = false
+    return
+  }
+  streetDebounceTimer = setTimeout(async () => {
+    streetLoading.value = true
+    try {
+      streetSuggestions.value = await searchStreets(cityRef, q)
+      streetDropdownOpen.value = true
+    } finally {
+      streetLoading.value = false
+    }
+  }, 300)
+}
+
+function selectStreet(street: NpStreet) {
+  form.street = `${street.type} ${street.name}`.trim()
+  streetSuggestions.value = []
+  streetDropdownOpen.value = false
+}
+
+function onStreetFocus() {
+  if (streetSuggestions.value.length) streetDropdownOpen.value = true
+}
+
+function onStreetBlur() {
+  streetDropdownOpen.value = false
+}
 
 async function load() {
   loading.value = true
@@ -40,6 +131,7 @@ async function submit() {
     form.house = ''
     form.apartment = ''
     form.isDefault = false
+    selectedCityRef.value = null
     showForm.value = false
     await load()
   } finally {
@@ -87,12 +179,41 @@ onMounted(load)
         <div class="cab-addr__grid">
           <div class="cab-addr__field">
             <label class="cab-addr__label">Місто *</label>
-            <input
-              v-model="form.city"
-              class="cab-addr__input"
-              :class="{ 'cab-addr__input--error': errors.city }"
-              placeholder="Київ"
-            />
+            <div class="cab-addr__autocomplete">
+              <input
+                v-model="form.city"
+                class="cab-addr__input"
+                :class="{ 'cab-addr__input--error': errors.city }"
+                placeholder="Київ"
+                autocomplete="off"
+                @input="onCityInput"
+                @focus="onCityFocus"
+                @blur="onCityBlur"
+              />
+              <ul
+                v-if="cityDropdownOpen && citySuggestions.length"
+                class="cab-addr__dropdown"
+              >
+                <li
+                  v-for="settlement in citySuggestions"
+                  :key="settlement.ref"
+                >
+                  <button
+                    type="button"
+                    class="cab-addr__dropdown-option"
+                    @mousedown.prevent="selectCity(settlement)"
+                  >
+                    {{ settlement.present }}
+                  </button>
+                </li>
+              </ul>
+              <p
+                v-else-if="cityDropdownOpen && !cityLoading"
+                class="cab-addr__dropdown-empty"
+              >
+                Нічого не знайдено
+              </p>
+            </div>
             <span
               v-if="errors.city"
               class="cab-addr__error"
@@ -102,12 +223,42 @@ onMounted(load)
 
           <div class="cab-addr__field">
             <label class="cab-addr__label">Вулиця *</label>
-            <input
-              v-model="form.street"
-              class="cab-addr__input"
-              :class="{ 'cab-addr__input--error': errors.street }"
-              placeholder="вул. Хрещатик"
-            />
+            <div class="cab-addr__autocomplete">
+              <input
+                v-model="form.street"
+                class="cab-addr__input"
+                :class="{ 'cab-addr__input--error': errors.street }"
+                :disabled="!selectedCityRef"
+                :placeholder="selectedCityRef ? 'вул. Хрещатик' : 'Спочатку оберіть місто'"
+                autocomplete="off"
+                @input="onStreetInput"
+                @focus="onStreetFocus"
+                @blur="onStreetBlur"
+              />
+              <ul
+                v-if="streetDropdownOpen && streetSuggestions.length"
+                class="cab-addr__dropdown"
+              >
+                <li
+                  v-for="street in streetSuggestions"
+                  :key="street.ref"
+                >
+                  <button
+                    type="button"
+                    class="cab-addr__dropdown-option"
+                    @mousedown.prevent="selectStreet(street)"
+                  >
+                    {{ street.type }} {{ street.name }}
+                  </button>
+                </li>
+              </ul>
+              <p
+                v-else-if="streetDropdownOpen && !streetLoading"
+                class="cab-addr__dropdown-empty"
+              >
+                Нічого не знайдено
+              </p>
+            </div>
             <span
               v-if="errors.street"
               class="cab-addr__error"
@@ -140,22 +291,24 @@ onMounted(load)
           </div>
         </div>
 
-        <label class="cab-addr__checkbox">
-          <input
-            v-model="form.isDefault"
-            type="checkbox"
-          />
-          <span>Зробити основною</span>
-        </label>
+        <div class="cab-addr__form-footer">
+          <label class="cab-addr__checkbox">
+            <input
+              v-model="form.isDefault"
+              type="checkbox"
+            />
+            <span>Зробити основною</span>
+          </label>
 
-        <AppButton
-          variant="primary"
-          size="md"
-          :loading="submitting"
-          @click="submit"
-        >
-          Зберегти адресу
-        </AppButton>
+          <AppButton
+            variant="primary"
+            size="md"
+            :loading="submitting"
+            @click="submit"
+          >
+            Зберегти адресу
+          </AppButton>
+        </div>
       </div>
     </Transition>
 
@@ -308,6 +461,7 @@ onMounted(load)
   }
 
   &__input {
+    width: 100%;
     height: 40px;
     padding: 0 12px;
     border: 1px solid $color-gray-200;
@@ -321,9 +475,59 @@ onMounted(load)
     &:focus {
       border-color: $color-primary;
     }
+    &:disabled {
+      background: $color-gray-50;
+      color: $color-gray-400;
+      cursor: not-allowed;
+    }
     &--error {
       border-color: $color-danger;
     }
+  }
+
+  &__autocomplete {
+    position: relative;
+    width: 100%;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    inset-inline: 0;
+    z-index: $z-dropdown;
+    max-height: 220px;
+    overflow-y: auto;
+    background: $color-white;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+  }
+
+  &__dropdown-option {
+    display: block;
+    width: 100%;
+    padding: 9px 12px;
+    text-align: left;
+    font-size: $font-size-sm;
+    color: $color-gray-900;
+
+    &:hover {
+      background: $color-gray-50;
+    }
+  }
+
+  &__dropdown-empty {
+    position: absolute;
+    top: calc(100% + 4px);
+    inset-inline: 0;
+    z-index: $z-dropdown;
+    padding: 9px 12px;
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+    background: $color-white;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
   }
 
   &__error {
@@ -338,6 +542,14 @@ onMounted(load)
     font-size: $font-size-sm;
     color: $color-gray-700;
     cursor: pointer;
+  }
+
+  &__form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   &__list {
