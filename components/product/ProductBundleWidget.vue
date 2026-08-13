@@ -123,7 +123,15 @@ function handleBuyBundle() {
         </div>
 
         <div class="bundle-widget__tile-info">
-          <h3 class="bundle-widget__tile-title">{{ selectedAccessory.title }}</h3>
+          <h3 class="bundle-widget__tile-title">
+            <NuxtLink
+              :to="`/product/${selectedAccessory.id}`"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ selectedAccessory.title }}
+            </NuxtLink>
+          </h3>
           <p class="bundle-widget__tile-price">
             <span class="bundle-widget__tile-price-old">{{ selectedAccessory.price }} ₴</span>
             {{ accessoryDiscountedPrice }} ₴
@@ -325,6 +333,17 @@ function handleBuyBundle() {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color $transition-fast;
+
+      &:hover {
+        color: $color-primary;
+        text-decoration: underline;
+      }
+    }
   }
 
   &__tile-price {
