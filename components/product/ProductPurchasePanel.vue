@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, ShoppingCart, Minus, Plus } from 'lucide-vue-next'
+import { Heart, ShoppingCart, Check, Minus, Plus } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 interface Props {
@@ -7,27 +7,70 @@ interface Props {
   originalPrice: number | null
   isFav: boolean
   isOutOfStock: boolean
+  isInCart: boolean
+  cartQty: number
 }
 
 interface Emits {
   addToCart: [qty: number]
   toggleFav: []
   notify: []
+  updateCartQty: [delta: number]
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const { clamp: clampToStock } = useStockLimit()
+
+// Before the item is in the cart, quantity is a local draft used only for the
+// initial "add to cart" click. Once it's in the cart, the same stepper reads
+// and writes the real cart quantity instead (see displayQty/applyQty below).
 const qty = ref(1)
 
-function decrement() {
-  if (qty.value > 1) qty.value--
-}
-function increment() {
-  qty.value++
+const displayQty = computed(() => (props.isInCart ? props.cartQty : qty.value))
+const isAtStockLimit = computed(() => displayQty.value >= props.product.stock)
+
+function applyQty(value: number) {
+  const clamped = clampToStock(value, props.product.stock)
+  if (props.isInCart) {
+    const delta = clamped - props.cartQty
+    if (delta !== 0) emit('updateCartQty', delta)
+  } else {
+    qty.value = clamped
+  }
 }
 
+function decrement() {
+  if (props.isInCart) {
+    if (props.cartQty > 1) emit('updateCartQty', -1)
+  } else if (qty.value > 1) {
+    qty.value--
+  }
+}
+function increment() {
+  if (isAtStockLimit.value) {
+    clampToStock(displayQty.value + 1, props.product.stock)
+    return
+  }
+  if (props.isInCart) emit('updateCartQty', 1)
+  else qty.value++
+}
+
+const {
+  editing: qtyEditing,
+  draft: qtyDraft,
+  inputRef: qtyInputRef,
+  startEdit: startQtyEdit,
+  commit: commitQty,
+  cancel: cancelQty,
+} = useEditableQty(
+  () => displayQty.value,
+  (v) => applyQty(v),
+)
+
 function handleAddToCart() {
+  if (props.isInCart) return
   emit('addToCart', qty.value)
   qty.value = 1
 }
@@ -78,15 +121,33 @@ function handleAddToCart() {
         <button
           class="product-purchase__qty-btn"
           type="button"
-          :disabled="qty <= 1"
+          :disabled="isInCart ? cartQty <= 1 : qty <= 1"
           @click="decrement"
         >
           <Minus :size="14" />
         </button>
-        <span class="product-purchase__qty-val">{{ qty }}</span>
+        <input
+          v-if="qtyEditing"
+          ref="qtyInputRef"
+          v-model="qtyDraft"
+          type="number"
+          min="1"
+          inputmode="numeric"
+          class="product-purchase__qty-val product-purchase__qty-val--input"
+          @blur="commitQty"
+          @keydown.enter="commitQty"
+          @keydown.escape="cancelQty"
+        />
+        <span
+          v-else
+          class="product-purchase__qty-val"
+          @click="startQtyEdit"
+          >{{ displayQty }}</span
+        >
         <button
           class="product-purchase__qty-btn"
           type="button"
+          :disabled="isAtStockLimit"
           @click="increment"
         >
           <Plus :size="14" />
@@ -96,12 +157,16 @@ function handleAddToCart() {
 
     <AppButton
       v-if="!isOutOfStock"
-      variant="gradient"
+      :variant="isInCart ? 'success' : 'gradient'"
       size="xl"
       class="product-purchase__add-btn"
       @click="handleAddToCart"
     >
-      <ShoppingCart :size="24" /> Додати до кошика
+      <component
+        :is="isInCart ? Check : ShoppingCart"
+        :size="24"
+      />
+      {{ isInCart ? 'У кошику' : 'Додати до кошика' }}
     </AppButton>
     <AppButton
       v-else
@@ -250,11 +315,30 @@ function handleAddToCart() {
     font-weight: $font-weight-semibold;
     color: $color-gray-900;
     border-inline: 1px solid $color-gray-200;
+    cursor: text;
+
+    &--input {
+      height: 100%;
+      background: $color-white;
+      border-block: none;
+      outline: none;
+      font-family: $font-family-base;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+      }
+      appearance: textfield;
+    }
   }
 
-  // ".app-btn--gradient" chained in so these layout overrides
-  // out-specificity AppButton's own size/variant rules reliably
-  &__add-btn.app-btn--gradient {
+  // ".app-btn--gradient"/".app-btn--success" chained in so these layout
+  // overrides out-specificity AppButton's own size/variant rules reliably —
+  // both variants are covered since this button switches between them
+  // (gradient when not in cart, success once added).
+  &__add-btn.app-btn--gradient,
+  &__add-btn.app-btn--success {
     grid-area: buy;
     white-space: nowrap;
     justify-content: center;

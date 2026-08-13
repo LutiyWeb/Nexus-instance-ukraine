@@ -237,6 +237,10 @@ const allImages = computed(() => {
 })
 
 const isFav = computed(() => (product.value ? wishlistsStore.has(product.value.id) : false))
+const isInCart = computed(() => (product.value ? cartStore.has(product.value.id) : false))
+const cartQty = computed(
+  () => cartStore.items.find((e) => e.product.id === product.value?.id)?.qty ?? 0,
+)
 
 const originalPrice = computed(() => {
   const p = product.value
@@ -346,6 +350,10 @@ const isOutOfStock = computed(() => (product.value?.stock ?? 0) === 0 || route.q
 
 function onAddToCart(qty: number) {
   if (product.value) cartStore.add(product.value, qty)
+}
+
+function onUpdateCartQty(delta: number) {
+  if (product.value) cartStore.updateQty(product.value.id, delta)
 }
 
 const toastStore = useToastStore()
@@ -540,9 +548,12 @@ function toggleFav() {
             :original-price="originalPrice"
             :is-fav="isFav"
             :is-out-of-stock="isOutOfStock"
+            :is-in-cart="isInCart"
+            :cart-qty="cartQty"
             @add-to-cart="onAddToCart"
             @toggle-fav="toggleFav"
             @notify="notifyWhenAvailable"
+            @update-cart-qty="onUpdateCartQty"
           />
 
           <!-- Perks -->

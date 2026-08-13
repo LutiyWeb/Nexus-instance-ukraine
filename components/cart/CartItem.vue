@@ -2,7 +2,7 @@
 import { Trash2 } from 'lucide-vue-next'
 import type { CartEntry } from '~/stores/cart'
 
-defineProps<{
+const props = defineProps<{
   item: CartEntry
   selected: boolean
 }>()
@@ -16,6 +16,31 @@ const emit = defineEmits<{
 function formatPrice(p: number) {
   return p.toLocaleString('uk-UA') + ' ₴'
 }
+
+const { clamp: clampToStock } = useStockLimit()
+
+function increment() {
+  if (props.item.qty >= props.item.product.stock) {
+    clampToStock(props.item.qty + 1, props.item.product.stock)
+    return
+  }
+  emit('updateQty', props.item.product.id, 1)
+}
+
+const {
+  editing: qtyEditing,
+  draft: qtyDraft,
+  inputRef: qtyInputRef,
+  startEdit: startQtyEdit,
+  commit: commitQty,
+  cancel: cancelQty,
+} = useEditableQty(
+  () => props.item.qty,
+  (v) => {
+    const clamped = clampToStock(v, props.item.product.stock)
+    emit('updateQty', props.item.product.id, clamped - props.item.qty)
+  },
+)
 </script>
 
 <template>
@@ -56,14 +81,32 @@ function formatPrice(p: number) {
     <div class="cart-item__qty">
       <button
         type="button"
+        :disabled="item.qty <= 1"
         @click="emit('updateQty', item.product.id, -1)"
       >
         −
       </button>
-      <span>{{ item.qty }}</span>
+      <input
+        v-if="qtyEditing"
+        ref="qtyInputRef"
+        v-model="qtyDraft"
+        type="number"
+        min="1"
+        inputmode="numeric"
+        class="cart-item__qty-input"
+        @blur="commitQty"
+        @keydown.enter="commitQty"
+        @keydown.escape="cancelQty"
+      />
+      <span
+        v-else
+        @click="startQtyEdit"
+        >{{ item.qty }}</span
+      >
       <button
         type="button"
-        @click="emit('updateQty', item.product.id, 1)"
+        :disabled="item.qty >= item.product.stock"
+        @click="increment"
       >
         +
       </button>
@@ -196,8 +239,13 @@ function formatPrice(p: number) {
       justify-content: center;
       transition: background $transition-fast;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background: $color-gray-200;
+      }
+
+      &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
       }
     }
 
@@ -206,6 +254,27 @@ function formatPrice(p: number) {
       font-weight: $font-weight-medium;
       min-width: 20px;
       text-align: center;
+      cursor: text;
+    }
+
+    &-input {
+      width: 32px;
+      min-width: 20px;
+      text-align: center;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      font-family: $font-family-base;
+      color: $color-gray-900;
+      border: none;
+      outline: none;
+      background: transparent;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+      }
+      appearance: textfield;
     }
   }
 
