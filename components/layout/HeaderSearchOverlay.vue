@@ -6,6 +6,7 @@ import {
   TrendingUp,
   ChevronRight,
   ShoppingCart,
+  Check,
   LayoutGrid,
   Laptop,
   Smartphone,
@@ -530,12 +531,18 @@ onBeforeUnmount(() => {
                         <span class="search-modal__product-price">${{ p.price }}</span>
                       </div>
                       <button
-                        class="search-modal__product-add"
+                        :class="[
+                          'search-modal__product-add',
+                          { 'search-modal__product-add--active': cartStore.has(p.id) },
+                        ]"
                         type="button"
-                        title="Додати до кошика"
+                        :title="cartStore.has(p.id) ? 'У кошику' : 'Додати до кошика'"
                         @click.prevent="quickAdd(p, $event)"
                       >
-                        <ShoppingCart :size="14" />
+                        <component
+                          :is="cartStore.has(p.id) ? Check : ShoppingCart"
+                          :size="14"
+                        />
                       </button>
                     </NuxtLink>
                   </template>
@@ -574,7 +581,7 @@ onBeforeUnmount(() => {
 
   &__box {
     width: 100%;
-    max-width: 864px;
+    max-width: 1024px;
     background: $color-white;
     border-radius: $radius-xl;
     box-shadow:
@@ -744,6 +751,7 @@ onBeforeUnmount(() => {
   &__trending {
     overflow: hidden;
     padding: 24px 12px 36px;
+    --swiper-theme-color: #{$color-primary};
 
     :deep(.swiper-pagination) {
       bottom: 8px;
@@ -955,6 +963,15 @@ onBeforeUnmount(() => {
     &:hover {
       background: $color-primary;
       color: $color-white;
+    }
+
+    &--active {
+      background: $color-success;
+      color: $color-white;
+
+      &:hover {
+        filter: brightness(0.92);
+      }
     }
   }
 
