@@ -199,7 +199,7 @@ const showImage = computed(() => mounted.value && isXl.value)
     font-weight: $font-weight-bold;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #0072ff;
+    color: $color-primary-dark;
 
     @include mixins.respond-to(notebook) {
       font-size: 10px;
