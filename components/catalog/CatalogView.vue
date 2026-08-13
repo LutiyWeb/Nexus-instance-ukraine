@@ -75,13 +75,19 @@ const activeFilters = computed<Filters>(() => ({
 }))
 
 // ─── Fetch on URL change ──────────────────────────────────────────────────────
+// Also re-runs once categoriesStore.categories finishes loading (fetched in
+// onMounted below) — a parent category needs its subcategory slugs expanded
+// before querying products, and that expansion is a no-op until the category
+// tree has arrived.
 watch(
-  () => route.query,
+  [() => route.query, () => categoriesStore.categories.length],
   () => {
     productsStore.fetchProducts({
       page: currentPage.value,
       limit: perPage.value,
-      categories: selectedCategories.value.length ? selectedCategories.value : undefined,
+      categories: selectedCategories.value.length
+        ? categoriesStore.expandSlugs(selectedCategories.value)
+        : undefined,
       brands: selectedBrands.value.length ? selectedBrands.value : undefined,
       priceMin: activeFilters.value.priceMin > 0 ? activeFilters.value.priceMin : undefined,
       priceMax: activeFilters.value.priceMax < 999999 ? activeFilters.value.priceMax : undefined,
@@ -222,6 +228,7 @@ const activeCategory = computed(() =>
 )
 
 const pageTitle = computed(() => activeCategory.value?.name ?? 'Каталог')
+const activeSubcategories = computed(() => activeCategory.value?.subcategories ?? [])
 
 const breadcrumbs = computed(() => {
   const crumbs: { label: string; to?: string }[] = [{ label: 'Головна', to: '/' }]
@@ -278,6 +285,8 @@ const breadcrumbs = computed(() => {
         </div>
       </div>
     </div>
+
+    <CatalogSubcategoryTiles :subcategories="activeSubcategories" />
 
     <!-- Backdrop -->
     <Transition name="fade">

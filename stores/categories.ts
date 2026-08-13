@@ -80,5 +80,19 @@ export const useCategoriesStore = defineStore('categories', () => {
     return null
   }
 
-  return { categories, loading, fetchCategories, findBySlug }
+  // A parent category can have zero products of its own (all real products
+  // live in its subcategories — see the comment in fetchCategories above), so
+  // filtering products by the parent slug alone returns nothing. Expand it to
+  // the parent + all its subcategory slugs before querying products.
+  function expandSlugs(slugs: string[]): string[] {
+    const expanded = new Set<string>()
+    for (const slug of slugs) {
+      expanded.add(slug)
+      const top = categories.value.find((c) => c.slug === slug)
+      top?.subcategories?.forEach((s) => expanded.add(s.slug))
+    }
+    return [...expanded]
+  }
+
+  return { categories, loading, fetchCategories, findBySlug, expandSlugs }
 })
