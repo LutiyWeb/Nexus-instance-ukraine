@@ -96,27 +96,30 @@ const mounted = ref(false)
 // See TODOS.md for the "Лідери продажів" follow-up once there's real order
 // data to rank by.
 const HOME_PRICE_CEILING = 20000
-const HOME_PER_CATEGORY = 4
+const HOME_PER_CATEGORY = 3
 
-// Hand-picked for "affordable, season-relevant gadget" — revisit every
-// season/month. Checked against the live catalog on 2026-08-16: this vendor
-// (Hubber) carries none of the major-appliance categories (ACs, fridges,
-// washers, robot vacuums all came back empty), so the seasonal angle here is
-// scoped to portable electronics only, not home appliances.
-//
-// Two categories got dropped after checking actual stock: `tablets` has 0
-// products at any price right now (not a price problem, just no stock), and
-// `chasy` is ~95% watch straps/glass under this price cap — of the top 60
-// newest chasy items under ₴20000, only 2 were actual watches. Swapped both
-// for `smart-home` and `zaryadni-prystroi`, which checked out with plenty of
-// real, distinct, in-stock items each.
-const SEASONAL_CATEGORY_SLUGS = [
-  'powerbanky',
+// Every real top-level category gets a shot at the homepage now (was a
+// hand-picked seasonal shortlist) — the noise/brand/dedup filters below do
+// the curation work per category, so a thin or messy category just
+// contributes fewer (or zero) items instead of needing to be hand-excluded.
+const HOME_CATEGORY_SLUGS = [
+  'smartphones',
+  'laptops',
   'naushnyky',
   'audio',
-  'elektronni-knygy',
+  'gaming',
+  'tablets',
+  'accessories',
+  'tv',
   'smart-home',
+  'photo-video',
+  'office',
+  'chasy',
+  'elektronni-knygy',
   'zaryadni-prystroi',
+  'powerbanky',
+  'chohly-dlya-telefoniv',
+  'peryferiia',
 ]
 
 // Generic accessory-noise guard, kept in case a future category swap
@@ -155,6 +158,82 @@ function isRecognizedBrand(brand: string | null): boolean {
   return !!brand && RECOGNIZED_BRANDS.includes(brand)
 }
 
+// Same base product in several colors (we've seen this repeatedly — Bearbrick
+// powerbanks, Wonlex watches) reads as "3 identical items" once picked into a
+// top-3. Stripping a trailing SKU code and common color words collapses those
+// down to one representative before ranking runs.
+const COLOR_WORDS = [
+  'black',
+  'white',
+  'blue',
+  'red',
+  'grey',
+  'gray',
+  'silver',
+  'gold',
+  'rose',
+  'green',
+  'purple',
+  'orange',
+  'yellow',
+  'pink',
+  'beige',
+  'brown',
+  'multicolor',
+  'graphite',
+  'midnight',
+  'starlight',
+  'чорний',
+  'білий',
+  'синій',
+  'червоний',
+  'сірий',
+  'сріблястий',
+  'золотий',
+  'рожевий',
+  'чорный',
+  'белый',
+  'синий',
+  'красный',
+  'серый',
+  'черный',
+  'розовый',
+  'голубой',
+  'зеленый',
+]
+
+function baseModelKey(title: string): string {
+  let key = title
+    .toLowerCase()
+    .replace(/\([^)]*\)\s*$/, '')
+    .trim()
+  for (const color of COLOR_WORDS) {
+    key = key.replace(new RegExp(`\\b${color}\\b`, 'g'), '')
+  }
+  return key.replace(/\s+/g, ' ').trim()
+}
+
+function dedupeByBaseModel<T extends { title: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  const result: T[] = []
+  for (const item of items) {
+    const key = baseModelKey(item.title)
+    if (seen.has(key)) continue
+    seen.add(key)
+    result.push(item)
+  }
+  return result
+}
+
+function shuffle<T>(items: T[]): T[] {
+  const arr = [...items]
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
 // One combined "newest across all 6 categories" query doesn't work — a single
 // recent import batch in one category (e.g. a run of Audio radios) fills the
 // entire result window and crowds every other category out before dedup even
@@ -179,24 +258,32 @@ async function fetchSeasonalProducts() {
   homeLoading.value = true
   try {
     const groups = await Promise.all(
-      SEASONAL_CATEGORY_SLUGS.map(async (slug) => {
+      HOME_CATEGORY_SLUGS.map(async (slug) => {
         try {
           const res = await $fetch<{ data: Product[] }>(`${config.public.apiBase}/api/products/`, {
             query: { categorySlug: slug, priceMax: HOME_PRICE_CEILING, inStock: true, limit: 40 },
           })
-          // Recognized brands first within the category, so a Marshall or
-          // Logitech listing wins the limited per-category slots over a
-          // No Brand one at the same price/recency.
-          return res.data
-            .filter((p) => !isAccessoryNoise(p.title))
-            .sort((a, b) => Number(isRecognizedBrand(b.brand)) - Number(isRecognizedBrand(a.brand)))
+          // Top picks per category: recognized brand first, then biggest
+          // discount as the tiebreaker — a real markdown is a concrete reason
+          // to feature that listing today, not just "it's in stock".
+          return dedupeByBaseModel(res.data.filter((p) => !isAccessoryNoise(p.title)))
+            .sort((a, b) => {
+              const brandDiff =
+                Number(isRecognizedBrand(b.brand)) - Number(isRecognizedBrand(a.brand))
+              if (brandDiff !== 0) return brandDiff
+              return (b.discountPercentage ?? 0) - (a.discountPercentage ?? 0)
+            })
             .slice(0, HOME_PER_CATEGORY)
         } catch {
           return []
         }
       }),
     )
-    homeProducts.value = interleave(groups)
+    // Shuffled category order each load, then round-robin interleaved — with
+    // 17 categories in the mix, that guarantees no two adjacent cards share a
+    // category, and the mix looks different on every visit rather than always
+    // starting with the same one.
+    homeProducts.value = interleave(shuffle(groups.filter((g) => g.length > 0)))
   } finally {
     homeLoading.value = false
   }
