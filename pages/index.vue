@@ -81,7 +81,6 @@ interface BannersResponse {
 }
 
 const config = useRuntimeConfig()
-const store = useProductsStore()
 const categoriesStore = useCategoriesStore()
 
 const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
@@ -289,12 +288,23 @@ async function fetchSeasonalProducts() {
   }
 }
 
+// A local, homepage-only count — deliberately NOT productsStore.fetchProducts().
+// That call fills the *shared* products store, and other places (product page
+// "often bought together", search overlay "trending now") only fetch their own
+// list when that shared store is still empty. A homepage limit:1 call was
+// leaving exactly one product sitting there, so every other page silently
+// reused that same single item instead of fetching its own.
+const catalogTotal = ref(0)
+
 onMounted(() => {
   mounted.value = true
-  // Cheap call kept only to populate store.meta.total for the "Дивитись усі
-  // (N)" link count below, which should reflect the whole catalog, not just
-  // this curated seasonal pool.
-  store.fetchProducts({ limit: 1 })
+  $fetch<{ meta: { total: number } }>(`${config.public.apiBase}/api/products/`, {
+    query: { limit: 1 },
+  })
+    .then((res) => {
+      catalogTotal.value = res.meta.total
+    })
+    .catch(() => {})
   fetchSeasonalProducts()
   categoriesStore.fetchCategories()
 })
@@ -542,7 +552,7 @@ const promoTiles = computed(() => {
           title="Всі товари"
           link-label="Дивитись усі"
           link-to="/catalog"
-          :link-count="store.meta.total"
+          :link-count="catalogTotal"
         >
           <template #default="slotProps">
             <TheProductCard
@@ -563,7 +573,7 @@ const promoTiles = computed(() => {
           <h2 class="home__tiles-title">Гарячі пропозиції</h2>
         </div>
         <div
-          v-if="store.loading"
+          v-if="homeLoading"
           class="home__tiles-grid"
         >
           <AppSkeleton
