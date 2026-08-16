@@ -91,3 +91,23 @@ have yet (no cron, no worker process).
   Fix: pick a real headphones product (not a case) for special_1 via
   `/admin/banners`, or a follow-up one-off script that filters by title
   instead of just category.
+
+## Homepage — "Лідери продажів" removed (deferred 2026-08-16) — backend
+
+- **The old "Хіти продажів" slider on the homepage was fake** — it read from
+  the same unsorted `store.products` array as "Всі товари", just sliced to a
+  different length, so it always showed the exact same items under a
+  misleading label. Removed from `pages/index.vue` rather than leave a lie on
+  the page.
+- **No real signal to bring it back with yet.** `Product` has no sales-count
+  field; ranking by actual sales means aggregating `order_items` (sum/count
+  per product, probably over a rolling window), which doesn't exist as a
+  query today — and the store doesn't have enough real order volume yet for
+  that ranking to mean anything.
+- Also capped what "Всі товари"/"Новинки" can show: `priceMax=20000` on the
+  homepage fetch, plus a client-side `diversifyByCategory` cap (max 2 per
+  category) so one Hubber import batch (e.g. a run of near-identical screen
+  protectors) can't fill the whole slider.
+- Fix: once there's real order history, add a backend-side bestseller
+  ranking (new `sortBy` value or dedicated endpoint) and bring the section
+  back ordered by that instead of raw insert order.

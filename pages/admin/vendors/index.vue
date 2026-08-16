@@ -10,6 +10,20 @@ interface Vendor {
   name: string
   slug: string
   is_active: boolean
+  last_sync_at: string | null
+  last_sync_status: 'success' | 'partial' | 'failed' | 'running' | null
+  last_sync_error: string | null
+}
+
+interface SyncStats {
+  vendor: string
+  mode: 'incremental' | 'full'
+  seen: number
+  matched: number
+  price_changed: number
+  stock_changed: number
+  zeroed: number
+  failed: number
 }
 
 interface VendorCategory {
@@ -126,6 +140,51 @@ async function loadVendors() {
     if (vendors.value.length === 1) selectedVendorId.value = vendors.value[0].id
   } catch {
     message.error('Не вдалося завантажити список постачальників')
+  }
+}
+
+const selectedVendor = computed(
+  () => vendors.value.find((v) => v.id === selectedVendorId.value) ?? null,
+)
+
+// Full sweep always runs in the background (~7 min) and only reports 202, so
+// there is nothing to await — refresh the vendor row a few times to pick up
+// last_sync_status once the job finishes.
+async function pollVendorAfterFullSync() {
+  for (let i = 0; i < 20; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 15000))
+    await loadVendors()
+    const current = vendors.value.find((v) => v.id === selectedVendorId.value)
+    if (current && current.last_sync_status !== 'running') break
+  }
+}
+
+const syncingIncremental = ref(false)
+const syncingFull = ref(false)
+
+async function syncVendor(mode: 'incremental' | 'full') {
+  if (!selectedVendorId.value) return
+  const loadingRef = mode === 'full' ? syncingFull : syncingIncremental
+  loadingRef.value = true
+  try {
+    const res = await authFetch<{ data: { started: boolean; result?: SyncStats } }>(
+      `/api/admin/vendors/${selectedVendorId.value}/sync`,
+      { method: 'POST', body: { mode, wait: true } },
+    )
+    if (res.data.result) {
+      const s = res.data.result
+      message.success(
+        `Синхронізовано: перевірено ${s.seen}, зіставлено ${s.matched}, ціна змінена у ${s.price_changed}, залишок — у ${s.stock_changed}${s.failed ? `, помилок: ${s.failed}` : ''}`,
+      )
+    } else {
+      message.info('Повна синхронізація запущена у фоні (~7 хв) — статус оновиться тут автоматично')
+      pollVendorAfterFullSync().catch(() => {})
+    }
+    await loadVendors()
+  } catch (err: any) {
+    message.error(err?.data?.error?.message ?? 'Не вдалося запустити синхронізацію')
+  } finally {
+    loadingRef.value = false
   }
 }
 
@@ -379,6 +438,43 @@ onMounted(() => {
     </div>
 
     <template v-if="selectedVendorId">
+      <div class="admin-vendors__sync">
+        <div class="admin-vendors__sync-status">
+          <template v-if="selectedVendor?.last_sync_at">
+            Останнє оновлення: {{ new Date(selectedVendor.last_sync_at).toLocaleString('uk-UA') }}
+            <a-tag
+              :color="
+                selectedVendor.last_sync_status === 'success'
+                  ? 'green'
+                  : selectedVendor.last_sync_status === 'failed'
+                    ? 'red'
+                    : 'orange'
+              "
+            >
+              {{ selectedVendor.last_sync_status }}
+            </a-tag>
+          </template>
+          <template v-else>Ще не оновлювалось</template>
+        </div>
+        <a-space>
+          <a-button
+            type="primary"
+            :loading="syncingIncremental"
+            :disabled="syncingFull"
+            @click="syncVendor('incremental')"
+          >
+            Оновити ціни та залишки
+          </a-button>
+          <a-button
+            :loading="syncingFull"
+            :disabled="syncingIncremental"
+            @click="syncVendor('full')"
+          >
+            Повна синхронізація (~7 хв)
+          </a-button>
+        </a-space>
+      </div>
+
       <div class="admin-vendors__toolbar">
         <a-radio-group
           v-model:value="catalogMode"
@@ -577,6 +673,22 @@ onMounted(() => {
 
   &__vendor-select {
     width: 260px;
+  }
+
+  &__sync {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: rgb(79 70 229 / 4%);
+    border-radius: 8px;
+  }
+
+  &__sync-status {
+    font-size: 13px;
+    color: rgb(0 0 0 / 65%);
   }
 
   &__toolbar {

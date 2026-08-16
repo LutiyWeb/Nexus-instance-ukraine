@@ -102,6 +102,17 @@ const showImage = computed(() => mounted.value && isXl.value)
       max-width: 250px;
       display: block;
     }
+
+    :deep(.promo-tile__img) {
+      max-width: 250px;
+      // A percentage max-height doesn't reliably resolve here (the image sits
+      // behind a `display: contents` wrapper inside a flex tile), so this is
+      // a fixed px budget instead — small enough to fit the shortest tile
+      // height (170px, pre-notebook) with room for the title below it.
+      max-height: 120px;
+      width: auto;
+      height: auto;
+    }
   }
 
   &--horizontal {
@@ -113,6 +124,13 @@ const showImage = computed(() => mounted.value && isXl.value)
     .app-image {
       max-width: 200px;
       display: block;
+    }
+
+    :deep(.promo-tile__img) {
+      max-width: 200px;
+      max-height: 80%;
+      width: auto;
+      height: auto;
     }
 
     .promo-tile__content {

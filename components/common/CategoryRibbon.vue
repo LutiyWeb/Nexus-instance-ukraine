@@ -10,6 +10,7 @@ import {
   Home,
   Camera,
   Briefcase,
+  BookOpen,
   Package,
 } from 'lucide-vue-next'
 import type { Component } from 'vue'
@@ -20,9 +21,12 @@ const CATEGORY_ICONS: Record<string, Component> = {
   smartphones: Smartphone,
   laptops: Laptop,
   audio: Headphones,
+  naushnyky: Headphones,
   gaming: Gamepad2,
   tablets: Tablet,
-  accessories: Watch,
+  chasy: Watch,
+  'elektronni-knygy': BookOpen,
+  accessories: Package,
   tv: Tv,
   'smart-home': Home,
   'photo-video': Camera,

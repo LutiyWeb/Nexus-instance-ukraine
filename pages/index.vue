@@ -1,5 +1,18 @@
 <script setup lang="ts">
+import { Package, ShieldCheck, Truck, Percent, CreditCard } from 'lucide-vue-next'
 import { CARD_GAP } from '~/constants/layout'
+import type { Product } from '~/types/product'
+
+// Same copy as the SEO block at the bottom of the page — repeated here as a
+// compact strip right under the hero so a new visitor sees the trust signals
+// before they scroll, not only in the footer-adjacent SEO text.
+const TRUST_BADGES = [
+  { icon: Package, label: 'Великий асортимент' },
+  { icon: ShieldCheck, label: 'Офіційна гарантія' },
+  { icon: Truck, label: 'Швидка доставка' },
+  { icon: Percent, label: 'Вигідні ціни' },
+  { icon: CreditCard, label: 'Зручна оплата' },
+]
 
 useSeoMeta({
   title: 'Honey Store — інтернет-магазин техніки та аксесуарів',
@@ -78,9 +91,124 @@ const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
 const { isXl, isDesktop } = useBreakpoints()
 const mounted = ref(false)
 
+// Homepage sliders are impulse-buy real estate, not the full catalog — keep
+// them to items a browsing visitor could plausibly add to cart on a whim.
+// See TODOS.md for the "Лідери продажів" follow-up once there's real order
+// data to rank by.
+const HOME_PRICE_CEILING = 20000
+const HOME_PER_CATEGORY = 4
+
+// Hand-picked for "affordable, season-relevant gadget" — revisit every
+// season/month. Checked against the live catalog on 2026-08-16: this vendor
+// (Hubber) carries none of the major-appliance categories (ACs, fridges,
+// washers, robot vacuums all came back empty), so the seasonal angle here is
+// scoped to portable electronics only, not home appliances.
+//
+// Two categories got dropped after checking actual stock: `tablets` has 0
+// products at any price right now (not a price problem, just no stock), and
+// `chasy` is ~95% watch straps/glass under this price cap — of the top 60
+// newest chasy items under ₴20000, only 2 were actual watches. Swapped both
+// for `smart-home` and `zaryadni-prystroi`, which checked out with plenty of
+// real, distinct, in-stock items each.
+const SEASONAL_CATEGORY_SLUGS = [
+  'powerbanky',
+  'naushnyky',
+  'audio',
+  'elektronni-knygy',
+  'smart-home',
+  'zaryadni-prystroi',
+]
+
+// Generic accessory-noise guard, kept in case a future category swap
+// reintroduces something strap/glass/case-heavy like `chasy` was.
+const ACCESSORY_TITLE_EXCLUDES = ['ремінець', 'ремешок', 'скло', 'стекло', 'чохол', 'плівка']
+
+function isAccessoryNoise(title: string): boolean {
+  const lower = title.toLowerCase()
+  return ACCESSORY_TITLE_EXCLUDES.some((kw) => lower.includes(kw))
+}
+
+// Checked against the live catalog on 2026-08-16 (`/api/brands/?search=...`) —
+// only kept names with real stock. Revisit as the catalog grows; this is the
+// difference between the homepage showing a Marshall headphone and a No Brand
+// radio from the same category pool.
+const RECOGNIZED_BRANDS = [
+  'Xiaomi',
+  'Samsung',
+  'Apple',
+  'Marshall',
+  'JBL',
+  'Sony',
+  'Logitech',
+  'Razer',
+  'Anker',
+  'ASUS',
+  'Lenovo',
+  'Huawei',
+  'PocketBook',
+  'Ajax',
+  'Hikvision',
+  'Doogee',
+]
+
+function isRecognizedBrand(brand: string | null): boolean {
+  return !!brand && RECOGNIZED_BRANDS.includes(brand)
+}
+
+// One combined "newest across all 6 categories" query doesn't work — a single
+// recent import batch in one category (e.g. a run of Audio radios) fills the
+// entire result window and crowds every other category out before dedup even
+// sees them. Fetching each category separately guarantees every category in
+// the list actually gets a shot at the homepage, then interleaving keeps the
+// slider from clumping same-category cards together.
+const homeProducts = ref<Product[]>([])
+const homeLoading = ref(true)
+
+function interleave<T>(groups: T[][]): T[] {
+  const result: T[] = []
+  const maxLen = Math.max(0, ...groups.map((g) => g.length))
+  for (let i = 0; i < maxLen; i++) {
+    for (const group of groups) {
+      if (group[i]) result.push(group[i])
+    }
+  }
+  return result
+}
+
+async function fetchSeasonalProducts() {
+  homeLoading.value = true
+  try {
+    const groups = await Promise.all(
+      SEASONAL_CATEGORY_SLUGS.map(async (slug) => {
+        try {
+          const res = await $fetch<{ data: Product[] }>(`${config.public.apiBase}/api/products/`, {
+            query: { categorySlug: slug, priceMax: HOME_PRICE_CEILING, inStock: true, limit: 40 },
+          })
+          // Recognized brands first within the category, so a Marshall or
+          // Logitech listing wins the limited per-category slots over a
+          // No Brand one at the same price/recency.
+          return res.data
+            .filter((p) => !isAccessoryNoise(p.title))
+            .sort((a, b) => Number(isRecognizedBrand(b.brand)) - Number(isRecognizedBrand(a.brand)))
+            .slice(0, HOME_PER_CATEGORY)
+        } catch {
+          return []
+        }
+      }),
+    )
+    homeProducts.value = interleave(groups)
+  } finally {
+    homeLoading.value = false
+  }
+}
+
 onMounted(() => {
   mounted.value = true
-  store.fetchProducts({ limit: 20 })
+  // Cheap call kept only to populate store.meta.total for the "Дивитись усі
+  // (N)" link count below, which should reflect the whole catalog, not just
+  // this curated seasonal pool.
+  store.fetchProducts({ limit: 1 })
+  fetchSeasonalProducts()
   categoriesStore.fetchCategories()
 })
 
@@ -194,9 +322,8 @@ const promoBanners = computed(() => {
   }))
 })
 
-const featuredProducts = computed(() => store.products.slice(0, 12))
-const popularProducts = computed(() => store.products.slice(0, 10))
-const newProducts = computed(() => store.products.slice(12, 20))
+const featuredProducts = computed(() => homeProducts.value.slice(0, 12))
+const newProducts = computed(() => homeProducts.value.slice(12, 20))
 // Matches productBreakpoints' max slidesPerView (6) below, so the loading
 // grid never shows fewer cards than the real slider settles into.
 const skeletons = Array.from({ length: 6 })
@@ -259,6 +386,26 @@ const promoTiles = computed(() => {
       </div>
     </section>
 
+    <!-- Trust strip -->
+    <section class="home__trust-section">
+      <div class="container">
+        <ul class="home__trust">
+          <li
+            v-for="badge in TRUST_BADGES"
+            :key="badge.label"
+            class="home__trust-item"
+          >
+            <component
+              :is="badge.icon"
+              :size="20"
+              class="home__trust-icon"
+            />
+            <span>{{ badge.label }}</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <!-- Category Ribbon -->
     <section class="py-13">
       <div class="container">
@@ -290,7 +437,7 @@ const promoTiles = computed(() => {
     <section class="py-13">
       <div class="container">
         <div
-          v-if="store.loading"
+          v-if="homeLoading"
           class="home__skeleton-row"
         >
           <TheProductCard
@@ -359,42 +506,6 @@ const promoTiles = computed(() => {
       </div>
     </section>
 
-    <!-- Popular products -->
-    <section class="py-13">
-      <div class="container">
-        <div
-          v-if="store.loading"
-          class="home__skeleton-row"
-        >
-          <TheProductCard
-            v-for="(_, i) in skeletons"
-            :key="i"
-            :loading="true"
-          />
-        </div>
-        <AppSlider
-          v-else
-          :slides="popularProducts"
-          :space-between="CARD_GAP"
-          :breakpoints="productBreakpoints"
-          :peek="true"
-          title="Хіти продажів"
-          link-label="Дивитись всі"
-          link-to="/catalog"
-          :link-count="store.meta.total"
-        >
-          <template #default="slotProps">
-            <TheProductCard
-              v-if="slotProps?.slide"
-              :image-desktop-w="330"
-              :image-desktop-h="250"
-              :product="slotProps.slide as any"
-            />
-          </template>
-        </AppSlider>
-      </div>
-    </section>
-
     <!-- Banner special_1 -->
     <section
       v-if="special1"
@@ -414,7 +525,7 @@ const promoTiles = computed(() => {
     <section class="py-13">
       <div class="container">
         <div
-          v-if="store.loading"
+          v-if="homeLoading"
           class="home__skeleton-row"
         >
           <TheProductCard
@@ -489,6 +600,34 @@ const promoTiles = computed(() => {
   flex-direction: column;
   gap: 0;
   overflow: hidden;
+
+  &__trust-section {
+    padding-block: 16px;
+    border-block: 1px solid $color-gray-100;
+  }
+
+  &__trust {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 32px;
+    list-style: none;
+  }
+
+  &__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-700;
+    white-space: nowrap;
+  }
+
+  &__trust-icon {
+    flex-shrink: 0;
+    color: $color-primary;
+  }
 
   &__promo-header {
     display: flex;
