@@ -24,6 +24,15 @@ const HIGHLIGHTS = [
           Samsung, Sony, Xiaomi та інших. Весь асортимент сертифікований, має офіційну гарантію та
           доставляється по всій Україні.
         </p>
+
+        <button
+          class="seo-block__btn"
+          type="button"
+          @click="open = !open"
+        >
+          {{ open ? 'Сховати' : 'Читати повністю' }}
+          <span :class="['seo-block__arrow', { 'seo-block__arrow--open': open }]">↓</span>
+        </button>
       </div>
 
       <ul class="seo-block__highlights">
@@ -100,15 +109,6 @@ const HIGHLIGHTS = [
         </p>
       </div>
     </div>
-
-    <button
-      class="seo-block__btn"
-      type="button"
-      @click="open = !open"
-    >
-      {{ open ? 'Сховати' : 'Читати повністю' }}
-      <span :class="['seo-block__arrow', { 'seo-block__arrow--open': open }]">↓</span>
-    </button>
   </section>
 </template>
 
