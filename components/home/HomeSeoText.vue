@@ -157,9 +157,19 @@ const HIGHLIGHTS = [
     }
   }
 
+  // A grid item stretches to the row's height by default (the row's height
+  // being the taller of the two columns) — no absolute positioning needed.
+  // The min-height is only a floor for when the text column is short; when
+  // the text is taller, this block just stretches to match it via `height: 100%`.
   &__highlights {
     display: none;
+    height: 100%;
+    min-height: 200px;
     grid-template-columns: repeat(2, 1fr);
+    // fr, not %, so the rows don't need this container to already have a
+    // resolved height for the proportions to work (percentage heights don't
+    // reliably resolve here — we hit exactly that bug in the tile grid earlier).
+    grid-template-rows: minmax(80px, 2fr) minmax(80px, 2fr) minmax(60px, 1fr);
     gap: 12px;
     padding: 0;
     margin: 0;
@@ -171,8 +181,7 @@ const HIGHLIGHTS = [
   }
 
   // First four lay out as two squarish rows; the fifth spans full width as a
-  // short strip instead of a third row of squares, so the block doesn't grow
-  // taller than the text column next to it.
+  // short strip instead of a third row of squares.
   &__highlight {
     display: flex;
     flex-direction: column;
@@ -184,15 +193,14 @@ const HIGHLIGHTS = [
     border: 1px solid $color-gray-100;
     border-radius: $radius-lg;
     text-align: center;
-    // Half the height of a true square (aspect-ratio: 1) at the same width.
-    aspect-ratio: 2;
+    min-height: 80px;
 
     &:last-child {
       grid-column: 1 / -1;
       flex-direction: row;
       align-items: flex-start;
       text-align: left;
-      aspect-ratio: auto;
+      min-height: 60px;
     }
   }
 
