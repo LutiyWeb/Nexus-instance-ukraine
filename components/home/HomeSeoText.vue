@@ -35,7 +35,7 @@ const HIGHLIGHTS = [
           <span class="seo-block__highlight-icon">
             <component
               :is="item.icon"
-              :size="18"
+              :size="14"
             />
           </span>
           <span class="seo-block__highlight-text">
@@ -126,7 +126,7 @@ const HIGHLIGHTS = [
     gap: 32px;
 
     @include mixins.respond-to(laptop) {
-      grid-template-columns: minmax(0, 800px) 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
   }
 
@@ -159,29 +159,40 @@ const HIGHLIGHTS = [
 
   &__highlights {
     display: none;
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     padding: 0;
     margin: 0;
     list-style: none;
 
     @include mixins.respond-to(laptop) {
-      display: flex;
+      display: grid;
     }
   }
 
+  // First four lay out as two squarish rows; the fifth spans full width as a
+  // short strip instead of a third row of squares, so the block doesn't grow
+  // taller than the text column next to it.
   &__highlight {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
     background: $color-gray-50;
     border: 1px solid $color-gray-100;
     border-radius: $radius-lg;
-    transition: border-color $transition-fast;
+    text-align: center;
+    // Half the height of a true square (aspect-ratio: 1) at the same width.
+    aspect-ratio: 2;
 
-    &:hover {
-      border-color: $color-primary-light;
+    &:last-child {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: flex-start;
+      text-align: left;
+      aspect-ratio: auto;
     }
   }
 
@@ -189,8 +200,8 @@ const HIGHLIGHTS = [
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
     border-radius: $radius-md;
     background: rgba($color-primary, 12%);
@@ -200,10 +211,15 @@ const HIGHLIGHTS = [
   &__highlight-text {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2px;
     font-size: $font-size-sm;
     color: $color-gray-600;
     line-height: 1.4;
+
+    .seo-block__highlight:last-child & {
+      align-items: flex-start;
+    }
 
     strong {
       color: $color-gray-900;

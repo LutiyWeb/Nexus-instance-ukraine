@@ -114,18 +114,31 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     <!-- Categories -->
     <div class="catalog-filters__section">
       <span class="catalog-filters__label">Категорії</span>
-      <label
+      <template
         v-for="cat in categoriesStore.categories"
         :key="cat.id"
-        class="catalog-filters__check"
       >
-        <input
-          type="checkbox"
-          :checked="local.categories.includes(cat.slug)"
-          @change="toggleCategory(cat.slug)"
-        />
-        {{ cat.name }}
-      </label>
+        <label class="catalog-filters__check">
+          <input
+            type="checkbox"
+            :checked="local.categories.includes(cat.slug)"
+            @change="toggleCategory(cat.slug)"
+          />
+          {{ cat.name }}
+        </label>
+        <label
+          v-for="sub in cat.subcategories"
+          :key="sub.id"
+          class="catalog-filters__check catalog-filters__check--sub"
+        >
+          <input
+            type="checkbox"
+            :checked="local.categories.includes(sub.slug)"
+            @change="toggleCategory(sub.slug)"
+          />
+          {{ sub.name }}
+        </label>
+      </template>
     </div>
 
     <!-- Price presets -->
@@ -283,6 +296,11 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     color: $color-gray-600;
     cursor: pointer;
     line-height: 1.4;
+
+    &--sub {
+      margin-left: 22px;
+      color: $color-gray-500;
+    }
 
     input[type='checkbox'] {
       // Custom-drawn instead of accent-color: accent-color's checkmark

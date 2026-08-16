@@ -12,6 +12,7 @@ import {
   Briefcase,
   BookOpen,
   Package,
+  Mouse,
 } from 'lucide-vue-next'
 import type { Component } from 'vue'
 
@@ -31,6 +32,7 @@ const CATEGORY_ICONS: Record<string, Component> = {
   'smart-home': Home,
   'photo-video': Camera,
   office: Briefcase,
+  peryferiia: Mouse,
 }
 
 function getIcon(slug: string): Component {
