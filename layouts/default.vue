@@ -7,7 +7,8 @@
     <TheFooter />
     <AppBackdrop />
     <TheToast />
-    <CookieWidget />
+    <!-- TODO: temporarily hidden, re-enable shortly -->
+    <!-- <CookieWidget /> -->
     <FloatingActions />
   </div>
 </template>
