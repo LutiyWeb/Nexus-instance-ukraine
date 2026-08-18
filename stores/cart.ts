@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, skipHydrate } from 'pinia'
 import type { Product } from '~/types/product'
 import type { CartEntry } from '~/contracts/cart'
 
@@ -11,7 +11,11 @@ export const useCartStore = defineStore('cart', () => {
   const { authFetch } = useAuthFetch()
   const toastStore = useToastStore()
 
-  const items = ref<CartEntry[]>([])
+  // skipHydrate: this is populated client-side from localStorage for guests
+  // (_loadLocal below) or from the backend for logged-in users (fetchCart) —
+  // never from SSR. Without it, Nuxt's Pinia state hydration overwrites the
+  // freshly-loaded value with the server's empty array right after setup runs.
+  const items = skipHydrate(ref<CartEntry[]>([]))
   const loading = ref(false)
 
   const count = computed(() => items.value.reduce((s, e) => s + e.qty, 0))
