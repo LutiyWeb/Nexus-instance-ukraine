@@ -468,7 +468,7 @@ onBeforeUnmount(() => {
                 {{ item.product?.title }}
               </NuxtLink>
               <div class="cab-fav__footer">
-                <span class="cab-fav__price">${{ item.product?.price }}</span>
+                <span class="cab-fav__price">{{ item.product?.price }} ₴</span>
                 <button
                   v-if="!selectionMode"
                   class="cab-fav__remove"

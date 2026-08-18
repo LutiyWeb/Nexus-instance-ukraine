@@ -560,7 +560,7 @@ function toggleFav() {
           <div class="product-detail__perks">
             <div class="product-detail__perk">
               <Truck :size="16" />
-              <span>Безкоштовна доставка від $50</span>
+              <span>Безкоштовна доставка від 1 500 ₴</span>
             </div>
             <div class="product-detail__perk">
               <Shield :size="16" />

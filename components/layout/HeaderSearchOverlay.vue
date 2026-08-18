@@ -528,7 +528,7 @@ onBeforeUnmount(() => {
                       <div class="search-modal__product-info">
                         <span class="search-modal__product-cat">{{ p.category }}</span>
                         <p class="search-modal__product-title">{{ p.title }}</p>
-                        <span class="search-modal__product-price">${{ p.price }}</span>
+                        <span class="search-modal__product-price">{{ p.price }} ₴</span>
                       </div>
                       <button
                         :class="[

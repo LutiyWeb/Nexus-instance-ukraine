@@ -142,13 +142,13 @@ async function handleNotifyClick(e: Event, product: Product) {
               { 'image-card__price--discounted': product.compareAtPrice },
             ]"
           >
-            ${{ product.price }}
+            {{ product.price }} ₴
           </span>
           <span
             v-if="product.compareAtPrice"
             class="image-card__compare"
           >
-            ${{ product.compareAtPrice }}
+            {{ product.compareAtPrice }} ₴
           </span>
         </div>
         <button

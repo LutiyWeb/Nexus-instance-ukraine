@@ -103,10 +103,10 @@ onMounted(() => {
 
 // ─── Price presets ────────────────────────────────────────────────────────────
 const PRICE_PRESETS: PricePreset[] = [
-  { label: 'До $50', priceMin: 0, priceMax: 50 },
-  { label: '$50 – $100', priceMin: 50, priceMax: 100 },
-  { label: '$100 – $500', priceMin: 100, priceMax: 500 },
-  { label: 'Від $500', priceMin: 500, priceMax: 999999 },
+  { label: 'До 1 000 ₴', priceMin: 0, priceMax: 1000 },
+  { label: '1 000 – 5 000 ₴', priceMin: 1000, priceMax: 5000 },
+  { label: '5 000 – 15 000 ₴', priceMin: 5000, priceMax: 15000 },
+  { label: 'Від 15 000 ₴', priceMin: 15000, priceMax: 999999 },
 ]
 
 // ─── Active chips ─────────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ const activeChips = computed<Chip[]>(() => {
   const { priceMin, priceMax } = activeFilters.value
   if (priceMin > 0 || priceMax < 999999) {
     const preset = PRICE_PRESETS.find((p) => p.priceMin === priceMin && p.priceMax === priceMax)
-    const label = preset?.label ?? `$${priceMin}–$${priceMax}`
+    const label = preset?.label ?? `${priceMin} – ${priceMax} ₴`
     chips.push({ key: 'price', label: `Ціна: ${label}` })
   }
 

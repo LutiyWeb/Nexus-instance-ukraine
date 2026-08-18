@@ -79,11 +79,11 @@ function handleAddToCart() {
 <template>
   <div class="product-purchase">
     <div class="product-purchase__price-row">
-      <span class="product-purchase__price">${{ product.price }}</span>
+      <span class="product-purchase__price">{{ product.price }} ₴</span>
       <span
         v-if="originalPrice"
         class="product-purchase__price-original"
-        >${{ originalPrice }}</span
+        >{{ originalPrice }} ₴</span
       >
       <span
         v-if="product.discountPercentage"
