@@ -661,9 +661,23 @@ function toggleFav() {
     gap: 16px;
     align-items: flex-start;
 
+    // Stacked single-column layout: full-bleed 100%-wide gallery reads as
+    // oversized here, so it's capped to 80% and centered. Once the gallery
+    // sits in its own grid column (tablet+) it should fill that column
+    // normally again.
+    .product-gallery {
+      max-width: 80%;
+      margin-inline: auto;
+    }
+
     @include mixins.respond-to(tablet) {
       grid-template-columns: 1fr 1fr;
       gap: 32px;
+
+      .product-gallery {
+        max-width: none;
+        margin-inline: 0;
+      }
     }
   }
 

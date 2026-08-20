@@ -184,8 +184,10 @@ function handleAddToCart() {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 
-// Reflowed via grid per breakpoint: price+controls share a row on mobile,
-// price gets its own row on desktop with controls beside the buy button.
+// Reflowed via grid per breakpoint: price+controls share a row and the buy
+// button gets its own full-width row on small phones (it needs to stay a big,
+// easy tap target there); from 640px up there's enough room to fit price,
+// qty/favorite and the buy button on one row, pinned right.
 .product-purchase {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -197,12 +199,11 @@ function handleAddToCart() {
   gap: 6px;
   margin-bottom: 24px;
 
-  @include mixins.respond-to(tablet) {
-    grid-template-columns: auto 1fr;
+  @include mixins.respond-to(mobile) {
+    grid-template-columns: auto auto 1fr;
     grid-template-areas:
-      'price price'
-      'oos oos'
-      'controls buy';
+      'price controls buy'
+      'oos oos oos';
     align-items: stretch;
   }
 
@@ -242,7 +243,7 @@ function handleAddToCart() {
     gap: 8px;
     justify-self: end;
 
-    @include mixins.respond-to(tablet) {
+    @include mixins.respond-to(mobile) {
       justify-self: start;
     }
   }
@@ -263,7 +264,7 @@ function handleAddToCart() {
       color $transition-fast,
       border-color $transition-fast;
 
-    @include mixins.respond-to(tablet) {
+    @include mixins.respond-to(mobile) {
       height: auto;
     }
 
@@ -344,9 +345,10 @@ function handleAddToCart() {
     justify-content: center;
     min-width: 0;
 
-    @include mixins.respond-to(tablet) {
+    @include mixins.respond-to(mobile) {
       max-width: 250px;
       padding: 16px;
+      justify-self: end;
     }
 
     svg {
@@ -381,8 +383,8 @@ function handleAddToCart() {
     grid-area: buy;
     justify-content: center;
 
-    @include mixins.respond-to(tablet) {
-      justify-self: start;
+    @include mixins.respond-to(mobile) {
+      justify-self: end;
       width: auto;
     }
   }
