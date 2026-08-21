@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { X } from 'lucide-vue-next'
 
-defineProps<{ open: boolean }>()
+interface Props {
+  open: boolean
+  // false for popups the user isn't meant to dismiss early (e.g. a
+  // mandatory "please wait" notice) — hides the close button and stops
+  // backdrop clicks from closing it.
+  closable?: boolean
+}
+const props = withDefaults(defineProps<Props>(), { closable: true })
 const emit = defineEmits<{ 'update:open': [boolean] }>()
+
+function close() {
+  if (!props.closable) return
+  emit('update:open', false)
+}
 </script>
 
 <template>
@@ -12,13 +24,14 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
         <div
           v-if="open"
           class="app-modal-overlay"
-          @click.self="emit('update:open', false)"
+          @click.self="close"
         >
           <div class="app-modal">
             <button
+              v-if="closable"
               class="app-modal__close"
               type="button"
-              @click="emit('update:open', false)"
+              @click="close"
             >
               <X :size="14" />
             </button>
@@ -46,6 +59,7 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 
 .app-modal {
   position: relative;
+  overflow: hidden;
   background: $color-white;
   border-radius: $radius-xl;
   padding: 32px;

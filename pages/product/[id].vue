@@ -13,13 +13,23 @@ const categoriesStore = useCategoriesStore()
 
 const config = useRuntimeConfig()
 
+// Render's free-tier backend can cold-start for up to ~1min. A short
+// server-side timeout keeps SSR from hanging into Vercel's function
+// timeout; the client retry below (onMounted) has no such limit and can
+// wait it out.
+const backendTimeout = process.server ? 6000 : 90000
+
 const {
   data: productData,
   pending,
   error,
+  refresh: refreshProduct,
 } = useAsyncData(
   () => `product-${route.params.id}`,
-  () => $fetch<{ data: Product }>(`${config.public.apiBase}/api/products/${route.params.id}`),
+  () =>
+    $fetch<{ data: Product }>(`${config.public.apiBase}/api/products/${route.params.id}`, {
+      timeout: backendTimeout,
+    }),
 )
 
 const product = computed(() => productData.value?.data ?? null)
@@ -30,15 +40,24 @@ interface ReviewsSummary {
   avg: number | null
 }
 
-const { data: reviewsData } = useAsyncData(
+const {
+  data: reviewsData,
+  error: reviewsError,
+  refresh: refreshReviews,
+} = useAsyncData(
   () => `product-reviews-summary-${route.params.id}`,
   () =>
     $fetch<{ summary: ReviewsSummary }>(
       `${config.public.apiBase}/api/products/${route.params.id}/reviews`,
-      { query: { limit: 1 } },
+      { query: { limit: 1 }, timeout: backendTimeout },
     ),
 )
 const reviewsSummary = computed(() => reviewsData.value?.summary ?? null)
+
+onMounted(() => {
+  if (error.value) refreshProduct()
+  if (reviewsError.value) refreshReviews()
+})
 
 // Vendor descriptions arrive as HTML; sanitize before v-html to strip anything
 // that could execute (script tags, event handlers) while keeping formatting.
@@ -443,6 +462,7 @@ function toggleFav() {
           />
         </div>
       </div>
+      <AppColdStartNotice v-if="loading" />
 
       <!-- Error -->
       <div
@@ -662,12 +682,15 @@ function toggleFav() {
     align-items: flex-start;
 
     // Stacked single-column layout: full-bleed 100%-wide gallery reads as
-    // oversized here, so it's capped to 80% and centered. Once the gallery
-    // sits in its own grid column (tablet+) it should fill that column
-    // normally again.
-    .product-gallery {
-      max-width: 80%;
-      margin-inline: auto;
+    // oversized once there's room to spare, so it's capped to 80% and
+    // centered from 640px up. Below that (phones) it stays full width so the
+    // nav arrows keep hugging the screen edges. Once the gallery sits in its
+    // own grid column (tablet+) it fills that column normally again.
+    @include mixins.respond-to(mobile) {
+      .product-gallery {
+        max-width: 80%;
+        margin-inline: auto;
+      }
     }
 
     @include mixins.respond-to(tablet) {

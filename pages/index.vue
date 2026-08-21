@@ -83,8 +83,21 @@ interface BannersResponse {
 const config = useRuntimeConfig()
 const categoriesStore = useCategoriesStore()
 
-const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
+const {
+  data: bannersData,
+  status: bannersStatus,
+  error: bannersError,
+  refresh: refreshBanners,
+} = useFetch<BannersResponse>('/api/banners', {
   baseURL: config.public.apiBase,
+  // Render's free-tier backend can cold-start for up to ~1min. A short
+  // server-side timeout keeps SSR from hanging into Vercel's function
+  // timeout; the client retry below has no such limit and can wait it out.
+  timeout: process.server ? 6000 : 90000,
+})
+
+onMounted(() => {
+  if (bannersError.value) refreshBanners()
 })
 
 const { isXl, isDesktop } = useBreakpoints()
@@ -480,6 +493,7 @@ const promoTiles = computed(() => {
             />
           </template>
         </AppSlider>
+        <AppColdStartNotice v-if="bannersStatus === 'pending'" />
       </div>
     </section>
 
