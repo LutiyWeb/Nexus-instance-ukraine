@@ -3,66 +3,111 @@ import { MessageSquare, X } from 'lucide-vue-next'
 import { reviewSchema } from '~/contracts/reviews'
 import type { Review } from '~/types/review'
 
-defineProps<{ productId: number }>()
+const props = defineProps<{ productId: number }>()
 
 const authStore = useAuthStore()
 const uiStore = useUiStore()
 const toastStore = useToastStore()
+const config = useRuntimeConfig()
+const { authFetch } = useAuthFetch()
 
-// в”Ђв”Ђ Mock reviews (replace with API when /api/products/:id/reviews is ready) в”Ђв”Ђ
-const MOCK_REVIEWS: Review[] = [
-  {
-    id: 1,
-    author: 'Олексій К.',
-    initials: 'ОК',
-    rating: 5,
-    text: 'Чудовий товар, повністю відповідає опису. Доставка швидка, упаковка надійна. Однозначно рекомендую!',
-    createdAt: '2026-04-15T10:30:00Z',
-  },
-  {
-    id: 2,
-    author: 'Марина С.',
-    initials: 'МС',
-    rating: 4,
-    text: 'Гарне співвідношення ціна/якість. Трохи не дотягує до очікувань за дрібницями, але загалом дуже задоволена покупкою.',
-    createdAt: '2026-04-02T14:20:00Z',
-  },
-  {
-    id: 3,
-    author: 'Дмитро В.',
-    initials: 'ДВ',
-    rating: 5,
-    text: 'Другий раз купую. Не розчарувався. Якість стабільна, все працює як треба.',
-    createdAt: '2026-03-28T09:15:00Z',
-  },
-  {
-    id: 4,
-    author: 'Ольга Н.',
-    initials: 'ОН',
-    rating: 3,
-    text: 'Загалом нормально, але були невеликі проблеми з упаковкою при доставці. Продавець швидко вирішив питання.',
-    createdAt: '2026-03-10T18:45:00Z',
-  },
-]
+interface ApiReview {
+  id: number
+  rating: number
+  text: string
+  createdAt: string
+  user: { firstName: string | null; lastName: string | null }
+}
 
-const reviews = ref<Review[]>([...MOCK_REVIEWS])
-const visibleCount = ref(3)
-const visibleReviews = computed(() => reviews.value.slice(0, visibleCount.value))
-const hasMore = computed(() => visibleCount.value < reviews.value.length)
+interface ReviewsListResponse {
+  data: ApiReview[]
+  meta: { page: number; totalPages: number }
+  summary: {
+    total: number
+    avg: number | null
+    ratingCounts: Record<'1' | '2' | '3' | '4' | '5', number>
+  }
+}
 
-const avgRating = computed(() => {
-  if (!reviews.value.length) return 0
-  const sum = reviews.value.reduce((s, r) => s + r.rating, 0)
-  return Math.round((sum / reviews.value.length) * 10) / 10
+function initials(name: string) {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((n) => n[0] ?? '')
+    .join('')
+    .toUpperCase()
+}
+
+function mapReview(r: ApiReview): Review {
+  const name = `${r.user.firstName ?? ''} ${r.user.lastName ?? ''}`.trim() || 'Анонім'
+  return {
+    id: r.id,
+    author: name,
+    initials: initials(name),
+    rating: r.rating,
+    text: r.text,
+    createdAt: r.createdAt,
+  }
+}
+
+const PAGE_SIZE = 6
+
+const reviews = ref<Review[]>([])
+const page = ref(1)
+const totalPages = ref(1)
+const totalCount = ref(0)
+const avgRating = ref(0)
+const rawRatingCounts = ref<Record<'1' | '2' | '3' | '4' | '5', number>>({
+  '1': 0,
+  '2': 0,
+  '3': 0,
+  '4': 0,
+  '5': 0,
+})
+const loading = ref(true)
+const loadingMore = ref(false)
+
+const hasMore = computed(() => page.value < totalPages.value)
+// Backend keys counts by star value (1..5); the bars render 5★ first.
+const ratingCounts = computed(() =>
+  [5, 4, 3, 2, 1].map((n) => rawRatingCounts.value[String(n) as '1' | '2' | '3' | '4' | '5']),
+)
+
+async function fetchReviews(targetPage: number) {
+  const res = await $fetch<ReviewsListResponse>(
+    `${config.public.apiBase}/api/products/${props.productId}/reviews`,
+    { query: { page: targetPage, limit: PAGE_SIZE } },
+  )
+  const mapped = res.data.map(mapReview)
+  reviews.value = targetPage === 1 ? mapped : [...reviews.value, ...mapped]
+  page.value = res.meta.page
+  totalPages.value = res.meta.totalPages
+  totalCount.value = res.summary.total
+  avgRating.value = res.summary.avg ?? 0
+  rawRatingCounts.value = res.summary.ratingCounts
+}
+
+onMounted(async () => {
+  try {
+    await fetchReviews(1)
+  } catch {
+    toastStore.add('Не вдалося завантажити відгуки', 'error')
+  } finally {
+    loading.value = false
+  }
 })
 
-const ratingCounts = computed(() => {
-  const counts = [0, 0, 0, 0, 0]
-  reviews.value.forEach((r) => {
-    if (r.rating >= 1 && r.rating <= 5) counts[r.rating - 1]++
-  })
-  return counts.reverse()
-})
+async function loadMore() {
+  if (!hasMore.value || loadingMore.value) return
+  loadingMore.value = true
+  try {
+    await fetchReviews(page.value + 1)
+  } catch {
+    toastStore.add('Не вдалося завантажити відгуки', 'error')
+  } finally {
+    loadingMore.value = false
+  }
+}
 
 // в”Ђв”Ђ Dialog в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 const dialogOpen = ref(false)
@@ -84,15 +129,6 @@ const formText = ref('')
 const formErrors = ref<{ rating?: string; text?: string }>({})
 const submitting = ref(false)
 
-function initials(name: string) {
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0] ?? '')
-    .join('')
-    .toUpperCase()
-}
-
 async function submit() {
   formErrors.value = {}
   const result = reviewSchema.safeParse({ rating: formRating.value, text: formText.value })
@@ -106,30 +142,19 @@ async function submit() {
 
   submitting.value = true
   try {
-    // TODO: replace with real API call when /api/products/:id/reviews is ready
-    // await authFetch(`/api/products/${props.productId}/reviews`, {
-    //   method: 'POST',
-    //   body: { rating: formRating.value, text: formText.value },
-    // })
-
-    await new Promise((resolve) => setTimeout(resolve, 500)) // simulate request
-
-    const user = authStore.user
-    const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Анонім'
-    const newReview: Review = {
-      id: Date.now(),
-      author: name,
-      initials: initials(name),
-      rating: formRating.value,
-      text: formText.value,
-      createdAt: new Date().toISOString(),
-    }
-    reviews.value.unshift(newReview)
-    visibleCount.value = Math.max(visibleCount.value, 1)
+    await authFetch(`/api/products/${props.productId}/reviews`, {
+      method: 'POST',
+      body: { rating: formRating.value, text: formText.value },
+    })
     dialogOpen.value = false
     toastStore.add('Відгук успішно додано!')
-  } catch {
-    toastStore.add('Не вдалося надіслати відгук', 'error')
+    await fetchReviews(1)
+  } catch (err: any) {
+    const status = err?.response?.status ?? err?.statusCode
+    toastStore.add(
+      status === 409 ? 'Ви вже залишили відгук на цей товар' : 'Не вдалося надіслати відгук',
+      'error',
+    )
   } finally {
     submitting.value = false
   }
@@ -142,7 +167,11 @@ async function submit() {
     <div class="product-reviews__header">
       <div class="product-reviews__header-left">
         <h2 class="product-reviews__title">Відгуки</h2>
-        <span class="product-reviews__count">{{ reviews.length }}</span>
+        <span
+          v-if="!loading"
+          class="product-reviews__count"
+          >{{ totalCount }}</span
+        >
       </div>
       <AppButton
         variant="primary"
@@ -154,9 +183,21 @@ async function submit() {
       </AppButton>
     </div>
 
+    <!-- Loading -->
+    <div
+      v-if="loading"
+      class="product-reviews__summary"
+    >
+      <AppSkeleton
+        width="100%"
+        height="96px"
+        border-radius="12px"
+      />
+    </div>
+
     <!-- Summary -->
     <div
-      v-if="reviews.length"
+      v-else-if="totalCount"
       class="product-reviews__summary"
     >
       <div class="product-reviews__avg">
@@ -165,7 +206,7 @@ async function submit() {
           :rating="avgRating"
           :size="20"
         />
-        <span class="product-reviews__avg-sub">{{ reviews.length }} відгуків</span>
+        <span class="product-reviews__avg-sub">{{ totalCount }} відгуків</span>
       </div>
       <div class="product-reviews__bars">
         <div
@@ -177,7 +218,7 @@ async function submit() {
           <div class="product-reviews__bar-track">
             <div
               class="product-reviews__bar-fill"
-              :style="{ width: reviews.length ? `${(count / reviews.length) * 100}%` : '0%' }"
+              :style="{ width: totalCount ? `${(count / totalCount) * 100}%` : '0%' }"
             />
           </div>
           <span class="product-reviews__bar-count">{{ count }}</span>
@@ -203,7 +244,7 @@ async function submit() {
       class="product-reviews__list"
     >
       <ReviewCard
-        v-for="review in visibleReviews"
+        v-for="review in reviews"
         :key="review.id"
         :review="review"
       />
@@ -217,7 +258,8 @@ async function submit() {
       <AppButton
         variant="outline"
         size="md"
-        @click="visibleCount += 3"
+        :loading="loadingMore"
+        @click="loadMore"
       >
         Показати ще
       </AppButton>
