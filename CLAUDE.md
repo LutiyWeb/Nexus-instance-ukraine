@@ -42,7 +42,7 @@ If a change is generic enough to belong in every mirror (not specific to this st
 
 - `api/*.ts` — typed `$fetch` wrappers per domain (products, cart, auth, etc.)
 - `composables/useAuthFetch.ts` — wraps `$fetch` with `Authorization: Bearer <token>` from the auth store; use this for all protected endpoints
-- API base URL: `runtimeConfig.public.apiBase` (defaults to `http://localhost:8000`)
+- API base URL: `runtimeConfig.public.apiBase`, set via `NUXT_PUBLIC_API_BASE` (defaults to `http://localhost:8000` if unset — but this repo's `.env` currently overrides it to the deployed Render backend, `https://shopmarker-backend.onrender.com`, so local dev talks to Render, not the local backend, unless you override it back)
 
 ### State (Pinia)
 
@@ -94,93 +94,6 @@ PrimeVue is registered selectively via `nuxt.config.ts` (`primevue.components.in
 
 ---
 
-# AI Assistant Role: Senior Frontend Layout Architect
+## Vue/SCSS layout rules
 
-Operate in strict architectural planning mode. Before generating any Vue/SCSS for a section, follow these principles and output a planning breakdown.
-
-## GLOBAL LAYOUT GUIDELINES (APPLY ALWAYS):
-
-1. **Stream vs. Z-Axis Separation**:
-   - All meaningful content (text, buttons, media) MUST stay in the natural HTML flow. `position: absolute` on content elements is forbidden.
-   - `position: absolute` is allowed ONLY for decorative layers (background shapes, blobs, textures) that do not affect neighboring block geometry.
-
-2. **Complex Geometry & Overflow Isolation**:
-   - If UI elements visually protrude beyond section background boundaries, `overflow: hidden` on that container is forbidden.
-   - Handle overflows via `calc()` in `background-size` or absolutely positioned decorative layers.
-
-3. **Rigid Column Framework**:
-   - In multi-column layouts, column proportions MUST be locked at the parent level via `flex: 0 0 Xpx` or `grid-template-columns`.
-   - Dynamic content in one column must never be able to deform the adjacent column.
-
-4. **Safe Text Content Architecture**:
-   - Text offer blocks: Flex container, `flex-direction: column`, spacing via `gap` only.
-   - All paragraphs and descriptions MUST have a hard `max-width`.
-   - Decorative underlines/separators tied to text → `::after`/`::before` pseudo-element with `padding` on the text node.
-
-5. **Taboos on Hardcoded Heights & Inline Styles**:
-   - `height` on text-holding containers is forbidden. Use `padding` or `min-height`.
-   - Inline styles (`style="..."`) are forbidden.
-
-6. **Design Tokens, Typography & Mixins**:
-   - All colors via `var(--color-*)`. Hardcoded HEX/RGB in component selectors is forbidden.
-   - Use `px` for sizes and spacings (pixel-perfect Figma match).
-   - Never duplicate font property sets across classes — use `@include` typography mixins. Check for existing mixins before creating new ones.
-
-## RESPONSE FORMAT:
-
-Before any code, output a planning breakdown:
-
-1. **Step 1 — Layer & Z-Axis Analysis**: Which elements stay in flow, which go `position: absolute` as decorative layers, and why.
-
-2. **Step 2 — Layout Plan with Reasoning**: For each container:
-   - Technique (Grid or Flex) and **why** — e.g., "Grid for the two-column split because proportions must be rigidly locked; Flex for the text block because items stack vertically."
-   - Column locking: exact values and reasoning.
-   - Spacing tool: `gap` vs `padding` vs `margin` — and **why** each.
-   - `max-width` on text elements.
-
-3. **Step 3 — Naming Plan**: Full BEM breakdown:
-   - Block name (e.g., `.hero-banner`)
-   - Every element (`__media`, `__content`, `__title`, `__decoration`)
-   - Modifiers (`--dark`, `--wide`) if applicable
-
-4. **Step 4 — Typography & Tokens**: Which `var(--color-*)` tokens and `@include` mixins will be used.
-
-5. **Step 5 — Code**: Clean Vue SFC with `<style lang="scss">`. No inline styles, no hardcoded values.
-
----
-
-## CSS CODE QUALITY RULES (APPLY ALWAYS):
-
-1. **Pseudo-elements for decorative DOM nodes**: Any element that exists purely for decoration (background shapes, dividers, separator lines, visual accents — no semantic content) MUST be implemented as a `::before`/`::after` pseudo-element on its nearest semantic parent, not as a separate HTML element. Extra DOM nodes for decoration pollute the markup without semantic value.
-
-2. **No default CSS values**: Never write a CSS property that is already the browser default (e.g., `overflow: visible`, `width: auto`, `display: inline`). These add noise without effect.
-
-3. **Check globals before writing component styles**: Before writing a property in a component, verify it is not already set in the global reset (`main.scss`). Globally defined rules must not be repeated per-component. Known global defaults (as of current `main.scss`):
-   - `img { display: block; max-width: 100%; }` — never repeat these on `img` inside components
-   - `button { border: none; padding: 0; cursor: pointer; background: none; }` — never repeat on button elements
-   - `*, *::before, *::after { box-sizing: border-box; }`
-
-4. **Horizontal offsets belong on the container**: When multiple sibling children share the same left/right indent, set `padding-inline` on the parent container — all children inherit the boundary automatically. Do NOT apply `margin-left` to each child individually. Exception: a design-specific offset that applies only to one particular child element (e.g., `margin-left` on a single image for a Figma-precise placement) stays on that child, not the container.
-
-5. **CSS custom properties for component-specific colors**: Hardcoded `rgb()`/HEX values that are unique to a component (not in `_variables.scss`) MUST be extracted to CSS custom properties defined at the component root class (e.g., `--hero-accent: rgb(241, 209, 82)`). Use `var(--...)` everywhere inside the component. This enables per-context overrides without touching component internals.
-
----
-
-## ADDITIONAL RULES (AI-recommended)
-
-6. **Explicit breakpoints per component**: Every component must have styles explicitly written for all breakpoints it uses (`mobile`, `tablet`, `notebook`, `laptop`). Never rely on implicit inheritance between breakpoints — missing a middle breakpoint causes tablet layout breaks.
-
-7. **`<img>` width + height attributes required**: Always set `width` and `height` HTML attributes on every `<img>`, even if CSS controls the visual size. Without them the browser can't reserve space before the image loads — causes layout shift (CLS).
-
-8. **Interactive states are mandatory**: Every clickable element must have `:hover`, `:focus-visible`, and `:active` styles defined at the time of initial implementation, not later.
-
-9. **Animations via `transform`/`opacity` only**: Never animate `top`, `left`, `width`, `height`, or `margin` — these trigger reflow on every frame. Only `transform` and `opacity` are GPU-composited.
-
-10. **`z-index` via CSS custom properties only**: All z-index values must be defined as custom properties at the `:root` level in `_variables.scss` (e.g., `--z-header: 100`, `--z-modal: 200`). No hardcoded integers in component styles.
-
-11. **HTML semantics**: One `<h1>` per page. Use `<section>`, `<article>`, `<nav>`, `<main>` where appropriate. Never use `<div>` as a button or `<a>` without `href`.
-
-12. **No dead CSS — write only what produces a visible effect**: Before adding any CSS property, verify it has a real effect given the current DOM structure. Specifically:
-    - Layout properties (`display: flex`, `flex-direction`, `gap`, `align-items`, `justify-content`) on a container with a **single child** are meaningless — omit them.
-    - A property that matches the element's natural browser default (e.g., `display: block` on a `div`) must not be written.
-    - If removing a property would produce zero visual difference, it does not belong in the codebase.
+Strict layout-architecture rules (stream vs. z-axis, rigid columns, BEM planning breakdown, CSS quality checklist, breakpoints, z-index tokens, etc.) live in **`.claude/agents/markup.md`** — invoke the `markup` agent for any `.vue` template/style work so those rules load with full detail instead of sitting here always-on. `.claude/agents/reviewer.md` checks diffs against the same rule set.

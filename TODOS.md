@@ -111,3 +111,27 @@ have yet (no cron, no worker process).
 - Fix: once there's real order history, add a backend-side bestseller
   ranking (new `sortBy` value or dedicated endpoint) and bring the section
   back ordered by that instead of raw insert order.
+
+## Stale static banner images resurface when live products fail to load (deferred 2026-08-18)
+
+- **Observed while the backend/DB was unreachable**: instead of a clean
+  loading/empty/error state, some product-image slots fell back to old
+  headphones photos (Marshall, Beats-style) that used to be hardcoded static
+  banner content from before the catalogue was dynamic. Not yet identified
+  which component holds onto this old fallback — needs investigation (likely
+  a stale default/placeholder image reference, or cached old banner data,
+  left in a component that renders product images).
+- Fix: find and remove the leftover static fallback so a failed fetch shows
+  a real loading/error state instead of resurrecting old placeholder content.
+
+## ~~Auth broken (reported 2026-08-21)~~ — Fixed 2026-08-21
+
+- Root cause: `nuxt.config.ts` hardcoded hCaptcha's public test sitekey for
+  any non-production `NODE_ENV`, and that test key stopped rendering a
+  working checkbox (showed its own "used for testing" error instead), so
+  `captchaToken` never got set and login/register were both stuck on
+  "Пройдіть перевірку капчі".
+- Fix: local `.env` now sets `NUXT_PUBLIC_HCAPTCHA_SITE_KEY` (the real
+  sitekey, same one used on Vercel prod); `nuxt.config.ts` now uses that
+  env var regardless of `NODE_ENV`, falling back to the public test key
+  only when unset. Verified working end-to-end locally.
