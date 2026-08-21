@@ -2,29 +2,26 @@
 import { MessageCircleQuestion } from 'lucide-vue-next'
 import type { Question } from '~/types/question'
 
-defineProps<{ productId: number }>()
+const props = defineProps<{ productId: number }>()
 
-// ── Mock questions (replace with API when /api/products/:id/questions is ready) ──
-const MOCK_QUESTIONS: Question[] = [
-  {
-    id: 1,
-    author: 'Ігор П.',
-    initials: 'ІП',
-    text: 'Чи підходить цей товар для щоденного інтенсивного використання?',
-    createdAt: '2026-04-20T09:00:00Z',
-    answer: 'Так, товар розрахований на щоденне інтенсивне використання без втрати якості.',
-    answeredAt: '2026-04-20T14:00:00Z',
-  },
-  {
-    id: 2,
-    author: 'Наталія В.',
-    initials: 'НВ',
-    text: 'Яка гарантія виробника надається на цей товар?',
-    createdAt: '2026-04-05T11:30:00Z',
-  },
-]
+const config = useRuntimeConfig()
+const toastStore = useToastStore()
 
-const questions = ref<Question[]>([...MOCK_QUESTIONS])
+interface ApiQuestion {
+  id: number
+  text: string
+  answer: string | null
+  answeredAt: string | null
+  createdAt: string
+  user: { firstName: string | null; lastName: string | null }
+}
+
+interface QuestionsListResponse {
+  data: ApiQuestion[]
+  meta: { page: number; totalPages: number }
+}
+
+const PAGE_SIZE = 6
 
 function initials(name: string) {
   return name
@@ -35,15 +32,62 @@ function initials(name: string) {
     .toUpperCase()
 }
 
-function handleSubmitted(payload: { text: string; name: string; email: string }) {
-  const name = payload.name || 'Анонім'
-  questions.value.unshift({
-    id: Date.now(),
+function mapQuestion(q: ApiQuestion): Question {
+  const name = `${q.user.firstName ?? ''} ${q.user.lastName ?? ''}`.trim() || 'Анонім'
+  return {
+    id: q.id,
     author: name,
     initials: initials(name),
-    text: payload.text,
-    createdAt: new Date().toISOString(),
-  })
+    text: q.text,
+    createdAt: q.createdAt,
+    answer: q.answer ?? undefined,
+    answeredAt: q.answeredAt ?? undefined,
+  }
+}
+
+const questions = ref<Question[]>([])
+const page = ref(1)
+const totalPages = ref(1)
+const loading = ref(true)
+const loadingMore = ref(false)
+
+const hasMore = computed(() => page.value < totalPages.value)
+
+async function fetchQuestions(targetPage: number) {
+  const res = await $fetch<QuestionsListResponse>(
+    `${config.public.apiBase}/api/products/${props.productId}/questions`,
+    { query: { page: targetPage, limit: PAGE_SIZE } },
+  )
+  const mapped = res.data.map(mapQuestion)
+  questions.value = targetPage === 1 ? mapped : [...questions.value, ...mapped]
+  page.value = res.meta.page
+  totalPages.value = res.meta.totalPages
+}
+
+onMounted(async () => {
+  try {
+    await fetchQuestions(1)
+  } catch {
+    toastStore.add('Не вдалося завантажити питання', 'error')
+  } finally {
+    loading.value = false
+  }
+})
+
+async function loadMore() {
+  if (!hasMore.value || loadingMore.value) return
+  loadingMore.value = true
+  try {
+    await fetchQuestions(page.value + 1)
+  } catch {
+    toastStore.add('Не вдалося завантажити питання', 'error')
+  } finally {
+    loadingMore.value = false
+  }
+}
+
+function handleSubmitted() {
+  fetchQuestions(1)
 }
 </script>
 
@@ -53,7 +97,7 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
       <div class="product-questions__header-left">
         <h2 class="product-questions__title">Питання</h2>
         <span
-          v-if="questions.length"
+          v-if="!loading && questions.length"
           class="product-questions__count"
           >{{ questions.length }}</span
         >
@@ -64,8 +108,22 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
       />
     </div>
 
+    <!-- Loading -->
     <div
-      v-if="questions.length"
+      v-if="loading"
+      class="product-questions__list"
+    >
+      <AppSkeleton
+        v-for="i in 2"
+        :key="i"
+        width="100%"
+        height="140px"
+        border-radius="12px"
+      />
+    </div>
+
+    <div
+      v-else-if="questions.length"
       class="product-questions__list"
     >
       <QuestionCard
@@ -87,6 +145,21 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
         />
       </template>
     </AppEmpty>
+
+    <!-- Load more -->
+    <div
+      v-if="hasMore"
+      class="product-questions__more"
+    >
+      <AppButton
+        variant="outline"
+        size="md"
+        :loading="loadingMore"
+        @click="loadMore"
+      >
+        Показати ще
+      </AppButton>
+    </div>
   </section>
 </template>
 
@@ -140,6 +213,11 @@ function handleSubmitted(payload: { text: string; name: string; email: string })
     @include mixins.respond-to(mobile) {
       grid-template-columns: repeat(2, 1fr);
     }
+  }
+
+  &__more {
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

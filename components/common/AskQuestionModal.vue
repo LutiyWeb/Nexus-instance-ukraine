@@ -10,11 +10,12 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:open': [boolean]
-  submitted: [{ text: string; name: string; email: string }]
+  submitted: []
 }>()
 
 const authStore = useAuthStore()
 const toastStore = useToastStore()
+const { authFetch } = useAuthFetch()
 
 const text = ref('')
 const name = ref('')
@@ -104,14 +105,17 @@ async function submit() {
 
   submitting.value = true
   try {
-    // TODO: replace with real API call when /api/products/:id/questions is ready
-    // await authFetch(`/api/products/${props.productId}/questions`, {
-    //   method: 'POST',
-    //   body: { text: text.value, name: name.value, email: email.value, notifyByEmail: notifyByEmail.value },
-    // })
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    const formData = new FormData()
+    formData.append('text', text.value)
+    formData.append('notifyByEmail', String(notifyByEmail.value))
+    files.value.forEach((file) => formData.append('photos', file))
 
-    emit('submitted', { text: text.value, name: name.value, email: email.value })
+    await authFetch(`/api/products/${props.productId}/questions`, {
+      method: 'POST',
+      body: formData,
+    })
+
+    emit('submitted')
     toastStore.add('Питання надіслано і очікує на модерацію', 'success')
     close()
   } catch {

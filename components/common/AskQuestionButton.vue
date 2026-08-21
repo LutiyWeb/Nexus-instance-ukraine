@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { MessageCircleQuestion } from 'lucide-vue-next'
+
 interface Props {
   productId: number
 }
 
 defineProps<Props>()
-const emit = defineEmits<{ submitted: [{ text: string; name: string; email: string }] }>()
+const emit = defineEmits<{ submitted: [] }>()
 
 const authStore = useAuthStore()
 const uiStore = useUiStore()
@@ -21,14 +23,16 @@ function handleClick() {
 
 <template>
   <AppButton
-    variant="outline"
+    variant="primary"
     size="md"
     @click="handleClick"
-    >Поставити запитання</AppButton
   >
+    <MessageCircleQuestion :size="16" />
+    Поставити запитання
+  </AppButton>
   <AskQuestionModal
     v-model:open="open"
     :product-id="productId"
-    @submitted="emit('submitted', $event)"
+    @submitted="emit('submitted')"
   />
 </template>
