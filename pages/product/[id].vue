@@ -588,7 +588,7 @@ function toggleFav() {
             </div>
             <div class="product-detail__perk">
               <Package :size="16" />
-              <span>Повернення протягом 30 днів</span>
+              <span>Повернення протягом 14 днів</span>
             </div>
           </div>
         </div>

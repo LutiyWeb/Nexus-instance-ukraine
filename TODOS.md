@@ -135,3 +135,36 @@ have yet (no cron, no worker process).
   sitekey, same one used on Vercel prod); `nuxt.config.ts` now uses that
   env var regardless of `NODE_ENV`, falling back to the public test key
   only when unset. Verified working end-to-end locally.
+
+## Product page "Perks" block — hardcoded claims, one legally wrong (deferred 2026-08-21)
+
+**Де:** `pages/product/[id].vue:580-593`, the three-line block next to the buy
+button (`Truck`/`Shield`/`Package` icons).
+
+- ~~**"Повернення протягом 30 днів" contradicted Ukrainian consumer law.**~~
+  Fixed 2026-08-21 → now says 14 днів, matching Закон України «Про захист
+  прав споживачів» ст. 9 (non-food goods of proper quality: 14-day return
+  right). If the store ever wants to voluntarily offer more than the legal
+  minimum, that's a deliberate policy change, not a typo fix.
+- **"Гарантія 12 місяців" is a blanket claim not backed by real per-product
+  data — open, needs a decision.** The per-product warranty shown in the
+  Характеристики tab (e.g. "24 міс." on some products) is NOT a dedicated
+  field — it's whatever raw key/value pair Hubber happens to include in that
+  product's `options` (`product.value?.specs` in `pages/product/[id].vue:327`,
+  just `Object.entries()`, no normalization, no guaranteed presence). Backend
+  has no dedicated warranty field either (checked, nothing found). So the
+  Perks-block "12 місяців" is neither the real per-product value nor
+  confirmed accurate for every product — currently just a placeholder that
+  happens to look like real data next to the buy button.
+  - Option A: only show this perk when the product's own specs actually
+    contain a warranty-shaped key, using that exact value; omit the perk
+    otherwise rather than show a number that may not apply.
+  - Option B: if there's a genuine store-wide minimum-warranty policy (e.g.
+    "мінімум 12 місяців від магазину незалежно від виробника"), keep a fixed
+    claim — but that needs to be a conscious business decision, not a leftover.
+  - Not decided as of 2026-08-21 — user wasn't sure yet, asked to leave open.
+- **"Безкоштовна доставка від 1 500 ₴" has no backing config anywhere** —
+  pure placeholder number, not tied to any real shipping-threshold setting.
+  Deliberately deprioritized by the user (2026-08-21): "подумаем, как это
+  правильно сделать" — revisit once there's an actual delivery-pricing policy
+  to wire it to.
