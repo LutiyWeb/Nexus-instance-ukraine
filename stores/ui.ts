@@ -20,10 +20,14 @@ export const useUiStore = defineStore('ui', () => {
   )
 
   // catalog sits inside the header stacking context → backdrop must be BELOW the header
-  // search / auth / sidebar cover everything → backdrop must be ABOVE the header
+  // search / auth / sidebar / menu drawer are teleported, full-screen panels → backdrop must be ABOVE the header
   const overlayAboveHeader = computed(
     () =>
-      authModalOpen.value || forgotPasswordModalOpen.value || searchOpen.value || sidebarOpen.value,
+      authModalOpen.value ||
+      forgotPasswordModalOpen.value ||
+      searchOpen.value ||
+      sidebarOpen.value ||
+      menuOpen.value,
   )
 
   if (process.client) {

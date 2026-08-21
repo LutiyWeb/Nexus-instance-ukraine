@@ -42,10 +42,6 @@ function close() {
         v-if="open"
         class="header-sidebar"
       >
-        <div
-          class="header-sidebar__backdrop"
-          @click="close"
-        />
         <div class="header-sidebar__panel">
           <Transition
             :name="direction === 'forward' ? 'slide-forward' : 'slide-back'"
@@ -155,12 +151,6 @@ function close() {
   position: fixed;
   inset: 0;
   z-index: $z-modal;
-
-  &__backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgb(0 0 0 / 50%);
-  }
 
   &__panel {
     position: absolute;

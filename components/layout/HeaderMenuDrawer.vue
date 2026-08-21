@@ -154,14 +154,6 @@ const EXTRA = [
         </div>
       </div>
     </Transition>
-
-    <Transition name="fade">
-      <div
-        v-if="open"
-        class="menu-drawer__backdrop"
-        @click="$emit('close')"
-      />
-    </Transition>
   </Teleport>
 </template>
 
@@ -322,13 +314,6 @@ const EXTRA = [
       border-color: $color-gray-300;
     }
   }
-
-  &__backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgb(0 0 0 / 40%);
-    z-index: calc(#{$z-modal} - 1);
-  }
 }
 
 .menu-drawer-enter-active,
@@ -339,15 +324,5 @@ const EXTRA = [
 .menu-drawer-enter-from,
 .menu-drawer-leave-to {
   transform: translateX(-100%);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity $transition-base;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>
