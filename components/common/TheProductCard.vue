@@ -238,9 +238,19 @@ async function handleNotifyClick(e: Event, product: Product) {
   text-decoration: none;
   color: inherit;
 
-  &:hover:not(&--loading) {
-    box-shadow: $shadow-card-hover;
-    transform: translateY(-3px);
+  // Real-mouse-only: on touch devices :hover gets emulated during
+  // scroll/tap, so without this guard these effects flicker as a
+  // slider of cards is dragged with a finger.
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(&--loading) {
+      box-shadow: $shadow-card-hover;
+      transform: translateY(-3px);
+    }
+
+    &:hover &__hover-img {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   &__media {
@@ -265,11 +275,6 @@ async function handleNotifyClick(e: Event, product: Product) {
     z-index: 1;
     background-size: contain;
     background-position: center;
-  }
-
-  &:hover &__hover-img {
-    opacity: 1;
-    transform: scale(1);
   }
 
   &__media--oos {
