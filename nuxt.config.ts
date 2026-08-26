@@ -7,6 +7,22 @@ export default defineNuxtConfig({
 
   modules: ['@pinia/nuxt', '@nuxt/image', '@nuxtjs/sitemap', '@nuxtjs/robots', 'nuxt-gtag'],
 
+  // The installed nitropack only knows about Node 18/20/22 for its Vercel
+  // preset — on any build machine running a newer major it silently falls
+  // back to nodejs22.x. That runtime doesn't support require()-ing an ES
+  // module (unlike a plain local Node 22.12+ install), which crashed SSR
+  // on every dependency that internally requires() an ESM package (jsdom's
+  // html-encoding-sniffer, then sanitize-html's htmlparser2). Force the
+  // function runtime to match the Node version actually configured for
+  // this Vercel project instead of trusting nitro's outdated auto-detect.
+  nitro: {
+    vercel: {
+      functions: {
+        runtime: 'nodejs24.x',
+      },
+    },
+  },
+
   site: {
     url: process.env.NUXT_PUBLIC_SITE_URL || 'https://honey-store.ua',
   },
