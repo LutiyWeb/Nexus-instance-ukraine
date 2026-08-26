@@ -164,7 +164,7 @@ function onBackToLogin() {
         >
           <ShoppingCart :size="20" />
           <span
-            v-if="cartStore.count"
+            v-if="mounted && cartStore.count"
             class="the-header__badge"
             >{{ cartStore.count }}</span
           >
