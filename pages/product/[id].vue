@@ -1,7 +1,47 @@
 <script setup lang="ts">
 import { Star, Package, Shield, Truck } from 'lucide-vue-next'
-import DOMPurify from 'isomorphic-dompurify'
+import sanitizeHtml from 'sanitize-html'
 import type { Product } from '~/types/product'
+
+// Vendor descriptions are pasted from all over (Word, TinyMCE, Google Docs,
+// even ChatGPT) — this allowlist was built from a real sample of ~4000
+// descriptions (see scan for tags/attrs actually in use), not guessed.
+// iframe and the <style> tag are deliberately excluded even though a few
+// descriptions contain them: an embedded iframe or unscoped CSS block is a
+// real risk, not a formatting loss (DOMPurify's default config already
+// stripped iframe here too, since it wasn't in ADD_TAGS).
+const DESCRIPTION_ALLOWED_TAGS = [
+  'p',
+  'div',
+  'span',
+  'br',
+  'hr',
+  'b',
+  'strong',
+  'i',
+  'em',
+  'u',
+  'font',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'ul',
+  'ol',
+  'li',
+  'blockquote',
+  'table',
+  'tbody',
+  'tr',
+  'td',
+  'th',
+]
+
+const DESCRIPTION_ALLOWED_ATTRIBUTES = {
+  '*': ['style', 'align', 'class'],
+  font: ['color', 'face'],
+  table: ['border', 'cellpadding', 'cellspacing', 'width'],
+}
 
 const route = useRoute()
 const cartStore = useCartStore()
@@ -61,11 +101,19 @@ onMounted(() => {
 
 // Vendor descriptions arrive as HTML; sanitize before v-html to strip anything
 // that could execute (script tags, event handlers) while keeping formatting.
-const sanitizedDescription = computed(() => DOMPurify.sanitize(product.value?.description ?? ''))
+const sanitizedDescription = computed(() =>
+  sanitizeHtml(product.value?.description ?? '', {
+    allowedTags: DESCRIPTION_ALLOWED_TAGS,
+    allowedAttributes: DESCRIPTION_ALLOWED_ATTRIBUTES,
+  }),
+)
 // Meta tags must be plain text — strip all markup rather than leaking raw HTML
 // into <meta description> / OG tags.
 const plainDescription = computed(() =>
-  DOMPurify.sanitize(product.value?.description ?? '', { ALLOWED_TAGS: [] }).trim(),
+  sanitizeHtml(product.value?.description ?? '', {
+    allowedTags: [],
+    allowedAttributes: {},
+  }).trim(),
 )
 
 // Vendor descriptions can run to a couple thousand characters (spec dumps,
