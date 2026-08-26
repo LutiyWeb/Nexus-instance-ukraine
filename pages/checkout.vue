@@ -38,6 +38,16 @@ const selectedWarehouse = ref<NpWarehouse | null>(null)
 const paymentMethod = ref<'cod' | 'card'>('cod')
 const noCallback = ref(false)
 
+// Card payment needs an account (the pay endpoint looks up the order by
+// user+order, guest orders have no user) — drop back to cod if login is lost
+// mid-checkout so a hidden 'card' selection can't get submitted as a guest.
+watch(
+  () => authStore.isLoggedIn,
+  (loggedIn) => {
+    if (!loggedIn) paymentMethod.value = 'cod'
+  },
+)
+
 const errors = ref<Partial<Record<keyof typeof form | 'npCityRef' | 'npWarehouseRef', string>>>({})
 
 function formatPrice(p: number) {
@@ -110,6 +120,18 @@ async function submit() {
   submitting.value = true
   try {
     const body = {
+      ...(!authStore.isLoggedIn
+        ? {
+            items: cartStore.items.map((item) => ({
+              productId: item.product.id,
+              quantity: item.qty,
+            })),
+            customer: {
+              firstName: form.recipientName,
+              phone: form.phone,
+            },
+          }
+        : {}),
       ...(usingSavedAddress
         ? { addressId: selectedAddressId.value }
         : {
@@ -138,8 +160,24 @@ async function submit() {
       notes: form.notes || undefined,
     }
 
-    const res = await authFetch<{ data: { id: number } }>('/api/orders', { method: 'POST', body })
+    const res = await authFetch<{
+      data: { id: number; orderNumber: string; status: string; totalPrice: number }
+    }>('/api/orders', { method: 'POST', body })
     await cartStore.clear()
+
+    // Guest orders can't be fetched back via GET /api/orders/:id (no account to
+    // attach to) — stash what we already got from the POST response so the
+    // success page can render without hitting the API again.
+    if (!authStore.isLoggedIn) {
+      sessionStorage.setItem(
+        `guest-order-${res.data.id}`,
+        JSON.stringify({
+          orderNumber: res.data.orderNumber,
+          status: res.data.status,
+          totalPrice: res.data.totalPrice,
+        }),
+      )
+    }
 
     if (paymentMethod.value === 'card') {
       try {
@@ -318,6 +356,7 @@ async function submit() {
               Оплата при отриманні
             </button>
             <button
+              v-if="authStore.isLoggedIn"
               type="button"
               :class="[
                 'checkout__method-option',

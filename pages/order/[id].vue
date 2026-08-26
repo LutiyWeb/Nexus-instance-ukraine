@@ -2,20 +2,54 @@
 import { CheckCircle2, Package, MapPin, User, Phone, FileText, ChevronRight } from 'lucide-vue-next'
 import type { Order, OrderStatus } from '~/types/order'
 
-definePageMeta({ middleware: 'auth' })
-
 const route = useRoute()
 const { authFetch } = useAuthFetch()
+const authStore = useAuthStore()
 const ordersStore = useOrdersStore()
 
+// Guests have no account for GET /api/orders/:id to attach to (always 401), so
+// skip the fetch entirely for them — checkout.vue stashed what the POST
+// response returned, which is all a guest ever gets to see.
 const { data, pending, error } = useAsyncData(`order-${route.params.id}`, () =>
-  authFetch<{ data: Order }>(`/api/orders/${route.params.id}`),
+  authStore.isLoggedIn
+    ? authFetch<{ data: Order }>(`/api/orders/${route.params.id}`)
+    : Promise.resolve(null),
 )
 
 const order = computed(() => data.value?.data ?? null)
 
+interface GuestOrderSummary {
+  orderNumber: string
+  status: OrderStatus
+  totalPrice: number
+}
+
+const guestOrder = ref<GuestOrderSummary | null>(null)
+
+if (process.client && !authStore.isLoggedIn) {
+  try {
+    const raw = sessionStorage.getItem(`guest-order-${route.params.id}`)
+    guestOrder.value = raw ? JSON.parse(raw) : null
+  } catch {
+    guestOrder.value = null
+  }
+}
+
+const breadcrumbs = computed(() =>
+  authStore.isLoggedIn
+    ? [
+        { label: 'Головна', to: '/' },
+        { label: 'Мої замовлення', to: '/cabinet?section=orders' },
+        { label: order.value?.orderNumber ?? '...' },
+      ]
+    : [{ label: 'Головна', to: '/' }, { label: guestOrder.value?.orderNumber ?? '...' }],
+)
+
 useSeoMeta({
-  title: () => (order.value ? `Замовлення ${order.value.orderNumber} — Honey Store` : 'Замовлення'),
+  title: () => {
+    const number = order.value?.orderNumber ?? guestOrder.value?.orderNumber
+    return number ? `Замовлення ${number} — Honey Store` : 'Замовлення'
+  },
   robots: 'noindex, follow',
 })
 useCanonical()
@@ -43,183 +77,234 @@ function formatDate(iso: string) {
 <template>
   <div class="order-page container--narrow">
     <AppBreadcrumbs
-      :crumbs="[
-        { label: 'Головна', to: '/' },
-        { label: 'Мої замовлення', to: '/cabinet?section=orders' },
-        { label: order?.orderNumber ?? '...' },
-      ]"
+      :crumbs="breadcrumbs"
       class="order-page__breadcrumbs"
     />
 
-    <!-- Loading -->
-    <div
-      v-if="pending"
-      class="order-page__loading"
-    >
-      <AppSkeleton
-        width="100%"
-        height="200px"
-        border-radius="16px"
-      />
-    </div>
-
-    <!-- Error -->
-    <div
-      v-else-if="error || !order"
-      class="order-page__error"
-    >
-      <p>Замовлення не знайдено.</p>
-      <NuxtLink
-        to="/cabinet?section=orders"
-        class="order-page__error-link"
-        >Мої замовлення</NuxtLink
+    <!-- Guest: only what the POST /api/orders response gave us, no GET is possible -->
+    <template v-if="!authStore.isLoggedIn">
+      <div
+        v-if="guestOrder"
+        class="order-page__guest"
       >
-    </div>
+        <div class="order-page__banner">
+          <div class="order-page__banner-icon">
+            <CheckCircle2 :size="40" />
+          </div>
+          <div class="order-page__banner-body">
+            <h1 class="order-page__banner-title">Замовлення оформлено!</h1>
+            <p class="order-page__banner-sub">
+              Номер замовлення: <strong>{{ guestOrder.orderNumber }}</strong>
+            </p>
+          </div>
+          <span
+            :class="[
+              'order-page__status',
+              `order-page__status--${STATUS_COLOR[guestOrder.status]}`,
+            ]"
+          >
+            {{ ordersStore.getStatusLabel(guestOrder.status) }}
+          </span>
+        </div>
 
-    <!-- Content -->
-    <template v-else>
-      <!-- Success banner -->
-      <div class="order-page__banner">
-        <div class="order-page__banner-icon">
-          <CheckCircle2 :size="40" />
+        <div class="order-page__card order-page__guest-total">
+          <span>До сплати</span>
+          <span>{{ ordersStore.formatMoney(String(guestOrder.totalPrice)) }}</span>
         </div>
-        <div class="order-page__banner-body">
-          <h1 class="order-page__banner-title">Замовлення оформлено!</h1>
-          <p class="order-page__banner-sub">
-            Номер замовлення: <strong>{{ order.orderNumber }}</strong> &nbsp;·&nbsp;
-            {{ formatDate(order.createdAt) }}
-          </p>
-        </div>
-        <span
-          :class="[
-            'order-page__status',
-            `order-page__status--${STATUS_COLOR[order.status as OrderStatus]}`,
-          ]"
+
+        <NuxtLink
+          to="/catalog"
+          class="order-page__btn order-page__btn--primary order-page__guest-cta"
         >
-          {{ ordersStore.getStatusLabel(order.status as OrderStatus) }}
-        </span>
+          Продовжити покупки
+        </NuxtLink>
       </div>
 
-      <!-- Grid -->
-      <div class="order-page__layout">
-        <!-- Left: items + address -->
-        <div class="order-page__main">
-          <!-- Items -->
-          <section class="order-page__card">
-            <h2 class="order-page__card-title"><Package :size="16" />Склад замовлення</h2>
-            <div class="order-page__items">
-              <div
-                v-for="item in order.items"
-                :key="item.id"
-                class="order-page__item"
-              >
-                <div class="order-page__item-info">
-                  <p class="order-page__item-title">{{ item.productTitle }}</p>
-                  <p
-                    v-if="item.sku"
-                    class="order-page__item-sku"
-                  >
-                    SKU: {{ item.sku }}
-                  </p>
-                  <p
-                    v-if="item.variant"
-                    class="order-page__item-variant"
-                  >
-                    {{ (item.variant as any).title }}
-                  </p>
-                </div>
-                <div class="order-page__item-qty">× {{ item.quantity }}</div>
-                <div class="order-page__item-price">
-                  {{ ordersStore.formatMoney(item.totalPrice, order.currency) }}
+      <div
+        v-else
+        class="order-page__error"
+      >
+        <p>Замовлення недоступне. Номер замовлення показується лише одразу після оформлення.</p>
+        <NuxtLink
+          to="/contacts"
+          class="order-page__error-link"
+          >Зв'язатися з підтримкою</NuxtLink
+        >
+      </div>
+    </template>
+
+    <!-- Logged in -->
+    <template v-else>
+      <!-- Loading -->
+      <div
+        v-if="pending"
+        class="order-page__loading"
+      >
+        <AppSkeleton
+          width="100%"
+          height="200px"
+          border-radius="16px"
+        />
+      </div>
+
+      <!-- Error -->
+      <div
+        v-else-if="error || !order"
+        class="order-page__error"
+      >
+        <p>Замовлення не знайдено.</p>
+        <NuxtLink
+          to="/cabinet?section=orders"
+          class="order-page__error-link"
+          >Мої замовлення</NuxtLink
+        >
+      </div>
+
+      <!-- Content -->
+      <template v-else>
+        <!-- Success banner -->
+        <div class="order-page__banner">
+          <div class="order-page__banner-icon">
+            <CheckCircle2 :size="40" />
+          </div>
+          <div class="order-page__banner-body">
+            <h1 class="order-page__banner-title">Замовлення оформлено!</h1>
+            <p class="order-page__banner-sub">
+              Номер замовлення: <strong>{{ order.orderNumber }}</strong> &nbsp;·&nbsp;
+              {{ formatDate(order.createdAt) }}
+            </p>
+          </div>
+          <span
+            :class="[
+              'order-page__status',
+              `order-page__status--${STATUS_COLOR[order.status as OrderStatus]}`,
+            ]"
+          >
+            {{ ordersStore.getStatusLabel(order.status as OrderStatus) }}
+          </span>
+        </div>
+
+        <!-- Grid -->
+        <div class="order-page__layout">
+          <!-- Left: items + address -->
+          <div class="order-page__main">
+            <!-- Items -->
+            <section class="order-page__card">
+              <h2 class="order-page__card-title"><Package :size="16" />Склад замовлення</h2>
+              <div class="order-page__items">
+                <div
+                  v-for="item in order.items"
+                  :key="item.id"
+                  class="order-page__item"
+                >
+                  <div class="order-page__item-info">
+                    <p class="order-page__item-title">{{ item.productTitle }}</p>
+                    <p
+                      v-if="item.sku"
+                      class="order-page__item-sku"
+                    >
+                      SKU: {{ item.sku }}
+                    </p>
+                    <p
+                      v-if="item.variant"
+                      class="order-page__item-variant"
+                    >
+                      {{ (item.variant as any).title }}
+                    </p>
+                  </div>
+                  <div class="order-page__item-qty">× {{ item.quantity }}</div>
+                  <div class="order-page__item-price">
+                    {{ ordersStore.formatMoney(item.totalPrice, order.currency) }}
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <!-- Delivery address -->
-          <section
-            v-if="order.deliveryAddressSnapshot"
-            class="order-page__card order-page__card--fill"
-          >
-            <h2 class="order-page__card-title"><MapPin :size="16" />Адреса доставки</h2>
-            <div class="order-page__address">
-              <p>
-                <User :size="13" />
-                {{ order.deliveryAddressSnapshot.recipientName }}
-              </p>
-              <p>
-                <Phone :size="13" />
-                {{ order.deliveryAddressSnapshot.phone }}
-              </p>
-              <p>
-                <MapPin :size="13" />
-                {{ order.deliveryAddressSnapshot.city }},
-                {{ order.deliveryAddressSnapshot.street }}, буд.
-                {{ order.deliveryAddressSnapshot.house }}
-                <template v-if="order.deliveryAddressSnapshot.apartment">
-                  , кв. {{ order.deliveryAddressSnapshot.apartment }}
-                </template>
-              </p>
-            </div>
-          </section>
-
-          <!-- Notes -->
-          <section
-            v-if="order.notes"
-            class="order-page__card"
-          >
-            <h2 class="order-page__card-title"><FileText :size="16" />Коментар</h2>
-            <p class="order-page__notes">{{ order.notes }}</p>
-          </section>
-        </div>
-
-        <!-- Right: summary + actions -->
-        <aside class="order-page__aside">
-          <div class="order-page__summary">
-            <h2 class="order-page__summary-title">Разом</h2>
-
-            <div class="order-page__summary-row">
-              <span>Товари</span>
-              <span>{{ ordersStore.formatMoney(order.subtotalPrice, order.currency) }}</span>
-            </div>
-            <div
-              v-if="parseFloat(order.discountAmount) > 0"
-              class="order-page__summary-row order-page__summary-row--discount"
+            <!-- Delivery address -->
+            <section
+              v-if="order.deliveryAddressSnapshot"
+              class="order-page__card order-page__card--fill"
             >
-              <span>Знижка</span>
-              <span>− {{ ordersStore.formatMoney(order.discountAmount, order.currency) }}</span>
-            </div>
-            <div class="order-page__summary-row">
-              <span>Доставка</span>
-              <span>{{
-                parseFloat(order.deliveryPrice) === 0
-                  ? 'Безкоштовно'
-                  : ordersStore.formatMoney(order.deliveryPrice, order.currency)
-              }}</span>
-            </div>
+              <h2 class="order-page__card-title"><MapPin :size="16" />Адреса доставки</h2>
+              <div class="order-page__address">
+                <p>
+                  <User :size="13" />
+                  {{ order.deliveryAddressSnapshot.recipientName }}
+                </p>
+                <p>
+                  <Phone :size="13" />
+                  {{ order.deliveryAddressSnapshot.phone }}
+                </p>
+                <p>
+                  <MapPin :size="13" />
+                  {{ order.deliveryAddressSnapshot.city }},
+                  {{ order.deliveryAddressSnapshot.street }}, буд.
+                  {{ order.deliveryAddressSnapshot.house }}
+                  <template v-if="order.deliveryAddressSnapshot.apartment">
+                    , кв. {{ order.deliveryAddressSnapshot.apartment }}
+                  </template>
+                </p>
+              </div>
+            </section>
 
-            <div class="order-page__summary-total">
-              <span>До сплати</span>
-              <span>{{ ordersStore.formatMoney(order.totalPrice, order.currency) }}</span>
-            </div>
-
-            <div class="order-page__summary-actions">
-              <NuxtLink
-                to="/catalog"
-                class="order-page__btn order-page__btn--primary"
-              >
-                Продовжити покупки
-              </NuxtLink>
-              <NuxtLink
-                to="/cabinet?section=orders"
-                class="order-page__btn order-page__btn--outline"
-              >
-                Мої замовлення <ChevronRight :size="14" />
-              </NuxtLink>
-            </div>
+            <!-- Notes -->
+            <section
+              v-if="order.notes"
+              class="order-page__card"
+            >
+              <h2 class="order-page__card-title"><FileText :size="16" />Коментар</h2>
+              <p class="order-page__notes">{{ order.notes }}</p>
+            </section>
           </div>
-        </aside>
-      </div>
+
+          <!-- Right: summary + actions -->
+          <aside class="order-page__aside">
+            <div class="order-page__summary">
+              <h2 class="order-page__summary-title">Разом</h2>
+
+              <div class="order-page__summary-row">
+                <span>Товари</span>
+                <span>{{ ordersStore.formatMoney(order.subtotalPrice, order.currency) }}</span>
+              </div>
+              <div
+                v-if="parseFloat(order.discountAmount) > 0"
+                class="order-page__summary-row order-page__summary-row--discount"
+              >
+                <span>Знижка</span>
+                <span>− {{ ordersStore.formatMoney(order.discountAmount, order.currency) }}</span>
+              </div>
+              <div class="order-page__summary-row">
+                <span>Доставка</span>
+                <span>{{
+                  parseFloat(order.deliveryPrice) === 0
+                    ? 'Безкоштовно'
+                    : ordersStore.formatMoney(order.deliveryPrice, order.currency)
+                }}</span>
+              </div>
+
+              <div class="order-page__summary-total">
+                <span>До сплати</span>
+                <span>{{ ordersStore.formatMoney(order.totalPrice, order.currency) }}</span>
+              </div>
+
+              <div class="order-page__summary-actions">
+                <NuxtLink
+                  to="/catalog"
+                  class="order-page__btn order-page__btn--primary"
+                >
+                  Продовжити покупки
+                </NuxtLink>
+                <NuxtLink
+                  to="/cabinet?section=orders"
+                  class="order-page__btn order-page__btn--outline"
+                >
+                  Мої замовлення <ChevronRight :size="14" />
+                </NuxtLink>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </template>
     </template>
   </div>
 </template>
@@ -246,6 +331,26 @@ function formatDate(iso: string) {
     text-decoration: underline;
     margin-top: 8px;
     display: inline-block;
+  }
+
+  // ── Guest success (no account to fetch the full order back from) ──────────
+  &__guest {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__guest-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+  }
+
+  &__guest-cta {
+    align-self: flex-start;
   }
 
   // ── Banner ───────────────────────────────────────────────────────────────
