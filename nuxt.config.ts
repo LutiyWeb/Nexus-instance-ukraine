@@ -49,6 +49,11 @@ export default defineNuxtConfig({
   },
 
   image: {
+    // Without this, @nuxt/image auto-detects Vercel at build time and routes
+    // every image through Vercel's paid optimization endpoint (/_vercel/image)
+    // instead of processing them itself — that endpoint's quota is exhausted
+    // in production (402 OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED on every image).
+    provider: 'ipx',
     quality: 80,
     format: ['webp', 'jpg'],
     domains: ['images.unsplash.com', 'image.hubber.pro'],
