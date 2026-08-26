@@ -11,8 +11,27 @@ const authStore = useAuthStore()
 const toastStore = useToastStore()
 const { authFetch } = useAuthFetch()
 
-// If cart is empty redirect to cart page
-if (process.client && !cartStore.items.length) navigateTo('/cart')
+// If cart is empty redirect to cart page. For a logged-in user on a fresh
+// page load, cartStore.loading is still true here (fetchCart() just kicked
+// off) — checking items.length immediately would catch it before the
+// server cart arrives and bounce someone with a real cart to /cart. Wait
+// for the in-flight fetch to settle before deciding; guests load
+// synchronously from localStorage so loading is already false for them.
+if (process.client) {
+  if (cartStore.loading) {
+    const stopCartLoadingWatch = watch(
+      () => cartStore.loading,
+      (isLoading) => {
+        if (!isLoading) {
+          stopCartLoadingWatch()
+          if (!cartStore.items.length) navigateTo('/cart')
+        }
+      },
+    )
+  } else if (!cartStore.items.length) {
+    navigateTo('/cart')
+  }
+}
 
 const savedAddresses = ref<Address[]>([])
 const selectedAddressId = ref<number | null>(null)

@@ -7,6 +7,17 @@ const { authFetch } = useAuthFetch()
 const authStore = useAuthStore()
 const ordersStore = useOrdersStore()
 
+// authStore.isLoggedIn is unknown during SSR (localStorage-only) but already
+// true on the client before the first paint — branching the guest/logged-in
+// template on it directly would render different markup server vs. client
+// and trip a structural hydration mismatch. Hold both branches back behind
+// `mounted` (same pattern as TheHeader.vue) so SSR and the client's first
+// render agree on a neutral loading state.
+const mounted = ref(false)
+onMounted(() => {
+  mounted.value = true
+})
+
 // Guests have no account for GET /api/orders/:id to attach to (always 401), so
 // skip the fetch entirely for them — checkout.vue stashed what the POST
 // response returned, which is all a guest ever gets to see.
@@ -35,15 +46,16 @@ if (process.client && !authStore.isLoggedIn) {
   }
 }
 
-const breadcrumbs = computed(() =>
-  authStore.isLoggedIn
+const breadcrumbs = computed(() => {
+  if (!mounted.value) return [{ label: 'Головна', to: '/' }, { label: '...' }]
+  return authStore.isLoggedIn
     ? [
         { label: 'Головна', to: '/' },
         { label: 'Мої замовлення', to: '/cabinet?section=orders' },
         { label: order.value?.orderNumber ?? '...' },
       ]
-    : [{ label: 'Головна', to: '/' }, { label: guestOrder.value?.orderNumber ?? '...' }],
-)
+    : [{ label: 'Головна', to: '/' }, { label: guestOrder.value?.orderNumber ?? '...' }]
+})
 
 useSeoMeta({
   title: () => {
@@ -81,8 +93,21 @@ function formatDate(iso: string) {
       class="order-page__breadcrumbs"
     />
 
+    <!-- Neutral until mounted: SSR can never know auth state (localStorage-only),
+    so this avoids a structural mismatch between the guest and logged-in branches below -->
+    <div
+      v-if="!mounted"
+      class="order-page__loading"
+    >
+      <AppSkeleton
+        width="100%"
+        height="200px"
+        border-radius="16px"
+      />
+    </div>
+
     <!-- Guest: only what the POST /api/orders response gave us, no GET is possible -->
-    <template v-if="!authStore.isLoggedIn">
+    <template v-else-if="!authStore.isLoggedIn">
       <div
         v-if="guestOrder"
         class="order-page__guest"
@@ -235,7 +260,12 @@ function formatDate(iso: string) {
                   <Phone :size="13" />
                   {{ order.deliveryAddressSnapshot.phone }}
                 </p>
-                <p>
+                <p v-if="order.deliveryAddressSnapshot.npWarehouseAddress">
+                  <MapPin :size="13" />
+                  Відділення №{{ order.deliveryAddressSnapshot.npWarehouseNumber }} —
+                  {{ order.deliveryAddressSnapshot.npWarehouseAddress }}
+                </p>
+                <p v-else>
                   <MapPin :size="13" />
                   {{ order.deliveryAddressSnapshot.city }},
                   {{ order.deliveryAddressSnapshot.street }}, буд.

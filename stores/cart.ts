@@ -16,7 +16,12 @@ export const useCartStore = defineStore('cart', () => {
   // never from SSR. Without it, Nuxt's Pinia state hydration overwrites the
   // freshly-loaded value with the server's empty array right after setup runs.
   const items = skipHydrate(ref<CartEntry[]>([]))
-  const loading = ref(false)
+  // Same reasoning as items above: plain ref would get patched back to the
+  // server's stale `false` by Pinia's SSR-state hydration right after a
+  // logged-in user's fetchCart() has already (synchronously) set it true,
+  // making any check of `loading` right after store creation see `false`
+  // even though a real fetch is in flight.
+  const loading = skipHydrate(ref(false))
 
   const count = computed(() => items.value.reduce((s, e) => s + e.qty, 0))
   const total = computed(() => items.value.reduce((s, e) => s + e.product.price * e.qty, 0))

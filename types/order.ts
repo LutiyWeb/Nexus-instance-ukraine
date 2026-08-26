@@ -31,10 +31,17 @@ export interface OrderAddressSnapshot {
   addressId?: number
   recipientName: string
   phone: string
+  deliveryMethod?: 'courier' | 'np_courier' | 'np_branch' | 'np_postomat'
   city: string
-  street: string
-  house: string
+  // courier / np_courier
+  street?: string
+  house?: string
   apartment?: string
+  // np_branch / np_postomat
+  npCityRef?: string
+  npWarehouseRef?: string
+  npWarehouseNumber?: string
+  npWarehouseAddress?: string
 }
 
 export interface Order {
