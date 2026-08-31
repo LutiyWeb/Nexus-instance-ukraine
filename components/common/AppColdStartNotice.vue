@@ -27,10 +27,9 @@ useScrollLock(visible)
     @update:open="visible = false"
   >
     <div class="cold-start-modal">
-      <AppHexPattern
-        variant="cluster"
-        class="cold-start-modal__hex"
-      />
+      <div class="cold-start-modal__hex">
+        <AppHexPattern variant="cluster" />
+      </div>
       <p class="cold-start-modal__title">Please wait</p>
       <p class="cold-start-modal__text">
         First load can take up to a minute — this is a one-time "wake up" of our free server. Thanks
