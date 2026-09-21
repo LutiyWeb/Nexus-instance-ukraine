@@ -12,6 +12,7 @@ import {
   ShoppingCart,
   Truck,
   RotateCcw,
+  Frame,
 } from 'lucide-vue-next'
 
 defineProps<{ open: boolean }>()
@@ -37,6 +38,7 @@ const NAV = [
   { label: 'Акції', to: '/promo', icon: Tag },
   { label: 'Про нас', to: '/about', icon: Info },
   { label: 'Контакти', to: '/contacts', icon: Phone },
+  { label: 'Макет', to: '/mockup', icon: Frame },
 ]
 
 const CABINET = [
