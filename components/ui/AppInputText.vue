@@ -7,6 +7,8 @@ interface Props {
   error?: string
   disabled?: boolean
   type?: 'text' | 'phone'
+  name?: string
+  autocomplete?: string
 }
 
 const props = withDefaults(defineProps<Props>(), { type: 'text' })
@@ -34,6 +36,8 @@ function onFocus() {
       v-model="modelValue"
       v-maska="type === 'phone' ? { mask: PHONE_MASK, eager: true } : undefined"
       :type="type === 'phone' ? 'tel' : 'text'"
+      :name="name"
+      :autocomplete="autocomplete"
       :placeholder="placeholder"
       :disabled="disabled"
       :class="['app-input__field', { 'app-input__field--error': error }]"

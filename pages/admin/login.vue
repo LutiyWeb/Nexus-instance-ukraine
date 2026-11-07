@@ -78,18 +78,23 @@ async function submit() {
   <div class="admin-login">
     <form
       class="admin-login__form"
+      autocomplete="on"
       @submit.prevent="submit"
     >
       <h1 class="admin-login__title">Вхід в адмінку</h1>
 
       <AppInputText
         v-model="email"
+        name="email"
+        autocomplete="username"
         label="Email"
         placeholder="email@example.com"
         :error="errors.email"
       />
       <AppPasswordInput
         v-model="password"
+        name="password"
+        autocomplete="current-password"
         label="Пароль"
         placeholder="Пароль"
         :error="errors.password"
