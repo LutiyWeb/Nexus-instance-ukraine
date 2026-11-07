@@ -6,7 +6,7 @@ interface Props {
   label?: string
   error?: string
   disabled?: boolean
-  type?: 'text' | 'phone'
+  type?: 'text' | 'phone' | 'email'
   name?: string
   autocomplete?: string
 }
@@ -35,7 +35,7 @@ function onFocus() {
     <input
       v-model="modelValue"
       v-maska="type === 'phone' ? { mask: PHONE_MASK, eager: true } : undefined"
-      :type="type === 'phone' ? 'tel' : 'text'"
+      :type="type === 'phone' ? 'tel' : type"
       :name="name"
       :autocomplete="autocomplete"
       :placeholder="placeholder"

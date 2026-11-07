@@ -196,7 +196,7 @@ export const useWishlistsStore = defineStore('wishlists', () => {
     } catch {}
   }
 
-  if (process.client) {
+  if (import.meta.client) {
     _loadGuest()
     if (authStore.isLoggedIn) fetchWishlists()
   }

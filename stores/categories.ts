@@ -71,7 +71,7 @@ export const useCategoriesStore = defineStore('categories', () => {
     }
   }
 
-  function findBySlug(slug: string) {
+  function findBySlug(slug: string): Category | null {
     for (const cat of categories.value) {
       if (cat.slug === slug) return cat
       const sub = cat.subcategories?.find((s) => s.slug === slug)

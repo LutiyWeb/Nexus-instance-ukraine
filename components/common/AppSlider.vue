@@ -4,7 +4,7 @@ import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import type { RouteLocationRaw } from 'vue-router'
 
-type SlideItem = { id: string | number; [key: string]: unknown }
+type SlideItem = { id: string | number }
 
 interface Props {
   slides?: SlideItem[]

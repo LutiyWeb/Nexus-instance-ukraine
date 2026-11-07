@@ -93,7 +93,7 @@ const {
   // Render's free-tier backend can cold-start for up to ~1min. A short
   // server-side timeout keeps SSR from hanging into Vercel's function
   // timeout; the client retry below has no such limit and can wait it out.
-  timeout: process.server ? 6000 : 90000,
+  timeout: import.meta.server ? 6000 : 90000,
 })
 
 onMounted(() => {

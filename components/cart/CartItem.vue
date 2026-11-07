@@ -75,7 +75,7 @@ const {
       >
         {{ item.product.title }}
       </NuxtLink>
-      <span class="cart-item__price">{{ formatPrice(item.product.price) }}</span>
+      <span class="cart-item__price">{{ formatPrice(item.product.price ?? 0) }}</span>
     </div>
 
     <div class="cart-item__qty">

@@ -17,7 +17,7 @@ const { authFetch } = useAuthFetch()
 // server cart arrives and bounce someone with a real cart to /cart. Wait
 // for the in-flight fetch to settle before deciding; guests load
 // synchronously from localStorage so loading is already false for them.
-if (process.client) {
+if (import.meta.client) {
   if (cartStore.loading) {
     const stopCartLoadingWatch = watch(
       () => cartStore.loading,

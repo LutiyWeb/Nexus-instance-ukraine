@@ -30,7 +30,7 @@ function saveProfile() {
     authStore.user.firstName = form.firstName
     authStore.user.lastName = form.lastName
     authStore.user.phone = form.phone
-    if (process.client) localStorage.setItem('auth_user', JSON.stringify(authStore.user))
+    if (import.meta.client) localStorage.setItem('auth_user', JSON.stringify(authStore.user))
   }
   profileSaved.value = true
   setTimeout(() => {

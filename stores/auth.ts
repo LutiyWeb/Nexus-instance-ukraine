@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const error = ref<string | null>(null)
   const isLoggedIn = computed(() => !!token.value && !!user.value)
 
-  if (process.client) {
+  if (import.meta.client) {
     token.value = localStorage.getItem('access_token')
     const saved = localStorage.getItem('auth_user')
     if (saved) user.value = JSON.parse(saved)
@@ -128,7 +128,7 @@ export const useAuthStore = defineStore('auth', () => {
   const REFRESH_LOCK_TTL_MS = 8000
 
   async function refresh(): Promise<boolean> {
-    if (process.client) {
+    if (import.meta.client) {
       const lockAt = Number(localStorage.getItem(REFRESH_LOCK_KEY) ?? 0)
       if (lockAt && Date.now() - lockAt < REFRESH_LOCK_TTL_MS) {
         for (let i = 0; i < 20; i++) {
@@ -158,7 +158,7 @@ export const useAuthStore = defineStore('auth', () => {
       _clear()
       return false
     } finally {
-      if (process.client) localStorage.removeItem(REFRESH_LOCK_KEY)
+      if (import.meta.client) localStorage.removeItem(REFRESH_LOCK_KEY)
     }
   }
 

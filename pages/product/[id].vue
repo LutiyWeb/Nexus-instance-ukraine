@@ -57,7 +57,7 @@ const config = useRuntimeConfig()
 // server-side timeout keeps SSR from hanging into Vercel's function
 // timeout; the client retry below (onMounted) has no such limit and can
 // wait it out.
-const backendTimeout = process.server ? 6000 : 90000
+const backendTimeout = import.meta.server ? 6000 : 90000
 
 const {
   data: productData,
