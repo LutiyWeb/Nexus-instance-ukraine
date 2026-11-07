@@ -24,7 +24,7 @@ export const useCartStore = defineStore('cart', () => {
   const loading = skipHydrate(ref(false))
 
   const count = computed(() => items.value.reduce((s, e) => s + e.qty, 0))
-  const total = computed(() => items.value.reduce((s, e) => s + e.product.price * e.qty, 0))
+  const total = computed(() => items.value.reduce((s, e) => s + (e.product.price ?? 0) * e.qty, 0))
 
   function has(productId: number): boolean {
     return items.value.some((e) => e.product.id === productId)
@@ -32,7 +32,7 @@ export const useCartStore = defineStore('cart', () => {
 
   // ── localStorage (гість) ─────────────────────────────────────────────────
   function _loadLocal() {
-    if (!process.client) return
+    if (!import.meta.client) return
     try {
       const raw = localStorage.getItem(LS_KEY)
       if (raw) items.value = JSON.parse(raw)
@@ -40,12 +40,12 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function _saveLocal() {
-    if (!process.client) return
+    if (!import.meta.client) return
     localStorage.setItem(LS_KEY, JSON.stringify(items.value))
   }
 
   function _clearLocal() {
-    if (!process.client) return
+    if (!import.meta.client) return
     localStorage.removeItem(LS_KEY)
   }
 
@@ -182,7 +182,7 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   // ── Ініціалізація ─────────────────────────────────────────────────────────
-  if (process.client) {
+  if (import.meta.client) {
     if (authStore.isLoggedIn) {
       fetchCart()
     } else {

@@ -7,6 +7,8 @@ interface Props {
   label?: string
   error?: string
   disabled?: boolean
+  name?: string
+  autocomplete?: string
 }
 
 defineProps<Props>()
@@ -26,6 +28,8 @@ const showPassword = ref(false)
       <input
         :value="modelValue"
         :type="showPassword ? 'text' : 'password'"
+        :name="name"
+        :autocomplete="autocomplete"
         :placeholder="placeholder"
         :disabled="disabled"
         class="app-input__input"

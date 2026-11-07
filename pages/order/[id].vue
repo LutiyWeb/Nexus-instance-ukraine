@@ -37,7 +37,7 @@ interface GuestOrderSummary {
 
 const guestOrder = ref<GuestOrderSummary | null>(null)
 
-if (process.client && !authStore.isLoggedIn) {
+if (import.meta.client && !authStore.isLoggedIn) {
   try {
     const raw = sessionStorage.getItem(`guest-order-${route.params.id}`)
     guestOrder.value = raw ? JSON.parse(raw) : null

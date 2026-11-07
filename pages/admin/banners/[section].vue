@@ -359,7 +359,7 @@ watch(section, load, { immediate: true })
     >
       <div
         v-for="banner in banners"
-        :key="banner.slug"
+        :key="banner.slug ?? banner.id"
         class="admin-banners__item"
       >
         <div

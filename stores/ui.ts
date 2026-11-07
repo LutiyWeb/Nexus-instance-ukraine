@@ -30,7 +30,7 @@ export const useUiStore = defineStore('ui', () => {
       menuOpen.value,
   )
 
-  if (process.client) {
+  if (import.meta.client) {
     useScrollLock(overlayVisible)
   }
 

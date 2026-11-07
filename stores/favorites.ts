@@ -50,7 +50,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     } else if (adding) toastStore.add('Увійдіть, щоб зберегти в обране', 'warning')
   }
 
-  if (process.client && authStore.isLoggedIn) {
+  if (import.meta.client && authStore.isLoggedIn) {
     fetchFavorites()
   }
 

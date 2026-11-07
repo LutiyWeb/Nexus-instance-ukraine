@@ -45,12 +45,12 @@ const SLIDER_CODE = `<AppSlider
 </AppSlider>`
 
 const ARROW_CODE = `<!-- AppArrow — універсальна стрілка для всіх слайдерів -->
-<AppArrow direction="prev" @click="swiper.slidePrev()" />
-<AppArrow direction="next" @click="swiper.slideNext()" />
+<AppArrow direction="left" @click="swiper.slidePrev()" />
+<AppArrow direction="right" @click="swiper.slideNext()" />
 
 <!-- Стани -->
-<AppArrow direction="prev" :disabled="isBeginning" />
-<AppArrow direction="next" :disabled="isEnd" />`
+<AppArrow direction="left" :disabled="isBeginning" />
+<AppArrow direction="right" :disabled="isEnd" />`
 </script>
 
 <template>
@@ -105,17 +105,17 @@ const ARROW_CODE = `<!-- AppArrow — універсальна стрілка д
     >
       <template #preview>
         <div style="display: flex; gap: 12px; align-items: center">
-          <AppArrow direction="prev" />
-          <AppArrow direction="next" />
+          <AppArrow direction="left" />
+          <AppArrow direction="right" />
           <span style="color: #9ca3af; font-size: 13px; margin-left: 8px">активні</span>
         </div>
         <div style="display: flex; gap: 12px; align-items: center">
           <AppArrow
-            direction="prev"
+            direction="left"
             :disabled="true"
           />
           <AppArrow
-            direction="next"
+            direction="right"
             :disabled="true"
           />
           <span style="color: #9ca3af; font-size: 13px; margin-left: 8px">disabled</span>
@@ -129,7 +129,7 @@ const ARROW_CODE = `<!-- AppArrow — універсальна стрілка д
           :rows="[
             {
               name: 'direction',
-              type: `'prev' | 'next'`,
+              type: `'left' | 'right'`,
               required: true,
               description: 'Напрямок стрілки',
             },
