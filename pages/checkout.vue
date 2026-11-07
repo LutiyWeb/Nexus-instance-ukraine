@@ -642,10 +642,39 @@ async function submit() {
     cursor: pointer;
 
     input[type='checkbox'] {
-      accent-color: $color-primary;
+      // Custom-drawn instead of accent-color: accent-color's checkmark
+      // rendering isn't consistent across browsers, so the checked state
+      // silently falls back to a dark default in some of them.
+      appearance: none;
+      position: relative;
+      flex-shrink: 0;
       width: 16px;
       height: 16px;
+      margin: 0;
+      border: 1.5px solid $color-gray-300;
+      border-radius: $radius-sm;
+      background: $color-white;
       cursor: pointer;
+      transition:
+        background $transition-fast,
+        border-color $transition-fast;
+
+      &:checked {
+        background: $color-primary;
+        border-color: $color-primary;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 4.5px;
+          top: 2px;
+          width: 4px;
+          height: 8px;
+          border: solid $color-white;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+      }
     }
   }
 

@@ -11,6 +11,8 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck",
+    "test": "vitest",
+    "test:run": "vitest run",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -44,19 +46,23 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^4.3.4",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@types/node": "^26.6.6",
     "@types/sanitize-html": "^2.16.1",
+    "@vue/test-utils": "^2.5.1",
     "autoprefixer": "^10.5.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "happy-dom": "^21.0.4",
     "husky": "^9.1.7",
     "kill-port": "^2.0.1",
     "lint-staged": "^16.4.0",
     "postcss": "^8.5.14",
     "prettier": "^3.8.3",
     "typescript": "^6.0.3",
+    "vitest": "^5.1.0",
     "vue-tsc": "^3.3.14"
   }
 }
