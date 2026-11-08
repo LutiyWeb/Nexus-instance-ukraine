@@ -48,6 +48,7 @@
   "devDependencies": {
     "@nuxt/test-utils": "^4.3.4",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@playwright/test": "^1.65.0",
     "@types/node": "^26.6.6",
     "@types/sanitize-html": "^2.16.1",
     "@vue/test-utils": "^2.5.1",
