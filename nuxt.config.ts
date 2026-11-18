@@ -60,7 +60,13 @@ export default defineNuxtConfig({
     provider: 'ipx',
     quality: 80,
     format: ['webp', 'jpg'],
-    domains: ['images.unsplash.com', 'image.hubber.pro'],
+    // Own hosts: local images are passed to IPX as absolute URLs (see AppImage.vue).
+    domains: [
+      'images.unsplash.com',
+      'image.hubber.pro',
+      'www.honey-store.online',
+      'honey-store.online',
+    ],
   },
 
   css: [
