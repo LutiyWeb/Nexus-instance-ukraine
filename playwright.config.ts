@@ -4,9 +4,6 @@ import { defineConfig, devices } from '@playwright/test'
 // Override any of these via environment variables (CI sets them in the workflow).
 process.env.E2E_BASE_URL ??= 'http://localhost:3000'
 process.env.E2E_API_BASE_URL ??= 'https://shopmarker-backend.onrender.com'
-// An in-stock product on the test backend (see e2e/guest-checkout.spec.ts).
-process.env.E2E_PRODUCT_ID ??= '9264'
-process.env.E2E_PRODUCT_PRICE ??= '2199'
 
 export default defineConfig({
   testDir: './e2e',
