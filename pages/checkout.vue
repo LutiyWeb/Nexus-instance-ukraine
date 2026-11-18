@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
+import { buildOrderPayload, checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
 import type { Address } from '~/contracts/addresses'
 import type { NpSettlement, NpWarehouse } from '~/contracts/delivery'
 
@@ -138,46 +138,17 @@ async function submit() {
 
   submitting.value = true
   try {
-    const body = {
-      ...(!authStore.isLoggedIn
-        ? {
-            items: cartStore.items.map((item) => ({
-              productId: item.product.id,
-              quantity: item.qty,
-            })),
-            customer: {
-              firstName: form.recipientName,
-              phone: form.phone,
-            },
-          }
-        : {}),
-      ...(usingSavedAddress
-        ? { addressId: selectedAddressId.value }
-        : {
-            deliveryAddress: {
-              recipientName: form.recipientName,
-              phone: form.phone,
-              deliveryMethod: deliveryMethod.value,
-              city: selectedCity.value?.present ?? '',
-              npCityRef: selectedCity.value?.deliveryCityRef,
-              ...(deliveryMethod.value === 'np_branch'
-                ? {
-                    npWarehouseRef: selectedWarehouse.value?.ref,
-                    npWarehouseNumber: selectedWarehouse.value?.number,
-                    npWarehouseAddress: selectedWarehouse.value?.shortAddress,
-                  }
-                : {
-                    street: form.street,
-                    house: form.house,
-                    apartment: form.apartment || undefined,
-                  }),
-            },
-          }),
-      // Not yet persisted by the backend — see checkout notes.
+    const body = buildOrderPayload({
+      isLoggedIn: authStore.isLoggedIn,
+      cartItems: cartStore.items,
+      form,
+      deliveryMethod: deliveryMethod.value,
+      selectedAddressId: selectedAddressId.value,
+      selectedCity: selectedCity.value,
+      selectedWarehouse: selectedWarehouse.value,
       paymentMethod: paymentMethod.value,
       noCallback: noCallback.value,
-      notes: form.notes || undefined,
-    }
+    })
 
     const res = await authFetch<{
       data: { id: number; orderNumber: string; status: string; totalPrice: number }

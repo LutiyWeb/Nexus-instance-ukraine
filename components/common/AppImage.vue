@@ -62,6 +62,18 @@ const height = computed(() => {
   return props.sizes.desktop?.h ?? props.sizes.tablet?.h ?? props.sizes.mobile?.h
 })
 
+// On Vercel the IPX function can't read files from `public/` (they live on the
+// CDN, not in the function bundle) → IPX_FILE_NOT_FOUND for every local image.
+// Outside dev, hand IPX an absolute URL to our own site so it fetches the file
+// over HTTP like any remote image. Hosts not listed in `image.domains`
+// (preview deploys, localhost preview) get the original file unoptimized.
+const requestOrigin = useRequestURL().origin
+const resolvedSrc = computed(() =>
+  !import.meta.dev && props.src?.startsWith('/') && !props.src.startsWith('//')
+    ? `${requestOrigin}${props.src}`
+    : props.src,
+)
+
 // External vendor CDNs (e.g. image.hubber.pro) aren't ours to guarantee uptime for —
 // fall back to a placeholder instead of a broken-image icon.
 const hasError = ref(false)
@@ -85,7 +97,7 @@ const imgAttrs = computed(() => ({
   <NuxtPicture
     v-if="!hasError && src"
     class="app-image"
-    :src="src"
+    :src="resolvedSrc"
     :alt="alt"
     :loading="lazy ? 'lazy' : 'eager'"
     :sizes="sizesAttr || undefined"

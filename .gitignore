@@ -27,3 +27,10 @@ env.txt
 # Claude Code local tooling (skills, MCP server config) — machine-local, not project code
 .claude
 .mcp.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

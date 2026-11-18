@@ -38,6 +38,10 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/site.webmanifest' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {
@@ -56,7 +60,13 @@ export default defineNuxtConfig({
     provider: 'ipx',
     quality: 80,
     format: ['webp', 'jpg'],
-    domains: ['images.unsplash.com', 'image.hubber.pro'],
+    // Own hosts: local images are passed to IPX as absolute URLs (see AppImage.vue).
+    domains: [
+      'images.unsplash.com',
+      'image.hubber.pro',
+      'www.honey-store.online',
+      'honey-store.online',
+    ],
   },
 
   css: [
