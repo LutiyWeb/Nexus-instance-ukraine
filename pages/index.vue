@@ -107,8 +107,10 @@ const mounted = ref(false)
 // them to items a browsing visitor could plausibly add to cart on a whim.
 // See TODOS.md for the "Лідери продажів" follow-up once there's real order
 // data to rank by.
-const HOME_PRICE_CEILING = 20000
-const HOME_PER_CATEGORY = 3
+// TEMP (2026-11-18): в демо-базе всего 20 товаров — поднято, чтобы заполнить
+// оба слайдера. Вернуть 20000 и 3 вместе с удалением TEMP-слагов ниже.
+const HOME_PRICE_CEILING = 100000
+const HOME_PER_CATEGORY = 5
 
 // Every real top-level category gets a shot at the homepage now (was a
 // hand-picked seasonal shortlist) — the noise/brand/dedup filters below do
@@ -132,6 +134,12 @@ const HOME_CATEGORY_SLUGS = [
   'powerbanky',
   'chohly-dlya-telefoniv',
   'peryferiia',
+  // TEMP (2026-11-18): категории демо-сида после пересоздания БД.
+  // Убрать, когда бэкенд вернёт реальный каталог со слагами выше.
+  'pc-accessories',
+  'bags-cases',
+  'smart-watches',
+  'home-appliances',
 ]
 
 // Generic accessory-noise guard, kept in case a future category swap
