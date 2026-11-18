@@ -107,40 +107,20 @@ const mounted = ref(false)
 // them to items a browsing visitor could plausibly add to cart on a whim.
 // See TODOS.md for the "Лідери продажів" follow-up once there's real order
 // data to rank by.
-// TEMP (2026-11-18): в демо-базе всего 20 товаров — поднято, чтобы заполнить
-// оба слайдера. Вернуть 20000 и 3 вместе с удалением TEMP-слагов ниже.
-const HOME_PRICE_CEILING = 100000
-const HOME_PER_CATEGORY = 5
+const HOME_PRICE_CEILING = 20000
+const HOME_PER_CATEGORY = 3
 
-// Every real top-level category gets a shot at the homepage now (was a
-// hand-picked seasonal shortlist) — the noise/brand/dedup filters below do
-// the curation work per category, so a thin or messy category just
-// contributes fewer (or zero) items instead of needing to be hand-excluded.
-const HOME_CATEGORY_SLUGS = [
-  'smartphones',
-  'laptops',
-  'naushnyky',
-  'audio',
-  'gaming',
-  'tablets',
-  'accessories',
-  'tv',
-  'smart-home',
-  'photo-video',
-  'office',
-  'chasy',
-  'elektronni-knygy',
-  'zaryadni-prystroi',
-  'powerbanky',
-  'chohly-dlya-telefoniv',
-  'peryferiia',
-  // TEMP (2026-11-18): категории демо-сида после пересоздания БД.
-  // Убрать, когда бэкенд вернёт реальный каталог со слагами выше.
-  'pc-accessories',
-  'bags-cases',
-  'smart-watches',
-  'home-appliances',
-]
+// Every category that exists in the catalog gets a shot at the homepage —
+// taken from the API (same store as the menu), not a hardcoded slug list, so
+// categories created in the admin show up here without a code change. The
+// noise/brand/dedup filters below do the curation work per category, so a thin
+// or messy category just contributes fewer (or zero) items.
+function homeCategorySlugs(): string[] {
+  return categoriesStore.categories.flatMap((cat) => [
+    cat.slug,
+    ...(cat.subcategories?.map((sub) => sub.slug) ?? []),
+  ])
+}
 
 // Generic accessory-noise guard, kept in case a future category swap
 // reintroduces something strap/glass/case-heavy like `chasy` was.
@@ -278,7 +258,7 @@ async function fetchSeasonalProducts() {
   homeLoading.value = true
   try {
     const groups = await Promise.all(
-      HOME_CATEGORY_SLUGS.map(async (slug) => {
+      homeCategorySlugs().map(async (slug) => {
         try {
           const res = await $fetch<{ data: Product[] }>(`${config.public.apiBase}/api/products/`, {
             query: { categorySlug: slug, priceMax: HOME_PRICE_CEILING, inStock: true, limit: 40 },
@@ -326,8 +306,11 @@ onMounted(() => {
       catalogTotal.value = res.meta.total
     })
     .catch(() => {})
-  fetchSeasonalProducts()
-  categoriesStore.fetchCategories()
+  // Sliders need the category list first — their slugs come from it.
+  categoriesStore
+    .fetchCategories()
+    .catch(() => {})
+    .finally(fetchSeasonalProducts)
 })
 
 const FALLBACK_MAIN: BannerDto[] = [
