@@ -218,6 +218,9 @@ function onPerPageUpdate(limit: number) {
 
 function onPageUpdate(page: number) {
   router.push({ query: { ...route.query, page: String(page) } })
+  if (import.meta.client) {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 }
 
 // ─── Page title & breadcrumbs ─────────────────────────────────────────────────

@@ -168,3 +168,13 @@ button (`Truck`/`Shield`/`Package` icons).
   Deliberately deprioritized by the user (2026-08-21): "подумаем, как это
   правильно сделать" — revisit once there's an actual delivery-pricing policy
   to wire it to.
+
+## ~~Catalog — scroll to top on pagination (added 2026-11-20)~~ — Done 2026-11-20
+
+- ~~**Clicking a pagination page leaves the viewport at the bottom of the catalog.**~~
+  Fixed in `components/catalog/CatalogView.vue` (`onPageUpdate` now scrolls to top).
+
+## ~~Header — widen desktop search bar by 20% (added 2026-11-20)~~ — Done 2026-11-20
+
+- ~~**Increase `.the-header__search` width on desktop by 20%.**~~
+  Fixed in `components/layout/TheHeader.vue` (`max-width: 336px` at `notebook`).

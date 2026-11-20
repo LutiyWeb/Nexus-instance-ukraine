@@ -252,6 +252,8 @@ function onBackToLogin() {
     display: flex;
     align-items: center;
     justify-self: end;
+    justify-content: flex-end;
+    width: 100%;
     gap: 4px;
   }
 
@@ -326,7 +328,7 @@ function onBackToLogin() {
     }
 
     @include mixins.respond-to(notebook) {
-      max-width: 280px;
+      max-width: 336px;
     }
   }
 

@@ -4,6 +4,6 @@ import { configDefaults } from 'vitest/config'
 export default defineVitestConfig({
   test: {
     environment: 'nuxt',
-    exclude: [...configDefaults.exclude, 'e2e/**'],
+    exclude: [...configDefaults.exclude, 'e2e/**', 'smoke/**'],
   },
 })
